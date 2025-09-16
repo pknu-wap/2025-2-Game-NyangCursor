@@ -103,3 +103,6 @@ InitTestScene*.unity*
 
 # Ignore VSCode folder
 .vscode/
+
+# Visual Studio Config File
+.vsconfig
