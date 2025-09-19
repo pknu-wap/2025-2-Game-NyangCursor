@@ -668,9 +668,9 @@ MonoBehaviour:
     targetSmooth: 0.12
     deadzone: 0.25
   heavyPreset:
-    turnRateDeg: 180
-    targetSmooth: 0.25
-    deadzone: 0.35
+    turnRateDeg: 90
+    targetSmooth: 0.3
+    deadzone: 0.4
   followCam: {fileID: 519420032}
   camOffset: {x: 0, y: 0, z: -10}
   camSmooth: 0.15
@@ -1066,7 +1066,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tierPresetBlend: 3700000046000000550000005f000000
   presetBlendLerpTime: 0.15
-  mover: {fileID: 0}
+  mover: {fileID: 816579066}
   fuelGage_img: {fileID: 1005116026}
   overDriveGage_img: {fileID: 641088630}
   fuel: 100
@@ -1081,13 +1081,11 @@ MonoBehaviour:
   - 0.4
   - 0.6
   - 0.8
-  - 1
   tierSpeedMul:
-  - 2
-  - 3
-  - 4
-  - 5
-  - 6
+  - 1.2
+  - 1.4
+  - 1.6
+  - 1.8
   paused: 0
   boostObject: {fileID: 58544708}
   boostOnDuration: 1

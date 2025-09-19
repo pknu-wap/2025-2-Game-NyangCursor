@@ -38,9 +38,9 @@ public class GaugeOverdriveController : MonoBehaviour
 
     [Header("Tier Settings (20 / 50 / 80 / 100)")]
     [Tooltip("티어 경계 통과 시 externalControl 잠깐 켜지는 시간(초). 순서대로")]
-    public float[] tierLockDur = { 0.2f, 0.4f, 0.6f, 0.8f,1 };
+    public float[] tierLockDur = { 0.2f, 0.4f, 0.6f, 0.8f};
     [Tooltip("티어 구간 동안 유지되는 속도 배율. 순서대로")]
-    public float[] tierSpeedMul = { 2f, 3f, 4f, 5f , 6f };
+    public float[] tierSpeedMul = { 1.2f, 1.4f, 1.6f, 1.8f };
 
     [Header("Misc")]
     public bool paused = false;
