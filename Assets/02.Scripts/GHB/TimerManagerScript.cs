@@ -34,7 +34,7 @@ public class TimerManager : MonoBehaviour
         currentTime += Time.deltaTime;
         currentTime = Mathf.Min(currentTime, clearSeconds);
 
-        // UI 갱신 (경과 시간)
+        // 현재 진행 시간을 담은 이벤트 발송
         OnTimerTick?.Invoke(currentTime);
 
         // 클리어 조건
