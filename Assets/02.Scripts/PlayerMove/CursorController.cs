@@ -84,7 +84,7 @@ public class CursorController : MonoBehaviour
 
     private void Awake()
     {
-        cam = Camera.main;
+        cam = followCam.GetComponent<Camera>();
         rb = GetComponent<Rigidbody2D>();
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         smoothedTarget = transform.position;
