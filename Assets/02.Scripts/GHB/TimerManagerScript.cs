@@ -5,8 +5,9 @@ public class TimerManager : MonoBehaviour
 {
     [Header("스테이지 클리어까지 버텨야 하는 시간 (분 단위)")]
     [SerializeField] private float clearMinutes;
+    private float clearSeconds;
 
-    private float RemainingTime;
+    private float currentTime; // 진행(Play상태로 유지)된 시간
 
     public static event Action<float> OnTimerTick; // UI에서 구독
     public static event Action OnStageClear;       // 클리어 이벤트
@@ -15,7 +16,7 @@ public class TimerManager : MonoBehaviour
 
     void Start()
     {
-        RemainingTime = clearMinutes * 60f;
+        clearSeconds = clearMinutes * 60f;
         StageFlowManager.OnStageStateChanged += HandleStageStateChanged;
     }
 
@@ -27,15 +28,17 @@ public class TimerManager : MonoBehaviour
     void Update()
     {
         if (isPaused) return;
-        if (RemainingTime <= 0f) return;
+        if (currentTime >= clearSeconds) return; // 이미 목표 시간 도달 → 더 진행 안 함
 
-        RemainingTime -= Time.deltaTime;
-        RemainingTime = Mathf.Max(RemainingTime, 0f);
+        // 0 → clearSeconds 로 증가
+        currentTime += Time.deltaTime;
+        currentTime = Mathf.Min(currentTime, clearSeconds);
 
-        // UI 갱신
-        OnTimerTick?.Invoke(RemainingTime);
+        // UI 갱신 (경과 시간)
+        OnTimerTick?.Invoke(currentTime);
 
-        if (RemainingTime <= 0f)
+        // 클리어 조건
+        if (currentTime >= clearSeconds)
         {
             Debug.Log("스테이지 클리어!");
             OnStageClear?.Invoke();
