@@ -10,6 +10,9 @@ public class InGameUIManager : MonoBehaviour
     [Header("일시정지 관련 UI")]
     [SerializeField] private GameObject PausePanel;
 
+    [Header("증강 선택 관련 UI")]
+    [SerializeField] private GameObject AugmentPanel;
+
     void OnEnable()
     {
         TimerManager.OnTimerTick += UpdateTimerUI;
@@ -36,23 +39,22 @@ public class InGameUIManager : MonoBehaviour
     }
 
 
-    // 플로우 매니저에서 상태를 받아온 후 UI 갱신
+    // 플로우 매니저에서 상태 변화를 받아온 후 UI 갱신
     private void HandleInGameUI(StageFlowManager.StageState newState)
     {
         switch (newState)
         {
             case StageFlowManager.StageState.Play:
-                Time.timeScale = 1f;
                 PausePanel.SetActive(false);
+                AugmentPanel.SetActive(false);
                 break;
             case StageFlowManager.StageState.Augment:
+                AugmentPanel.SetActive(true);
+                break;
             case StageFlowManager.StageState.Pause:
                 PausePanel.SetActive(true);
                 break;
             case StageFlowManager.StageState.Clear:
-                // 플레이어 / 적 엔티티에 isPaused 변수를 둔 다음 OnStageStateChanged 이벤트를 구독해서 제어하는 방식이 좋을듯
-                // timeScale = 0은 임시 로직
-                Time.timeScale = 0f;
                 break;
         }
     }

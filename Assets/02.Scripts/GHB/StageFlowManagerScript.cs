@@ -35,11 +35,23 @@ public class StageFlowManager : MonoBehaviour
         {
             if (CurrentState == StageState.Play)
             {
-                SetState(StageState.Pause);
+                SetStateToPause();
             }
-            else if (CurrentState == StageState.Pause)
+            else if (CurrentState == StageState.Pause || CurrentState == StageState.Augment)
             {
-                SetState(StageState.Play);
+                SetStateToPlay();
+            }
+        }
+        // 임시 증강선택 단축키
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            if (CurrentState == StageState.Play)
+            {
+                SetStateToAugment();
+            }
+            else if (CurrentState == StageState.Augment)
+            {
+                SetStateToPlay();
             }
         }
     }
