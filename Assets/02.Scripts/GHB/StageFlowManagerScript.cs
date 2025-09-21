@@ -28,6 +28,22 @@ public class StageFlowManager : MonoBehaviour
         TimerManager.OnStageClear -= StageClear;
     }
 
+    // 임시 ESC 토글 일시정지
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (CurrentState == StageState.Play)
+            {
+                SetState(StageState.Pause);
+            }
+            else if (CurrentState == StageState.Pause)
+            {
+                SetState(StageState.Play);
+            }
+        }
+    }
+
     public void SetState(StageState newState)
     {
         if (CurrentState == newState) return;
@@ -53,22 +69,27 @@ public class StageFlowManager : MonoBehaviour
         }
     }
 
-    // 임시 ESC 토글 일시정지
-    void Update()
+    // 버튼 참조용
+    public void SetStateToPlay()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (CurrentState == StageState.Play)
-            {
-                SetState(StageState.Pause);
-            }
-            else if (CurrentState == StageState.Pause)
-            {
-                SetState(StageState.Play);
-            }
-        }
+        SetState(StageState.Play);
     }
-    
+
+    public void SetStateToAugment()
+    {
+        SetState(StageState.Augment);
+    }
+
+    public void SetStateToPause()
+    {
+        SetState(StageState.Pause);
+    }
+
+    public void SetStateToClear()
+    {
+        SetState(StageState.Clear);
+    }
+
     private void StageClear()
     {
         Debug.Log("스테이지 클리어 로그");
