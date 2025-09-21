@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class CursorControllerStable : MonoBehaviour
+public class CursorController : MonoBehaviour
 {
     [Header("Move (RUNTIME VALUES) - 읽기용")]
     [SerializeField, Tooltip("보간된 현재 이동 속도(옵션, 필요 없으면 삭제 가능)")]
@@ -55,17 +55,17 @@ public class CursorControllerStable : MonoBehaviour
     [SerializeField] private Vector3 camOffset = new Vector3(0, 0, -10);
     [SerializeField] private float camSmooth = 0.15f;
 
-    Camera cam;
-    Rigidbody2D rb;
-    Vector3 smoothedTarget;
-    float desiredAngle;
-    float angleVel;
-    Vector3 camVel;
+    private Camera cam;
+    private Rigidbody2D rb;
+    private Vector3 smoothedTarget;
+    private float desiredAngle;
+    private float angleVel;
+    private Vector3 camVel;
 
-    // ✅ 외부 제어 플래그
+    // 외부 제어 플래그
     public bool externalControl = false;
 
-    public GameObject deadZone_img;
+    public GameObject deadZoneImg;
 
     // ★ 히스테리시스/스냅 옵션
     [Header("Deadzone Stabilizer / Snap")]
@@ -79,10 +79,10 @@ public class CursorControllerStable : MonoBehaviour
     [Range(0.0f, 0.2f)] public float smoothTimeSnap = 0.03f;
 
     // 내부 상태(히스테리시스)
-    bool inDeadzone = false;
-    bool prevInDeadzone = false;
+    private bool inDeadzone = false;
+    private bool prevInDeadzone = false;
 
-    void Awake()
+    private void Awake()
     {
         cam = Camera.main;
         rb = GetComponent<Rigidbody2D>();
@@ -94,7 +94,7 @@ public class CursorControllerStable : MonoBehaviour
         currentSpeed = speed; // 표시용
     }
 
-    void Update()
+    private void Update()
     {
         if (externalControl) return;
 
@@ -153,18 +153,18 @@ public class CursorControllerStable : MonoBehaviour
                 );
             }
 
-            if (deadZone_img) deadZone_img.SetActive(false);
+            if (deadZoneImg) deadZoneImg.SetActive(false);
         }
         else
         {
-            if (deadZone_img) deadZone_img.SetActive(true);
+            if (deadZoneImg) deadZoneImg.SetActive(true);
         }
 
         // 표시용 동기화(옵션)
         currentSpeed = speed;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         // ★ newAngle 기준으로 회전/이동 동기화
         float newAngle = rb.rotation;
@@ -186,7 +186,7 @@ public class CursorControllerStable : MonoBehaviour
 #endif
     }
 
-    void LateUpdate()
+    private void LateUpdate()
     {
         if (!followCam) return;
         Vector3 targetPos = (Vector3)rb.position + camOffset;
@@ -194,7 +194,7 @@ public class CursorControllerStable : MonoBehaviour
     }
 
     // --- Helpers ---
-    void ApplyPresetBlend()
+    private void ApplyPresetBlend()
     {
         // 1~100 → 0~1 (0=기본, 1=묵직)
         float t = Mathf.InverseLerp(1f, 100f, presetBlend);
