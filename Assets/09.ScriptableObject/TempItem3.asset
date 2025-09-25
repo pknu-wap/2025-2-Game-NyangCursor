@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a5684de4ca4cdf43b8cc1e1e7eb265c, type: 3}
   m_Name: TempItem3
   m_EditorClassIdentifier: 
-  itemName: "\uC544\uC774\uD15C1"
+  itemName: "\uC544\uC774\uD15C3"
   icon: {fileID: 21300000, guid: f199f4fe544c2c64b86328d2e923b162, type: 3}
   price: 20
   itemStatName: attack

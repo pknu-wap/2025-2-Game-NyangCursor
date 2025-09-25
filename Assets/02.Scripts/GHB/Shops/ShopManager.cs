@@ -1,18 +1,28 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.PlayerLoop;
+using System.Collections;
 using System.Collections.Generic;
 
 public class ShopManager : MonoBehaviour
 {
     [Header("Setup")]
-    [SerializeField] private Transform contentParent; // GridLayoutGroup이 붙은 Content
-    [SerializeField] private GameObject itemPrefab;   // 상점 아이템 프리팹
-    [SerializeField] private List<ShopStatData> shopItems = new List<ShopStatData>(); // 스크립터블 오브젝트 배열
+    [SerializeField] private Transform contentParent;
+    [SerializeField] private GameObject itemPrefab;
+    [SerializeField] private List<ShopStatData> shopItems = new List<ShopStatData>();
+    [SerializeField] private TMP_Text currentMoneyText;
+
+    [Header("Feedback")]
+    [SerializeField] private Color normalMoneyColor;
+    [SerializeField] private Color insufficientMoneyColor = Color.red;
+    [SerializeField] private float blinkDuration = 0.5f;
 
     private void Start()
     {
+        // 임시로 돈 충전
+        PlayerPrefs.SetInt("Money", 100);
+        normalMoneyColor = currentMoneyText.color;
+        UpdateMoneyUI();
         InitializateShop();
     }
 
@@ -20,21 +30,17 @@ public class ShopManager : MonoBehaviour
     {
         foreach (var data in shopItems)
         {
-            // 프리팹 생성
             GameObject item = Instantiate(itemPrefab, contentParent);
 
-            // 자식 컴포넌트 가져오기
             Image iconImage = item.transform.Find("Icon").GetComponent<Image>();
             TMP_Text nameText = item.transform.Find("NameText").GetComponent<TMP_Text>();
             TMP_Text priceText = item.transform.Find("PriceText").GetComponent<TMP_Text>();
             Button buyButton = item.transform.Find("BuyButton").GetComponent<Button>();
 
-            // 데이터 적용
             iconImage.sprite = data.icon;
-            nameText.text    = data.itemName;
-            priceText.text   = data.price.ToString();
+            nameText.text = data.itemName;
+            priceText.text = data.price.ToString();
 
-            // 버튼 클릭 시 구매 로직
             buyButton.onClick.AddListener(() => BuyItem(data));
         }
     }
@@ -42,18 +48,36 @@ public class ShopManager : MonoBehaviour
     private void BuyItem(ShopStatData data)
     {
         int money = PlayerPrefs.GetInt("Money", 0);
+
         if (money < data.price)
         {
             Debug.Log("돈 부족");
+            StartCoroutine(BlinkMoneyText());
             return;
         }
 
         PlayerPrefs.SetInt("Money", money - data.price);
 
-        // 스탯 증가 예제 (아이템 이름을 키로 사용)
         float current = PlayerPrefs.GetFloat(data.itemStatName, 0);
         PlayerPrefs.SetFloat(data.itemStatName, current + data.itemStatValue);
 
-        Debug.Log($"{data.itemName} 구매됨, " + $"{data.itemStatName} +{data.itemStatValue}");
+        Debug.Log($"{data.itemName} 구매됨, {data.itemStatName} +{data.itemStatValue}");
+
+        UpdateMoneyUI();
+    }
+
+    private void UpdateMoneyUI()
+    {
+        int money = PlayerPrefs.GetInt("Money", 0);
+        currentMoneyText.text = $"G : {money}";
+        currentMoneyText.color = normalMoneyColor;
+    }
+
+
+    private IEnumerator BlinkMoneyText()
+    {
+        currentMoneyText.color = insufficientMoneyColor;
+        yield return new WaitForSeconds(blinkDuration);
+        currentMoneyText.color = normalMoneyColor;
     }
 }
