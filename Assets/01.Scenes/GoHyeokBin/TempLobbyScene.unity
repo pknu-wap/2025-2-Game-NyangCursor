@@ -1781,6 +1781,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shopUI: {fileID: 302030533}
+  currentMoneyText: {fileID: 94036892}
   contentParent: {fileID: 946005962}
   itemPrefab: {fileID: 8492508207609549598, guid: 64062938362775f4f891a61ee277672e, type: 3}
   shopItems:
@@ -1788,8 +1789,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 539b197cf7c91eb44acad5e011a7decf, type: 2}
   - {fileID: 11400000, guid: 5ed05709fe78ae44b822ab9d92aff624, type: 2}
   - {fileID: 11400000, guid: e66a058b258693f4a8ca16204e03136d, type: 2}
-  currentMoneyText: {fileID: 94036892}
-  normalMoneyColor: {r: 1, g: 1, b: 1, a: 1}
   insufficientMoneyColor: {r: 1, g: 0, b: 0, a: 1}
   blinkDuration: 0.5
 --- !u!1 &1658027431

@@ -8,15 +8,16 @@ public class ShopManager : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private GameObject shopUI;
+    [SerializeField] private TMP_Text currentMoneyText;
 
     [Header("Setup")]
     [SerializeField] private Transform contentParent;
     [SerializeField] private GameObject itemPrefab;
     [SerializeField] private List<ShopStatData> shopItems = new List<ShopStatData>();
-    [SerializeField] private TMP_Text currentMoneyText;
+    
 
     [Header("Feedback")]
-    [SerializeField] private Color normalMoneyColor;
+    private Color normalMoneyColor;
     [SerializeField] private Color insufficientMoneyColor = Color.red;
     [SerializeField] private float blinkDuration = 0.5f;
 
