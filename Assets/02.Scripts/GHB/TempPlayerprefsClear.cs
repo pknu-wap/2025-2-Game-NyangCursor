@@ -6,6 +6,7 @@ public class TempPlayerprefsClear : MonoBehaviour
     {
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
-        Debug.Log("초기화");
+        PlayerPrefs.SetInt("Money", 100);
+        Debug.Log("초기화, 돈 100원");
     }
 }
