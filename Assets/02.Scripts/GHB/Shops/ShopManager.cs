@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 public class ShopManager : MonoBehaviour
 {
+    [Header("UI")]
+    [SerializeField] private GameObject shopUI;
+
     [Header("Setup")]
     [SerializeField] private Transform contentParent;
     [SerializeField] private GameObject itemPrefab;
@@ -73,11 +76,29 @@ public class ShopManager : MonoBehaviour
         currentMoneyText.color = normalMoneyColor;
     }
 
-
     private IEnumerator BlinkMoneyText()
     {
         currentMoneyText.color = insufficientMoneyColor;
         yield return new WaitForSeconds(blinkDuration);
         currentMoneyText.color = normalMoneyColor;
+    }
+
+    // 상점 열기 버튼용 함수
+    public void OpenShop()
+    {
+        if (shopUI != null)
+        {
+            shopUI.SetActive(true);
+            UpdateMoneyUI();
+        }
+    }
+
+    void Update()
+    {
+        // 닫기
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            shopUI.SetActive(false);
+        }
     }
 }
