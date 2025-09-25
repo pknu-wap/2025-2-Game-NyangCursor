@@ -94,11 +94,27 @@ public class ShopManager : MonoBehaviour
     }
 
     void Update()
+{
+    // 닫기
+    if (Input.GetKeyDown(KeyCode.Escape))
     {
-        // 닫기
-        if (Input.GetKeyDown(KeyCode.Escape))
+        shopUI.SetActive(false);
+    }
+
+    // 임시로 Playerprefs 값들 출력
+    if (Input.GetKeyDown(KeyCode.K))
+    {
+        // money 값 출력
+        int money = PlayerPrefs.GetInt("Money", 0);
+        Debug.Log($"Money : {money}");
+
+        // shopItems 모든 스탯 값 출력
+        foreach (var item in shopItems)
         {
-            shopUI.SetActive(false);
+            float val = PlayerPrefs.GetFloat(item.itemStatName, 0f);
+            Debug.Log($"{item.itemStatName} : {val}");
         }
     }
+}
+
 }
