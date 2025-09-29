@@ -6,7 +6,7 @@ using System.Collections;
 
 /*
 현재는 DifficultyManager 와 협업이 이루어지지 않은 상태입니다.
-나중에는 DifficultyManager 로부터 spawnPeriod, maxEnemies, enemyTypesToSpawn 을 
+나중에는 DifficultyManager 로부터 spawnPeriod, maxEnemies, enemyDatasToSpawn 을 
 OnIncreaseDifficulty 이벤트를 통해 전달받을 예정입니다.
 */
 
@@ -18,7 +18,7 @@ public class EnemyManager : MonoBehaviour
 
     // 내부에서 관리하는 멤버 변수
     private int currentEnemies;
-    [SerializeField] private List<EnemyData> enemyTypesToSpawn; // 스폰할 적 데이터 리스트
+    [SerializeField] private List<EnemyData> enemyDatasToSpawn; // 스폰할 적 데이터 리스트
     [SerializeField] private CircleCollider2D spawnZoneCollider;  // 스폰 영역
     [SerializeField] private CircleCollider2D combatZoneCollider; // 적이 활동하는 영역
 
@@ -67,7 +67,7 @@ public class EnemyManager : MonoBehaviour
             // 현재 적 개수가 최대치보다 작을 때에만 요청
             if (currentEnemies < maxEnemies)
             {
-                EnemyData randomEnemy = enemyTypesToSpawn[Random.Range(0, enemyTypesToSpawn.Count)];
+                EnemyData randomEnemy = enemyDatasToSpawn[Random.Range(0, enemyDatasToSpawn.Count)];
                 OnRequestEnemy?.Invoke(randomEnemy);
                 currentEnemies++;
             }
