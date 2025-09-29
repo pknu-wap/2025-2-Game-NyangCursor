@@ -1,53 +1,43 @@
 using UnityEngine;
+using UnityEngine.Playables;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class CursorController : MonoBehaviour
 {
+    [SerializeField] PlayerStat playerStat;
+
     [Header("Move (RUNTIME VALUES) - 읽기용")]
-    [SerializeField, Tooltip("보간된 현재 이동 속도(옵션, 필요 없으면 삭제 가능)")]
-    private float currentSpeed;
     [SerializeField] private float currentTurnRateDeg;
     [SerializeField] private float currentDeadzone;
     [SerializeField] private float currentTargetSmooth;
 
-    [Header("Base Runtime Params (기본 시작값)")]
-    public float speed = 8f;
-
     [Header("Preset Blend")]
-    [Tooltip("1=기본 프리셋, 100=묵직 프리셋")]
-    [Range(1, 100)] public int presetBlend = 50;
+    [Range(1, 100)] public int presetBlend = 10;
 
-    [Header("Dynamic Deadzone")]
-    [Tooltip("속도에 비례해서 deadzone을 보정하는 계수. 0이면 보정 없음")]
-    public float deadzoneSpeedFactor = 2.0f;
+    public float speed;
 
     [System.Serializable]
     public struct TurnFeelPreset
     {
-        [Tooltip("초당 회전(도/초). 낮을수록 묵직")]
-        public float turnRateDeg;
-        [Tooltip("목표점 스무딩 시간. 높을수록 묵직")]
-        public float targetSmooth;
-        [Tooltip("데드존 반경. 높을수록 묵직")]
-        public float deadzone;
+        public float turnRateDeg;   // 회전 속도
+        public float targetSmooth;  // 마우스 스무딩
+        public float deadzone;      // 데드존 반경
     }
 
     [Header("Presets")]
-    [Tooltip("기본(경쾌) 프리셋")]
-    public TurnFeelPreset basePreset = new TurnFeelPreset
+    private TurnFeelPreset basePreset = new TurnFeelPreset
     {
         turnRateDeg = 360f,
         targetSmooth = 0.12f,
         deadzone = 0.25f
     };
 
-    [Tooltip("묵직 프리셋")]
-    public TurnFeelPreset heavyPreset = new TurnFeelPreset
+    private TurnFeelPreset heavyPreset = new TurnFeelPreset
     {
-        turnRateDeg = 180f,
-        targetSmooth = 0.25f,
-        deadzone = 0.35f
+        turnRateDeg = 90f,
+        targetSmooth = 0.3f,
+        deadzone = 0.4f
     };
 
     [Header("Camera Follow")]
@@ -58,68 +48,94 @@ public class CursorController : MonoBehaviour
     private Camera cam;
     private Rigidbody2D rb;
     private Vector3 smoothedTarget;
+    private Vector3 targetVel;
+    private Vector3 lastTarget;
+
     private float desiredAngle;
     private float angleVel;
     private Vector3 camVel;
 
-    // 외부 제어 플래그
     public bool externalControl = false;
-
     public GameObject deadZoneImg;
 
-    // ★ 히스테리시스/스냅 옵션
-    [Header("Deadzone Stabilizer / Snap")]
-    [Tooltip("히스테리시스 비율(입·출 반경 차이). 0.06~0.10 권장")]
-    [Range(0f, 0.3f)] public float hysteresis = 0.08f;
-    [Tooltip("아주 작은 각 변화 무시(도). 2~3도 권장")]
+    [Header("Deadzone / Snap")]
     [Range(0f, 10f)] public float minAngleDeg = 2.5f;
-    [Tooltip("각도 차가 이 이상이면 빠르게 '확' 추종(도)")]
     [Range(0f, 90f)] public float snapThreshold = 22f;
-    [Tooltip("스냅시 부드러움 시간(작을수록 즉각). 예: 0.03")]
     [Range(0.0f, 0.2f)] public float smoothTimeSnap = 0.03f;
 
-    // 내부 상태(히스테리시스)
     private bool inDeadzone = false;
     private bool prevInDeadzone = false;
 
+    [SerializeField] bool drawDeadzoneGizmos = true;
+
+    //마우스 업데이트 관련
+    private float stopTimer = 0f;          // 마우스 멈춤 누적 시간
+    private float mouseStopDelay = 0.1f; // 몇 초 멈추면 딱 붙일지
+
     private void Awake()
     {
+        speed = playerStat.speed; //처음 속도 초기화
+
         cam = followCam.GetComponent<Camera>();
         rb = GetComponent<Rigidbody2D>();
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         smoothedTarget = transform.position;
+        lastTarget = smoothedTarget;
         desiredAngle = rb.rotation;
 
         ApplyPresetBlend();
-        currentSpeed = speed; // 표시용
     }
+    private float smoothLockTimer = 0f;  // 남은 락 시간(초)
+
 
     private void Update()
     {
-        if (externalControl) return;
-
-        // 프리셋 블렌딩(실시간 튜닝 반영)
-        ApplyPresetBlend();
-
-        // 마우스 → 월드
+        // --- 마우스 위치 ---
         Vector3 m = Input.mousePosition;
         m.z = Mathf.Abs(cam.transform.position.z);
         Vector3 target = cam.ScreenToWorldPoint(m);
 
-        // 목표점 스무딩
-        float k = 1f - Mathf.Exp(-Time.deltaTime / Mathf.Max(0.0001f, currentTargetSmooth));
-        smoothedTarget = Vector3.Lerp(smoothedTarget, target, k);
 
-        // 방향 벡터
+        // --- 마우스 움직임 체크 ---
+        bool mouseStopped = (target - lastTarget).sqrMagnitude < 0.01f;
+
+        // --- 타이머 갱신 ---
+        if (smoothLockTimer > 0f)
+            smoothLockTimer -= Time.deltaTime;
+
+        if (mouseStopped && smoothLockTimer <= 0f)
+        {
+            // 멈췄고, 락 해제된 상태 → 딱 붙이기
+            smoothedTarget = target;
+            targetVel = Vector3.zero; // 관성 제거
+            print("d");
+        }
+        else
+        {
+            // 움직이거나(마우스 움직임), 혹은 락 타이머 중일 때 → 스무딩 유지
+            smoothedTarget = Vector3.SmoothDamp(smoothedTarget, target, ref targetVel, currentTargetSmooth);
+            print("s");
+
+            // 움직임이 발생한 순간 → 락 걸기
+            if (!mouseStopped)
+                smoothLockTimer = 0.2f; // 0.5초 동안 d 금지
+        }
+
+        lastTarget = target;
+
+        ApplyPresetBlend();
+
+        // --- 외부 제어면 여기서 끝 ---
+        if (externalControl) return;
+
+
+        // --- 방향 계산 ---
         Vector2 to = (Vector2)(smoothedTarget - (Vector3)rb.position);
         float dist = to.magnitude;
 
-        // 속도 기반 deadzone 보정
-        float eff = currentDeadzone + deadzoneSpeedFactor * speed * Time.fixedDeltaTime;
-
-        // ★ 히스테리시스: 입·출 반경 분리
-        float enterR = eff;
-        float exitR = eff * (1f + hysteresis);
+        // Deadzone 체크
+        float enterR = currentDeadzone;
+        float exitR = currentDeadzone;
 
         if (inDeadzone)
         {
@@ -130,7 +146,6 @@ public class CursorController : MonoBehaviour
             if (dist <= enterR) inDeadzone = true;
         }
 
-        // ★ 데드존 진입 '그 프레임'에 관성 제거 → 경계 꿈틀 억제
         if (!prevInDeadzone && inDeadzone)
             angleVel = 0f;
         prevInDeadzone = inDeadzone;
@@ -139,11 +154,9 @@ public class CursorController : MonoBehaviour
         {
             float targetAngle = Mathf.Atan2(to.y, to.x) * Mathf.Rad2Deg - 90f;
 
-            // ★ 미세 각 변화는 무시(데드밴드)
             float angDiff = Mathf.Abs(Mathf.DeltaAngle(desiredAngle, targetAngle));
             if (angDiff > minAngleDeg)
             {
-                // ★ 큰 각도 차면 스냅(더 빠른 추종)
                 float smoothTime = (angDiff >= snapThreshold)
                     ? smoothTimeSnap
                     : (1f / Mathf.Max(1f, currentTurnRateDeg));
@@ -160,13 +173,12 @@ public class CursorController : MonoBehaviour
             if (deadZoneImg) deadZoneImg.SetActive(true);
         }
 
-        // 표시용 동기화(옵션)
-        currentSpeed = speed;
+
     }
+
 
     private void FixedUpdate()
     {
-        // ★ newAngle 기준으로 회전/이동 동기화
         float newAngle = rb.rotation;
 
         if (!externalControl)
@@ -180,9 +192,9 @@ public class CursorController : MonoBehaviour
         Vector2 forward = new Vector2(-Mathf.Sin(rad), Mathf.Cos(rad));
 
 #if UNITY_6000_0_OR_NEWER
-        rb.linearVelocity = forward * speed;      // 항상 최신 speed 사용
+        rb.linearVelocity = forward * speed;
 #else
-        rb.velocity = forward * speed;            // currentSpeed 대신 speed 권장
+        rb.velocity = forward * speed;
 #endif
     }
 
@@ -193,14 +205,40 @@ public class CursorController : MonoBehaviour
         followCam.position = Vector3.SmoothDamp(followCam.position, targetPos, ref camVel, camSmooth);
     }
 
-    // --- Helpers ---
     private void ApplyPresetBlend()
     {
-        // 1~100 → 0~1 (0=기본, 1=묵직)
+        // playerStat.turnRateDeg → 1일 때 10f, 10일 때 360f
+        float trNorm = Mathf.InverseLerp(1f, 10f, playerStat.turnRateDeg);
+        trNorm = Mathf.Clamp01(trNorm); // 안전하게 0~1 범위 제한
+
+        // --- playerStat 기반 "동적 heavyPreset" ---
+        float boostedTurn = Mathf.Lerp(10f, 360f, trNorm);
+        float boostedSmooth = Mathf.Lerp(0.3f, 0.12f, trNorm);
+        float boostedDeadzone = Mathf.Lerp(0.4f, 0.25f, trNorm);
+
+        // --- presetBlend(1~100) 보간 ---
         float t = Mathf.InverseLerp(1f, 100f, presetBlend);
 
-        currentTurnRateDeg = Mathf.Lerp(basePreset.turnRateDeg, heavyPreset.turnRateDeg, t);
-        currentTargetSmooth = Mathf.Lerp(basePreset.targetSmooth, heavyPreset.targetSmooth, t);
-        currentDeadzone = Mathf.Lerp(basePreset.deadzone, heavyPreset.deadzone, t);
+        currentTurnRateDeg = Mathf.Lerp(basePreset.turnRateDeg, boostedTurn, t);
+        currentTargetSmooth = Mathf.Lerp(basePreset.targetSmooth, boostedSmooth, t);
+        currentDeadzone = Mathf.Lerp(basePreset.deadzone, boostedDeadzone, t);
+
+        Debug.Log(currentTurnRateDeg);
+    }
+
+    void OnDrawGizmos()
+    {
+        if (!drawDeadzoneGizmos) return;
+
+        Vector3 center = (rb != null) ? (Vector3)rb.position : transform.position;
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(center, currentDeadzone);
+
+        if (Application.isPlaying)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawSphere(smoothedTarget, 0.1f);
+        }
     }
 }
