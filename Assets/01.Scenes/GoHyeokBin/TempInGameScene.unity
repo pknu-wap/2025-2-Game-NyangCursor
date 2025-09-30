@@ -240,11 +240,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11af39d6cb54e954a995a4cd40919e0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseStats:
-  - statName: attack
-    value: 5
-  - statName: health
-    value: 10
+  BaseStats:
+  - statType: 1
+    value: 1000
+  - statType: 0
+    value: 100
   shopStats:
   - {fileID: 11400000, guid: eaa24806d3aa25d46b4bf44245b19c04, type: 2}
   - {fileID: 11400000, guid: 539b197cf7c91eb44acad5e011a7decf, type: 2}

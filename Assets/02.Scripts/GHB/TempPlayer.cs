@@ -1,51 +1,85 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEditor.EditorTools;
 
 public class TempPlayer : MonoBehaviour
 {
+    // 스탯 종류 정의 (추가되면 여기만 수정하면 됨)
+    public enum StatType
+    {
+        Health,
+        Attack
+    }
+
+    [System.Serializable]
+    public class StatEntry
+    {
+        public StatType statType;
+        public float value;
+    }
+
     [Header("기본 스탯")]
     [Tooltip("플레이어의 기본 스탯 능력치를 작성하세요")]
-    public List<StatEntry> baseStats = new List<StatEntry>(); // 인스펙터에서 기본값 설정 가능
+    public List<StatEntry> BaseStats = new List<StatEntry>();
 
     [Header("상점 스탯")]
     [Tooltip("상점 데이터 ScriptableObject들을 끌어 두세요")]
     public List<ShopStatData> shopStats = new List<ShopStatData>();
 
-    private Dictionary<string, float> currentStats = new Dictionary<string, float>();
-    private Dictionary<string, float> baseStatDict = new Dictionary<string, float>();
-
-    [System.Serializable]
-    public class StatEntry
-    {
-        public string statName;
-        public float value;
-    }
+    private Dictionary<StatType, float> baseStats = new Dictionary<StatType, float>();
+    private Dictionary<StatType, float> currentStats = new Dictionary<StatType, float>();
 
     void Start()
     {
-        // 기본 스탯 딕셔너리로 변환
-        baseStatDict.Clear();
-        foreach (var stat in baseStats)
-        {
-            baseStatDict[stat.statName] = stat.value;
-        }
-
-        InitializeStats();
+        InitializeBaseStats();
+        InitializeCurrentStats();
     }
 
-    private void InitializeStats()
+    /// 인스펙터에서 입력한 기본 스탯을 Dictionary로 초기화
+    private void InitializeBaseStats()
+    {
+        baseStats.Clear();
+        foreach (var stat in BaseStats)
+        {
+            baseStats[stat.statType] = stat.value;
+        }
+    }
+
+    /// PlayerPrefs 값과 합산해서 currentStats 초기화
+    private void InitializeCurrentStats()
     {
         currentStats.Clear();
 
-        foreach (var stat in shopStats)
+        foreach (StatType type in System.Enum.GetValues(typeof(StatType)))
         {
-            float baseValue = baseStatDict.ContainsKey(stat.itemStatName) ? baseStatDict[stat.itemStatName] : 0f;
-            float addedValue = PlayerPrefs.GetFloat(stat.itemStatName, 0f);
-            currentStats[stat.itemStatName] = baseValue + addedValue;
-            Debug.Log($"{stat.itemStatName}의 기본스탯 {baseValue} + 추가구매 스탯 {addedValue} = {currentStats[stat.itemStatName]}");
+            float baseValue = baseStats.ContainsKey(type) ? baseStats[type] : 0f;
+            float addedValue = PlayerPrefs.GetFloat(type.ToString(), 0f);
+            currentStats[type] = baseValue + addedValue;
+
+            Debug.Log($"{type} : 기본 {baseValue} + 추가 {addedValue} = {currentStats[type]}");
         }
     }
+
+    // ==================== 스탯 접근용 메서드 ====================
+
+    public float GetStat(StatType type)
+    {
+        return currentStats.ContainsKey(type) ? currentStats[type] : 0f;
+    }
+
+    public void SetStat(StatType type, float value)
+    {
+        currentStats[type] = value;
+    }
+
+    public void AddStat(StatType type, float value)
+    {
+        if (!currentStats.ContainsKey(type))
+            currentStats[type] = 0f;
+
+        currentStats[type] += value;
+    }
+
+    // ==================== 디버그 ====================
 
     void Update()
     {
