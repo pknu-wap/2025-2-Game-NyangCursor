@@ -16,6 +16,13 @@ public class TempStageSelectUIManager : MonoBehaviour
         }
     }
 
+    // 테스트용 pref 삭제 함수
+    public void ResetPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+    }
+
     // 임시 씬전환 함수
     public void SceneChange()
     {

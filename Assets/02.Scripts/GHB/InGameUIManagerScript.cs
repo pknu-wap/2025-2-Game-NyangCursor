@@ -22,7 +22,7 @@ public class InGameUIManager : MonoBehaviour
     void OnDisable()
     {
         TimerManager.OnTimerTick -= UpdateTimerUI;
-        StageFlowManager.OnStageStateChanged += HandleInGameUI;
+        StageFlowManager.OnStageStateChanged -= HandleInGameUI;
     }
 
     // 타이머 매니저에서 시간을 받아온 후 시간 UI 갱신

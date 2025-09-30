@@ -13,6 +13,7 @@ public class TimerManager : MonoBehaviour
     public static event Action OnStageClear;       // 클리어 이벤트
 
     private bool isPaused = false;
+    private bool isCleared = false;
 
     void Start()
     {
@@ -31,14 +32,14 @@ public class TimerManager : MonoBehaviour
 
         // 0 → clearSeconds 로 증가
         currentTime += Time.deltaTime;
-        currentTime = Mathf.Min(currentTime, clearSeconds);
 
         // 현재 진행 시간을 담은 이벤트 발송
         OnTimerTick?.Invoke(currentTime);
 
         // 클리어 조건
-        if (currentTime >= clearSeconds)
+        if (currentTime >= clearSeconds && !isCleared)
         {
+            isCleared = true;
             Debug.Log("스테이지 클리어!");
             OnStageClear?.Invoke();
         }
@@ -46,6 +47,7 @@ public class TimerManager : MonoBehaviour
 
     private void HandleStageStateChanged(StageFlowManager.StageState state)
     {
+        Debug.Log(state);
         // Play 상태일 때만 타이머 진행
         if (state == StageFlowManager.StageState.Play)
         {
