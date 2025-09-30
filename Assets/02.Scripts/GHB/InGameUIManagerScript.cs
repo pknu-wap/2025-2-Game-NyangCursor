@@ -54,7 +54,7 @@ public class InGameUIManager : MonoBehaviour
             case StageFlowManager.StageState.Pause:
                 PausePanel.SetActive(true);
                 break;
-            case StageFlowManager.StageState.Clear:
+            case StageFlowManager.StageState.End:
                 break;
         }
     }

@@ -1,8 +1,11 @@
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public class StageFlowManager : MonoBehaviour
 {
+    // 현재 스테이지 번호
+    [SerializeField] private int stageIndex;
     public enum StageState
     {
         Play,       // 일반 플레이
@@ -105,8 +108,8 @@ public class StageFlowManager : MonoBehaviour
     private void StageClear()
     {
         Debug.Log("스테이지 클리어 로그");
-
-        // ✅ 여기서 클리어 UI 표시, 보상 지급, 다음 씬 로딩 등 추가 가능
-        // 예: UIManager.Instance.ShowClearScreen();
+        // playerprefs를 통해 스테이지 클리어 기록 저장
+        PlayerPrefs.SetInt($"StageCleared_{stageIndex}", 1);
+        PlayerPrefs.Save();
     }
 }
