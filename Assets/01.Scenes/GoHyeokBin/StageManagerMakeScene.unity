@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf167d2e58bbf9d41abe704ad36459ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clearMinutes: 2
+  clearMinutes: 0.2
 --- !u!1 &34411377
 GameObject:
   m_ObjectHideFlags: 0
@@ -556,7 +556,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1975902428}
         m_TargetAssemblyTypeName: StageFlowManager, Assembly-CSharp
-        m_MethodName: SetStateToClear
+        m_MethodName: SetStateToEnd
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2431,6 +2431,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c03cc6fe1e2f8734eba5c24e141c2b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stageIndex: 1
 --- !u!1 &1995041220
 GameObject:
   m_ObjectHideFlags: 0
