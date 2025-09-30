@@ -28,7 +28,6 @@ public class TimerManager : MonoBehaviour
     void Update()
     {
         if (isPaused) return;
-        if (currentTime >= clearSeconds) return; // 이미 목표 시간 도달 → 더 진행 안 함
 
         // 0 → clearSeconds 로 증가
         currentTime += Time.deltaTime;
