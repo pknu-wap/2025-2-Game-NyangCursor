@@ -57,6 +57,10 @@ public class StageFlowManager : MonoBehaviour
                 SetStateToPlay();
             }
         }
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            GoToLobby();
+        }
     }
 
     public void SetState(StageState newState)
@@ -111,5 +115,11 @@ public class StageFlowManager : MonoBehaviour
         // playerprefs를 통해 스테이지 클리어 기록 저장
         PlayerPrefs.SetInt($"StageCleared_{stageIndex}", 1);
         PlayerPrefs.Save();
+    }
+
+    // 임시 씬 이동 메서드
+    private void GoToLobby()
+    {
+        SceneManager.LoadScene("StageUnlockMakeScene");
     }
 }
