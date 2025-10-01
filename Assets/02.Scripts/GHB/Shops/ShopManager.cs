@@ -14,7 +14,6 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Transform contentParent;
     [SerializeField] private GameObject itemPrefab;
     [SerializeField] private List<ShopStatData> shopItems = new List<ShopStatData>();
-    
 
     [Header("Feedback")]
     private Color normalMoneyColor;
@@ -27,10 +26,10 @@ public class ShopManager : MonoBehaviour
         PlayerPrefs.SetInt("Money", 100);
         normalMoneyColor = currentMoneyText.color;
         UpdateMoneyUI();
-        InitializateShop();
+        InitializeShop();
     }
 
-    private void InitializateShop()
+    private void InitializeShop()
     {
         foreach (var data in shopItems)
         {
@@ -45,6 +44,7 @@ public class ShopManager : MonoBehaviour
             nameText.text = data.itemName;
             priceText.text = data.price.ToString();
 
+            // 클릭 시 구매
             buyButton.onClick.AddListener(() => BuyItem(data));
         }
     }
@@ -60,12 +60,15 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
+        // 돈 차감
         PlayerPrefs.SetInt("Money", money - data.price);
 
-        float current = PlayerPrefs.GetFloat(data.itemStatName, 0);
-        PlayerPrefs.SetFloat(data.itemStatName, current + data.itemStatValue);
+        // 스탯 적용 (StatType -> string)
+        string statKey = data.itemStatType.ToString();
+        float current = PlayerPrefs.GetFloat(statKey, 0f);
+        PlayerPrefs.SetFloat(statKey, current + data.itemStatValue);
 
-        Debug.Log($"{data.itemName} 구매됨, {data.itemStatName} +{data.itemStatValue}");
+        Debug.Log($"{data.itemName} 구매됨, {statKey} +{data.itemStatValue}");
 
         UpdateMoneyUI();
     }
@@ -95,27 +98,25 @@ public class ShopManager : MonoBehaviour
     }
 
     void Update()
-{
-    // 닫기
-    if (Input.GetKeyDown(KeyCode.Escape))
     {
-        shopUI.SetActive(false);
-    }
-
-    // 임시로 Playerprefs 값들 출력
-    if (Input.GetKeyDown(KeyCode.K))
-    {
-        // money 값 출력
-        int money = PlayerPrefs.GetInt("Money", 0);
-        Debug.Log($"Money : {money}");
-
-        // shopItems 모든 스탯 값 출력
-        foreach (var item in shopItems)
+        // 닫기
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            float val = PlayerPrefs.GetFloat(item.itemStatName, 0f);
-            Debug.Log($"{item.itemStatName} : {val}");
+            shopUI.SetActive(false);
+        }
+
+        // 임시로 PlayerPrefs 값 출력
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            int money = PlayerPrefs.GetInt("Money", 0);
+            Debug.Log($"Money : {money}");
+
+            foreach (var item in shopItems)
+            {
+                string statKey = item.itemStatType.ToString();
+                float val = PlayerPrefs.GetFloat(statKey, 0f);
+                Debug.Log($"{statKey} : {val}");
+            }
         }
     }
-}
-
 }

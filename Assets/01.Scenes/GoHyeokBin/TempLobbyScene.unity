@@ -1785,10 +1785,14 @@ MonoBehaviour:
   contentParent: {fileID: 946005962}
   itemPrefab: {fileID: 8492508207609549598, guid: 64062938362775f4f891a61ee277672e, type: 3}
   shopItems:
-  - {fileID: 11400000, guid: eaa24806d3aa25d46b4bf44245b19c04, type: 2}
-  - {fileID: 11400000, guid: 539b197cf7c91eb44acad5e011a7decf, type: 2}
-  - {fileID: 11400000, guid: 5ed05709fe78ae44b822ab9d92aff624, type: 2}
-  - {fileID: 11400000, guid: e66a058b258693f4a8ca16204e03136d, type: 2}
+  - {fileID: 11400000, guid: ef9bdb39921bfff469a20eacb810be85, type: 2}
+  - {fileID: 11400000, guid: 424691941664fb4449b9cb726c654ab9, type: 2}
+  - {fileID: 11400000, guid: 69b3e3cf327408f4690a8b4da3eeaafd, type: 2}
+  - {fileID: 11400000, guid: d1a4b70a8a68aa1418b004b168849de5, type: 2}
+  - {fileID: 11400000, guid: d2b9dc67813cde14a84d39b6ccee8e87, type: 2}
+  - {fileID: 11400000, guid: 4f98fa6b52a4e6446b6bdc642be3a61e, type: 2}
+  - {fileID: 11400000, guid: c76be32c8b88f5a41a77444f45977f94, type: 2}
+  - {fileID: 11400000, guid: 3a7e645f541674e4f8fc1ba0928b2ca0, type: 2}
   insufficientMoneyColor: {r: 1, g: 0, b: 0, a: 1}
   blinkDuration: 0.5
 --- !u!1 &1658027431

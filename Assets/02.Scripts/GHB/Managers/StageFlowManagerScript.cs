@@ -19,12 +19,15 @@ public class StageFlowManager : MonoBehaviour
     {
         // 타이머 매니저의 클리어 이벤트 구독
         TimerManager.OnStageClear += StageClear;
+        // 업그레이드 매니저 선택 이벤트 구독
+        UpgradeManager.OnAugmentSelected += SetStateToPlay;
         // 시작은 플레이
         SetState(StageState.Play);
     }
 
     void OnDestroy()
     {
+        UpgradeManager.OnAugmentSelected -= SetStateToPlay;
         TimerManager.OnStageClear -= StageClear;
     }
 
