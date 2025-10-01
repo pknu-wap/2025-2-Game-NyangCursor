@@ -3,17 +3,16 @@ using System.Collections.Generic;
 
 public class TempPlayer : MonoBehaviour
 {
-    // 스탯 종류 정의 (추가되면 여기만 수정하면 됨)
-    public enum StatType
-    {
-        Health,
-        Attack
-    }
-
+    // ================================
+    // StatEntry 클래스 정의 (인스펙터 노출용)
+    // ================================
     [System.Serializable]
     public class StatEntry
     {
+        [Header("스탯 종류 선택")]
         public StatType statType;
+
+        [Header("스탯 값")]
         public float value;
     }
 
@@ -25,6 +24,9 @@ public class TempPlayer : MonoBehaviour
     [Tooltip("상점 데이터 ScriptableObject들을 끌어 두세요")]
     public List<ShopStatData> shopStats = new List<ShopStatData>();
 
+    // ================================
+    // 스탯 Dictionary 관리
+    // ================================
     private Dictionary<StatType, float> baseStats = new Dictionary<StatType, float>();
     private Dictionary<StatType, float> currentStats = new Dictionary<StatType, float>();
 
@@ -34,7 +36,6 @@ public class TempPlayer : MonoBehaviour
         InitializeCurrentStats();
     }
 
-    /// 인스펙터에서 입력한 기본 스탯을 Dictionary로 초기화
     private void InitializeBaseStats()
     {
         baseStats.Clear();
@@ -44,7 +45,6 @@ public class TempPlayer : MonoBehaviour
         }
     }
 
-    /// PlayerPrefs 값과 합산해서 currentStats 초기화
     private void InitializeCurrentStats()
     {
         currentStats.Clear();
@@ -54,13 +54,13 @@ public class TempPlayer : MonoBehaviour
             float baseValue = baseStats.ContainsKey(type) ? baseStats[type] : 0f;
             float addedValue = PlayerPrefs.GetFloat(type.ToString(), 0f);
             currentStats[type] = baseValue + addedValue;
-
             Debug.Log($"{type} : 기본 {baseValue} + 추가 {addedValue} = {currentStats[type]}");
         }
     }
 
-    // ==================== 스탯 접근용 메서드 ====================
-
+    // ================================
+    // 스탯 접근용 메서드
+    // ================================
     public float GetStat(StatType type)
     {
         return currentStats.ContainsKey(type) ? currentStats[type] : 0f;
@@ -79,8 +79,9 @@ public class TempPlayer : MonoBehaviour
         currentStats[type] += value;
     }
 
-    // ==================== 디버그 ====================
-
+    // ================================
+    // 디버그용: K키 누르면 모든 스탯 출력
+    // ================================
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.K))

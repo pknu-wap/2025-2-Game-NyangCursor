@@ -15,5 +15,6 @@ MonoBehaviour:
   itemName: "\uC544\uC774\uD15C4"
   icon: {fileID: 21300000, guid: 453a398fe5e60df4cb89f748f3884161, type: 3}
   price: 10
-  itemStatName: Health
+  itemStatType: 3
   itemStatValue: 10
+  description: 
