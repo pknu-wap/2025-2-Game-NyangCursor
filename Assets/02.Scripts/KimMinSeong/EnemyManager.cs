@@ -1,8 +1,8 @@
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
-using System.Collections;
 
 /*
 현재는 DifficultyManager 와 협업이 이루어지지 않은 상태입니다.
@@ -18,14 +18,10 @@ public class EnemyManager : MonoBehaviour
 
     // 내부에서 관리하는 멤버 변수
     private int currentEnemies;
-    [SerializeField] private List<EnemyData> enemyDatasToSpawn; // 스폰할 적 데이터 리스트
+    [SerializeField] private List<GameObject> enemyPrefabsToSpawn; // 스폰할 적 리스트
     [SerializeField] private CircleCollider2D spawnZoneCollider;  // 스폰 영역
     [SerializeField] private CircleCollider2D combatZoneCollider; // 적이 활동하는 영역
 
-    // 발행하는 이벤트
-    public static event Action<EnemyData> OnRequestEnemy;  // PoolManager 에게 적 스폰을 요청
-
-    // 멤버 초기화
     void Awake()
     {
         spawnPeriod = 2f;
@@ -35,30 +31,26 @@ public class EnemyManager : MonoBehaviour
         combatZoneCollider = GetComponent<CircleCollider2D>();
     }
 
-    // 이벤트 구독
     void OnEnable()
     {
         // DifficultyManager.OnIncreaseDifficulty += HandleDifficulty;
-        // PoolManager.OnEnemyReady += DeployEnemy;
         // CombatZoneTrigger.onEnemyExited += RepositionEnemy;
     }
 
-    // 이벤트 구독 해제
     void OnDisable()
     {
         // DifficultyManager.OnIncreaseDifficulty -= HandleDifficulty;
-        // PoolManager.OnEnemyReady -= DeployEnemy;
         // CombatZoneTrigger.onEnemyExited -= RepositionEnemy;
     }
 
     // spawnPeriod 마다 coroutine 실행
     void Start()
     {
-        StartCoroutine(SpawnRequestCoroutine());
+        StartCoroutine(SpawnCoroutine());
     }
 
-    // spawnPeriod 마다 PoolManager 에게 적 스폰 요청을 하는 함수
-    IEnumerator SpawnRequestCoroutine()
+    // spawnPeriod 마다 PoolManager 을 통해 적을 생성하는 함수
+    IEnumerator SpawnCoroutine()
     {
         while (true)
         {
@@ -67,9 +59,16 @@ public class EnemyManager : MonoBehaviour
             // 현재 적 개수가 최대치보다 작을 때에만 요청
             if (currentEnemies < maxEnemies)
             {
-                EnemyData randomEnemy = enemyDatasToSpawn[Random.Range(0, enemyDatasToSpawn.Count)];
-                OnRequestEnemy?.Invoke(randomEnemy);
-                currentEnemies++;
+                GameObject randomEnemyPrefab = enemyPrefabsToSpawn[Random.Range(0, enemyPrefabsToSpawn.Count)]; // 현재는 랜덤하게 선택
+                GameObject enemy = PoolManager.instance.Spawn(randomEnemyPrefab);
+                
+                if (enemy != null)
+                {
+                    enemy.transform.position = GetRandomSpawnPosition();
+                    currentEnemies++;
+                }
+                else
+                    Debug.Log("해당 Prefab 으로 적을 생성할 수 없습니다");
             }
         }
     }
@@ -95,13 +94,6 @@ public class EnemyManager : MonoBehaviour
         float y = center.y + radius * Mathf.Sin(randomAngle);
 
         return new Vector2(x, y);
-    }
-
-    // OnEnemyReady 의 콜백 함수로 스폰 영역에 적을 배치하는 함수
-    void DeployEnemy(GameObject enemy)
-    {
-        Vector2 spawnPosition = GetRandomSpawnPosition();
-        enemy.transform.position = spawnPosition;
     }
 
     // OnEnemyExited 의 콜백 함수로 전투 영역에서 벗어난 적을 재배치하는 함수
