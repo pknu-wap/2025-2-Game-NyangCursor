@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a5684de4ca4cdf43b8cc1e1e7eb265c, type: 3}
-  m_Name: TempItem4
+  m_Name: AttackSpeed
   m_EditorClassIdentifier: 
-  itemName: "\uC544\uC774\uD15C4"
-  icon: {fileID: 21300000, guid: 453a398fe5e60df4cb89f748f3884161, type: 3}
+  itemName: "\uACF5\uACA9 \uC18D\uB3C4"
+  icon: {fileID: 21300000, guid: b3a6eb94a9d383f44b4adf87079ff0e7, type: 3}
   price: 10
-  itemStatType: 3
-  itemStatValue: 10
-  description: 
+  itemStatType: 1
+  itemStatValue: 5
+  description: "\uACF5\uACA9 \uC18D\uB3C4 \uC99D\uAC00"

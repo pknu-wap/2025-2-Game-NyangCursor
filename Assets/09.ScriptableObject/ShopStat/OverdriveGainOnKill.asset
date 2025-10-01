@@ -10,11 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a5684de4ca4cdf43b8cc1e1e7eb265c, type: 3}
-  m_Name: TempItem2
+  m_Name: OverdriveGainOnKill
   m_EditorClassIdentifier: 
-  itemName: "\uC544\uC774\uD15C2"
-  icon: {fileID: 21300000, guid: 06cee3acc77d4044dae3d8ccb8c885b7, type: 3}
+  itemName: "\uC801 \uCC98\uCE58 \uC2DC \uC624\uBC84\uB4DC\uB77C\uC774\uBE0C \uAC8C\uC774\uC9C0
+    \uC0C1\uC2B9\uB7C9 \uC99D\uAC00"
+  icon: {fileID: 21300000, guid: b3a6eb94a9d383f44b4adf87079ff0e7, type: 3}
   price: 10
-  itemStatType: 1
+  itemStatType: 10
   itemStatValue: 5
-  description: 
+  description: "\uC801 \uCC98\uCE58 \uC2DC \uC624\uBC84\uB4DC\uB77C\uC774\uBE0C \uAC8C\uC774\uC9C0
+    \uC0C1\uC2B9\uB7C9 \uC99D\uAC00"
