@@ -4,7 +4,7 @@
 public class ClickModController : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private Camera cam;        // 메인 카메라
+    [SerializeField] private Camera cam;        // 메인 카메라s
     [SerializeField] private Rigidbody2D rb;    // 이동용 Rigidbody2D
     [SerializeField] private Animator animator; // 애니메이터
     [SerializeField] private CursorController cursorController;

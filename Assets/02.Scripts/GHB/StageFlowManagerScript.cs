@@ -1,11 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 
 public class StageFlowManager : MonoBehaviour
 {
     public enum StageState
     {
-        Play,       // 일반 플레이
+        Play,       // 일반 플레이s
         Augment,    // 증강 선택 UI 활성화
         Pause,       // 완전 일시정지
         Clear       // 클리어

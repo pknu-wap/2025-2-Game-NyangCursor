@@ -9,7 +9,7 @@ public class GaugeOverdriveController : MonoBehaviour
 
 
     [Header("Feel per Tier (PresetBlend)")]
-    [Tooltip("티어별 묵직함(1=가벼움 ~ 100=묵직). 순서대로 20,50,80,100")]
+    [Tooltip("티어별 묵직함s(1=가벼움 ~ 100=묵직). 순서대로 20,50,80,100")]
     [Range(1, 100)] public int[] tierPresetBlend = { 30, 45, 65, 80 };
 
     [Tooltip("티어 전환 시 presetBlend 부드럽게 보간할 시간(초). 0이면 즉시")]

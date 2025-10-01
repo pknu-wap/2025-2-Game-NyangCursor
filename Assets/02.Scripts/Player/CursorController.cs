@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.UIElements;
 
@@ -7,7 +7,7 @@ public class CursorController : MonoBehaviour
 {
     [SerializeField] PlayerStat playerStat;
 
-    [Header("Move (RUNTIME VALUES) - 읽기용")]
+    [Header("Move (RUNTIME VALUES) - 읽기용s")]
     [SerializeField] private float currentTurnRateDeg;
     [SerializeField] private float currentDeadzone;
     [SerializeField] private float currentTargetSmooth;

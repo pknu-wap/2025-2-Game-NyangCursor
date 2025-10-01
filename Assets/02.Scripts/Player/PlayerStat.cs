@@ -1,44 +1,44 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class PlayerStat : MonoBehaviour
 {
-    // ÀÏ¹İ¸ğµå °è¿­
-    [Header("ÀÌµ¿°è¿­")]
+    // ì¼ë°˜ëª¨ë“œ ê³„ì—´
+    [Header("ì´ë™ê³„ì—´")]
     public float walkSpeed;
     public float attackDamage;
 
 
-    //¿¬·á °è¿­
-    [Header("¿¬·á°è¿­")]
-    [Tooltip("¿¬·á ÀÚ¿¬ÃæÀü ¼Óµµ (ÃÊ´ç). 20ÃÊ Ç®ÃæÀüÀÌ¸é 5")]
+    //ì—°ë£Œ ê³„ì—´
+    [Header("ì—°ë£Œê³„ì—´")]
+    [Tooltip("ì—°ë£Œ ìì—°ì¶©ì „ ì†ë„ (ì´ˆë‹¹). 20ì´ˆ í’€ì¶©ì „ì´ë©´ 5")]
     public float fuelRechargePerSec = 5f;
-    [Tooltip("¿¬·á ¼Ò¸ğ ¼Óµµ (ÃÊ´ç)")]
+    [Tooltip("ì—°ë£Œ ì†Œëª¨ ì†ë„ (ì´ˆë‹¹)")]
     public float fuelConsumePerSec = 10f;
 
 
-    // ¿À¹öµå¶óÀÌºê °è¿­
-    [Header("Overdrive°è¿­")]
-    public float speed = 6f; //±âº»°ª 6
-    [Range(1, 10)] public float turnRateDeg = 3f; //(1= ¿ÏÀü¹¬Á÷, 3 = ½ÃÀÛ°ª, 10 = °æÄè)
-    [Tooltip("¿¬·á 1 ¼Ò¸ğ´ç ¿À¹öµå¶óÀÌºê Áõ°¡·® (±âº» 0.7)")]
+    // ì˜¤ë²„ë“œë¼ì´ë¸Œ ê³„ì—´
+    [Header("Overdriveê³„ì—´")]
+    public float speed = 6f; //ê¸°ë³¸ê°’ 6
+    [Range(1, 10)] public float turnRateDeg = 3f; //(1= ì™„ì „ë¬µì§, 3 = ì‹œì‘ê°’, 10 = ê²½ì¾Œ)
+    [Tooltip("ì—°ë£Œ 1 ì†Œëª¨ë‹¹ ì˜¤ë²„ë“œë¼ì´ë¸Œ ì¦ê°€ëŸ‰ (ê¸°ë³¸ 0.7)")]
     public float odGainPerFuel = 0.7f;
-    [Tooltip("Å°¸¦ ¶¾ µÚ °¨¼Ò ½ÃÀÛ±îÁö Áö¿¬(ÃÊ)")]
+    [Tooltip("í‚¤ë¥¼ ë—€ ë’¤ ê°ì†Œ ì‹œì‘ê¹Œì§€ ì§€ì—°(ì´ˆ)")]
     public float odDecayDelay = 3f;
-    [Tooltip("°¨¼Ò ½ÃÀÛ ÈÄ ÃÊ´ç °¨¼Ò·®")]
+    [Tooltip("ê°ì†Œ ì‹œì‘ í›„ ì´ˆë‹¹ ê°ì†ŒëŸ‰")]
     public float odDecayPerSec = 8f;
-    [Tooltip("¼ø°£ ºÎ½ºÆ® ¿ÀºêÁ§Æ®°¡ ÄÑÁ® ÀÖÀ» ½Ã°£(ÃÊ)")]
+    [Tooltip("ìˆœê°„ ë¶€ìŠ¤íŠ¸ ì˜¤ë¸Œì íŠ¸ê°€ ì¼œì ¸ ìˆì„ ì‹œê°„(ì´ˆ)")]
     public float boostOnDuration = 1f;
-    [Tooltip("¼ø°£ ºÎ½ºÆ® Ãß°¡ °¡¼Ó·®")]
+    [Tooltip("ìˆœê°„ ë¶€ìŠ¤íŠ¸ ì¶”ê°€ ê°€ì†ëŸ‰")]
     public float boostExtraSpeed = 1.3f;
 
 
-    // »ıÁ¸ °è¿­
+    // ìƒì¡´ ê³„ì—´
     public int maxHP = 3;
     public float shield = 0f;
 
-    // ¸ŞÅ¸ °è¿­
-    public float goldMultiplier = 1f; //°ñµåÈ¹µæ·®
-    public float expMultiplier = 1f;  //°æÇèÄ¡È¹µæ·®
+    // ë©”íƒ€ ê³„ì—´
+    public float goldMultiplier = 1f; //ê³¨ë“œíšë“ëŸ‰
+    public float expMultiplier = 1f;  //ê²½í—˜ì¹˜íšë“ëŸ‰
 
-    // ³ªÁß¿¡ È®Àå °¡´É
+    // ë‚˜ì¤‘ì— í™•ì¥ ê°€ëŠ¥
 }
