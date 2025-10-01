@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class TempPlayer : MonoBehaviour
+public class PlayerStatsManager : MonoBehaviour
 {
     // ================================
     // StatEntry 클래스 정의 (인스펙터 노출용)
