@@ -13,6 +13,9 @@ public class InGameUIManager : MonoBehaviour
     [Header("증강 선택 관련 UI")]
     [SerializeField] private GameObject AugmentPanel;
 
+    [Header("게임 종료 UI")]
+    [SerializeField] private GameObject GameEndPannel;
+
     void OnEnable()
     {
         TimerManager.OnTimerTick += UpdateTimerUI;
@@ -55,6 +58,7 @@ public class InGameUIManager : MonoBehaviour
                 PausePanel.SetActive(true);
                 break;
             case StageFlowManager.StageState.Clear:
+                GameEndPannel.SetActive(true);
                 break;
         }
     }
