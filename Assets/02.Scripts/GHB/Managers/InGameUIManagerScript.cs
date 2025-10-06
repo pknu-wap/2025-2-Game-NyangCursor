@@ -77,8 +77,7 @@ public class InGameUIManager : MonoBehaviour
             case StageFlowManager.StageState.Pause:
                 pausePanel.SetActive(true);
                 break;
-            case StageFlowManager.StageState.Clear:
-                // 게임 종료 패널은 DisplayEndResult에서 활성화
+            case StageFlowManager.StageState.End:
                 break;
         }
     }
