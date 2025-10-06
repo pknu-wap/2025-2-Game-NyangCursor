@@ -4,8 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class StageFlowManager : MonoBehaviour
 {
-    // 현재 스테이지 번호
-    [SerializeField] private int stageIndex;
     public enum StageState
     {
         Play,       // 일반 플레이
@@ -20,16 +18,10 @@ public class StageFlowManager : MonoBehaviour
 
     void Start()
     {
-        // 타이머 매니저의 클리어 이벤트 구독
-        TimerManager.OnStageClear += StageClear;
         // 시작은 플레이
         SetState(StageState.Play);
     }
 
-    void OnDestroy()
-    {
-        TimerManager.OnStageClear -= StageClear;
-    }
 
     // 임시 ESC 토글 일시정지
     void Update()
@@ -68,24 +60,8 @@ public class StageFlowManager : MonoBehaviour
         if (CurrentState == newState) return;
 
         CurrentState = newState;
-
         // 전역 이벤트로 알림 (UIManager, EnemySpawner 등에서 구독 가능)
         OnStageStateChanged?.Invoke(CurrentState);
-
-        // 여기서 직접 Time.timeScale 조절도 가능
-        switch (CurrentState)
-        {
-            case StageState.Play:
-                Time.timeScale = 1f;
-                break;
-            case StageState.Augment:
-            case StageState.Pause:
-            case StageState.End:
-                // 플레이어 / 적 엔티티에 isPaused 변수를 둔 다음 OnStageStateChanged 이벤트를 구독해서 제어하는 방식이 좋을듯
-                // timeScale = 0은 임시 로직
-                //Time.timeScale = 0f;
-                break;
-        }
     }
 
     // 버튼 참조용
@@ -107,14 +83,6 @@ public class StageFlowManager : MonoBehaviour
     public void SetStateToEnd()
     {
         SetState(StageState.End);
-    }
-
-    private void StageClear()
-    {
-        Debug.Log("스테이지 클리어 로그");
-        // playerprefs를 통해 스테이지 클리어 기록 저장
-        PlayerPrefs.SetInt($"StageCleared_{stageIndex}", 1);
-        PlayerPrefs.Save();
     }
 
     // 임시 씬 이동 메서드

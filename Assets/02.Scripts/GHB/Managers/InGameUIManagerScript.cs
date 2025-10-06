@@ -37,28 +37,30 @@ public class InGameUIManager : MonoBehaviour
     {
         int minutes = Mathf.FloorToInt(elapsedTime / 60f);
         int seconds = Mathf.FloorToInt(elapsedTime % 60f);
-        int ms = Mathf.FloorToInt(elapsedTime * 1000f % 1000f / 10f);
-        timeText.text = $"{minutes:00}:{seconds:00}:{ms:00}";
+        int milliseconds = Mathf.FloorToInt(elapsedTime * 1000f % 1000f / 10f);
+        timeText.text = $"{minutes:00}:{seconds:00}:{milliseconds:00}";
     }
 
     // 종료 시 UI 표시
-    private void DisplayEndResult(bool isCleared, int survivedSeconds, int reward)
+    private void DisplayEndResult(bool isCleared, float survivedTime, int reward)
     {
         gameEndPanel.SetActive(true);
 
-        // 생존 시간 및 보상 표시
-        clearTimeText.text = $"생존 시간 : {FormatTime(survivedSeconds)}";
+        int minutes = Mathf.FloorToInt(survivedTime / 60f);
+        int seconds = Mathf.FloorToInt(survivedTime % 60f);
+        int milliseconds = Mathf.FloorToInt(survivedTime * 1000f % 1000f / 10f);
+
+        clearTimeText.text = $"생존 시간 : {minutes:00}:{seconds:00}:{milliseconds:00}";
         rewardText.text = $"획득 보상 : {reward} G";
 
-        // 클리어 여부에 따라 메시지와 색상 변경
         if (isCleared)
         {
-            resultText.text = "STAGE CLEAR";
+            resultText.text = "MISSION COMPLETE";
             resultText.color = Color.green;
         }
         else
         {
-            resultText.text = "GAME OVER";
+            resultText.text = "MISSION FAILED";
             resultText.color = Color.red;
         }
     }
@@ -77,15 +79,7 @@ public class InGameUIManager : MonoBehaviour
             case StageFlowManager.StageState.Pause:
                 pausePanel.SetActive(true);
                 break;
-            case StageFlowManager.StageState.End:
-                break;
+            // End 상태의 경우 DisplayEndResult에서 따로 관리
         }
-    }
-
-    private string FormatTime(int totalSeconds)
-    {
-        int minutes = totalSeconds / 60;
-        int seconds = totalSeconds % 60;
-        return $"{minutes:00}:{seconds:00}";
     }
 }
