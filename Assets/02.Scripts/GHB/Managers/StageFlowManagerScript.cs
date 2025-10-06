@@ -76,7 +76,7 @@ public class StageFlowManager : MonoBehaviour
             case StageState.Clear:
                 // 플레이어 / 적 엔티티에 isPaused 변수를 둔 다음 OnStageStateChanged 이벤트를 구독해서 제어하는 방식이 좋을듯
                 // timeScale = 0은 임시 로직
-                Time.timeScale = 0f;
+                //Time.timeScale = 0f;
                 break;
         }
     }

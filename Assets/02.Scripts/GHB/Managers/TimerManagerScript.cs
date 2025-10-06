@@ -9,10 +9,14 @@ public class TimerManager : MonoBehaviour
 
     private float currentTime; // 진행(Play상태로 유지)된 시간
 
-    public static event Action<float> OnTimerTick; // UI에서 구독
-    public static event Action OnStageClear;       // 클리어 이벤트
+    public static event Action<float> OnTimerTick; // UI에서 실시간 시간 표시용
+    public static event Action OnStageClear;       // 목표 시간 도달 시 스테이지 클리어 이벤트
 
     private bool isPaused = false;
+
+    // 외부에서 읽기 가능하도록 프로퍼티 추가
+    public float CurrentTime => currentTime;
+    public float ClearSeconds => clearSeconds;
 
     void Start()
     {
@@ -28,16 +32,16 @@ public class TimerManager : MonoBehaviour
     void Update()
     {
         if (isPaused) return;
-        if (currentTime >= clearSeconds) return; // 이미 목표 시간 도달 → 더 진행 안 함
+        if (currentTime >= clearSeconds) return; // 이미 목표 시간 도달 → 더 이상 증가 안 함
 
-        // 0 → clearSeconds 로 증가
+        // 시간 누적
         currentTime += Time.deltaTime;
         currentTime = Mathf.Min(currentTime, clearSeconds);
 
-        // 현재 진행 시간을 담은 이벤트 발송
+        // UI에 실시간 전달
         OnTimerTick?.Invoke(currentTime);
 
-        // 클리어 조건
+        // 목표 시간 도달 시 클리어 이벤트
         if (currentTime >= clearSeconds)
         {
             Debug.Log("스테이지 클리어!");
@@ -45,16 +49,9 @@ public class TimerManager : MonoBehaviour
         }
     }
 
+    // StageFlowManager 상태 변화에 따라 타이머 일시정지 / 재개
     private void HandleStageStateChanged(StageFlowManager.StageState state)
     {
-        // Play 상태일 때만 타이머 진행
-        if (state == StageFlowManager.StageState.Play)
-        {
-            isPaused = false;
-        }
-        else
-        {
-            isPaused = true;
-        }
+        isPaused = state != StageFlowManager.StageState.Play;
     }
 }
