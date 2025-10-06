@@ -53,7 +53,7 @@ public class StageEndManager : MonoBehaviour
     // StageFlowManager 상태 변화에 따라 타이머 일시정지 / 재개
     private void HandleStageStateChanged(StageFlowManager.StageState state)
     {
-        if (state == StageFlowManager.StageState.Clear)
+        if (state == StageFlowManager.StageState.End)
         {
             NotifyStageEnd();
         }
