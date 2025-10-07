@@ -3,7 +3,7 @@ using System;
 
 public class TimerManager : MonoBehaviour
 {
-    [Header("스테이지 클리어까지 버텨야 하는 시간 (분 단위s)")]
+    [Header("스테이지 클리어까지 버텨야 하는 시간 (분 단위)")]
     [SerializeField] private float clearMinutes;
     private float clearSeconds;
 

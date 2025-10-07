@@ -1,19 +1,22 @@
 ﻿using UnityEngine;
+using UnityEngine.Android;
 using UnityEngine.Playables;
 using UnityEngine.UIElements;
+using static PlayerStateLogic;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class CursorController : MonoBehaviour
+public class OverDriveModController : MonoBehaviour
 {
     [SerializeField] PlayerStat playerStat;
 
-    [Header("Move (RUNTIME VALUES) - 읽기용s")]
+    [Header("Move (RUNTIME VALUES) - 읽기용")]
     [SerializeField] private float currentTurnRateDeg;
     [SerializeField] private float currentDeadzone;
     [SerializeField] private float currentTargetSmooth;
 
     [Header("Preset Blend")]
-    [Range(1, 100)] public int presetBlend = 10;
+    [Range(1, 100)] public int presetBlend = 20;
 
     public float speed;
 
@@ -68,9 +71,10 @@ public class CursorController : MonoBehaviour
 
     [SerializeField] bool drawDeadzoneGizmos = true;
 
-    //마우스 업데이트 관련
-    private float stopTimer = 0f;          // 마우스 멈춤 누적 시간
-    private float mouseStopDelay = 0.1f; // 몇 초 멈추면 딱 붙일지
+     private float maxDecelSpeed = 10f; // 감속 상한 속도
+     private float decelTime = 1f;    // 감속 지속 시간
+    private Coroutine decelRoutine;
+
 
     private void Awake()
     {
@@ -84,12 +88,45 @@ public class CursorController : MonoBehaviour
         desiredAngle = rb.rotation;
 
         ApplyPresetBlend();
+
+        GaugeOverdriveLogic.OnGetOffEvent += HandleResetOverDrive;
     }
+    private void OnDestroy()
+    {
+        GaugeOverdriveLogic.OnGetOffEvent -= HandleResetOverDrive;
+    }
+
+    private void HandleResetOverDrive()
+    {
+        if (decelRoutine != null) StopCoroutine(decelRoutine);
+        decelRoutine = StartCoroutine(DecelerateToZero());
+    }
+
+    private IEnumerator DecelerateToZero()
+    {
+        Vector2 currentVel = rb.linearVelocity;
+
+        // 현재 속도가 상한보다 작으면 아무것도 하지 않음
+        if (currentVel.magnitude <= maxDecelSpeed)
+            yield break;
+
+        // 너무 빠른 경우 → 상한값으로 즉시 보정
+        Vector2 limitedVel = currentVel.normalized * maxDecelSpeed;
+        rb.linearVelocity = limitedVel;
+
+        yield break;
+    }
+
+
+
     private float smoothLockTimer = 0f;  // 남은 락 시간(초)
 
 
     private void Update()
     {
+        if (PlayerStateLogic.Instance.CurrentState != PlayerState.OverDrive)
+            return;
+
         // --- 마우스 위치 ---
         Vector3 m = Input.mousePosition;
         m.z = Mathf.Abs(cam.transform.position.z);
@@ -108,17 +145,17 @@ public class CursorController : MonoBehaviour
             // 멈췄고, 락 해제된 상태 → 딱 붙이기
             smoothedTarget = target;
             targetVel = Vector3.zero; // 관성 제거
-            print("d");
+            
         }
         else
         {
             // 움직이거나(마우스 움직임), 혹은 락 타이머 중일 때 → 스무딩 유지
             smoothedTarget = Vector3.SmoothDamp(smoothedTarget, target, ref targetVel, currentTargetSmooth);
-            print("s");
+           
 
             // 움직임이 발생한 순간 → 락 걸기
             if (!mouseStopped)
-                smoothLockTimer = 0.2f; // 0.5초 동안 d 금지
+                smoothLockTimer = 0.1f; // 몇초에 딱 타겟보정할지?
         }
 
         lastTarget = target;
@@ -179,6 +216,9 @@ public class CursorController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (PlayerStateLogic.Instance.CurrentState != PlayerState.OverDrive)
+            return;
+
         float newAngle = rb.rotation;
 
         if (!externalControl)
@@ -200,6 +240,9 @@ public class CursorController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (PlayerStateLogic.Instance.CurrentState != PlayerState.OverDrive)
+            return;
+
         if (!followCam) return;
         Vector3 targetPos = (Vector3)rb.position + camOffset;
         followCam.position = Vector3.SmoothDamp(followCam.position, targetPos, ref camVel, camSmooth);
@@ -208,7 +251,7 @@ public class CursorController : MonoBehaviour
     private void ApplyPresetBlend()
     {
         // playerStat.turnRateDeg → 1일 때 10f, 10일 때 360f
-        float trNorm = Mathf.InverseLerp(1f, 10f, playerStat.turnRateDeg);
+        float trNorm = Mathf.InverseLerp(1f, 10f, playerStat.turnRateDeg); //todo 참조변경
         trNorm = Mathf.Clamp01(trNorm); // 안전하게 0~1 범위 제한
 
         // --- playerStat 기반 "동적 heavyPreset" ---
@@ -222,8 +265,6 @@ public class CursorController : MonoBehaviour
         currentTurnRateDeg = Mathf.Lerp(basePreset.turnRateDeg, boostedTurn, t);
         currentTargetSmooth = Mathf.Lerp(basePreset.targetSmooth, boostedSmooth, t);
         currentDeadzone = Mathf.Lerp(basePreset.deadzone, boostedDeadzone, t);
-
-        Debug.Log(currentTurnRateDeg);
     }
 
     void OnDrawGizmos()
