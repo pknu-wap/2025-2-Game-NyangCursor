@@ -27,20 +27,18 @@ public class EnemyManager : MonoBehaviour
         spawnPeriod = 2f;
         maxEnemies = 50;
         currentEnemies = 0;
-        spawnZoneCollider = GetComponent<CircleCollider2D>();
-        combatZoneCollider = GetComponent<CircleCollider2D>();
     }
 
     void OnEnable()
     {
         // DifficultyManager.OnIncreaseDifficulty += HandleDifficulty;
-        // CombatZoneTrigger.onEnemyExited += RepositionEnemy;
+        CombatZoneTrigger.onEnemyExited += RepositionEnemy;
     }
 
     void OnDisable()
     {
         // DifficultyManager.OnIncreaseDifficulty -= HandleDifficulty;
-        // CombatZoneTrigger.onEnemyExited -= RepositionEnemy;
+        CombatZoneTrigger.onEnemyExited -= RepositionEnemy;
     }
 
     // spawnPeriod 마다 coroutine 실행
@@ -60,11 +58,11 @@ public class EnemyManager : MonoBehaviour
             if (currentEnemies < maxEnemies)
             {
                 GameObject randomEnemyPrefab = enemyPrefabsToSpawn[Random.Range(0, enemyPrefabsToSpawn.Count)]; // 현재는 랜덤하게 선택
-                GameObject enemy = PoolManager.instance.Spawn(randomEnemyPrefab);
+                Vector2 spawnPosition = GetRandomSpawnPosition();
+                GameObject enemy = PoolManager.instance.Spawn(randomEnemyPrefab, spawnPosition);
                 
                 if (enemy != null)
                 {
-                    enemy.transform.position = GetRandomSpawnPosition();
                     currentEnemies++;
                 }
                 else
@@ -99,7 +97,14 @@ public class EnemyManager : MonoBehaviour
     // OnEnemyExited 의 콜백 함수로 전투 영역에서 벗어난 적을 재배치하는 함수
     void RepositionEnemy(Transform enemyTransform)
     {
+        // 현재 적 위치에서 제일 가까운 CombatZone 경계 위의 위치를 구함
         Vector2 closestPosition = combatZoneCollider.bounds.ClosestPoint(enemyTransform.position);
-        enemyTransform.position = closestPosition;
+
+        // 해당 위치에서 약간 안쪽 영역에 배치
+        Vector2 center = combatZoneCollider.bounds.center;
+        Vector2 direction = (center - closestPosition).normalized;
+        Vector2 adjustedPosition = closestPosition + direction * 0.2f;
+
+        enemyTransform.position = adjustedPosition;
     }
 }

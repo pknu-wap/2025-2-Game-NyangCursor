@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class PoolManager : MonoBehaviour
 {
@@ -71,7 +72,7 @@ public class PoolManager : MonoBehaviour
     }
 
     // Pool 에서 GameObject 를 꺼내오는 함수 
-    public GameObject Spawn(GameObject prefab)
+    public GameObject Spawn(GameObject prefab, Vector2 spawnPosition)
     {
         if (pools.TryGetValue(prefab, out Stack<GameObject> pool))
         {
@@ -84,7 +85,9 @@ public class PoolManager : MonoBehaviour
             else
                 instance = Instantiate(prefab, transform);
 
+            instance.transform.position = spawnPosition;
             instance.SetActive(true); // 해당 instance 를 활성화
+
             instanceDict.Add(instance, prefab); // 역추적을 위해 instance 가 어떤 Prefab 에서 왔는지 기록
             return instance;
         }
