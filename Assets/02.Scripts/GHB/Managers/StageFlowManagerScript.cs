@@ -1,14 +1,17 @@
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 public class StageFlowManager : MonoBehaviour
 {
+    // 현재 스테이지 번호
+    [SerializeField] private int stageIndex;
     public enum StageState
     {
         Play,       // 일반 플레이
         Augment,    // 증강 선택 UI 활성화
         Pause,       // 완전 일시정지
-        Clear       // 클리어
+        End       // 게임 종료
     }
 
     public StageState CurrentState { get; private set; }
@@ -54,6 +57,10 @@ public class StageFlowManager : MonoBehaviour
                 SetStateToPlay();
             }
         }
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            GoToLobby();
+        }
     }
 
     public void SetState(StageState newState)
@@ -73,7 +80,7 @@ public class StageFlowManager : MonoBehaviour
                 break;
             case StageState.Augment:
             case StageState.Pause:
-            case StageState.Clear:
+            case StageState.End:
                 // 플레이어 / 적 엔티티에 isPaused 변수를 둔 다음 OnStageStateChanged 이벤트를 구독해서 제어하는 방식이 좋을듯
                 // timeScale = 0은 임시 로직
                 Time.timeScale = 0f;
@@ -97,17 +104,22 @@ public class StageFlowManager : MonoBehaviour
         SetState(StageState.Pause);
     }
 
-    public void SetStateToClear()
+    public void SetStateToEnd()
     {
-        SetState(StageState.Clear);
+        SetState(StageState.End);
     }
 
     private void StageClear()
     {
         Debug.Log("스테이지 클리어 로그");
-        SetState(StageState.Clear);
+        // playerprefs를 통해 스테이지 클리어 기록 저장
+        PlayerPrefs.SetInt($"StageCleared_{stageIndex}", 1);
+        PlayerPrefs.Save();
+    }
 
-        // ✅ 여기서 클리어 UI 표시, 보상 지급, 다음 씬 로딩 등 추가 가능
-        // 예: UIManager.Instance.ShowClearScreen();
+    // 임시 씬 이동 메서드
+    private void GoToLobby()
+    {
+        SceneManager.LoadScene("StageUnlockMakeScene");
     }
 }
