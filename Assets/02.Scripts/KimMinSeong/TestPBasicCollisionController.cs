@@ -37,7 +37,7 @@ public class TestPCollisionController : MonoBehaviour, ICollidable
 
     private void TryAttackEnemy(GameObject target)
     {
-        // 공격 쿨다운 체크
+        // 공격 쿨타임 체크
         if (Time.time - lastAttackTime < damageCooltime)
             return;
 

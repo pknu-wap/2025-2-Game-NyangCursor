@@ -40,13 +40,6 @@ public class EBasicCollisionController : MonoBehaviour, ICollidable
 
     private void TryDealDamage(GameObject target)
     {
-        // 디버그 추가
-        if (owner == null)
-        {
-            Debug.LogError("[EBasicCollisionController] owner가 null입니다! Initialize()가 호출되지 않았습니다.");
-            return;
-        }
-
         // 쿨타임 체크
         if (Time.time - lastDamageTime < damageCoolTime)
             return;
