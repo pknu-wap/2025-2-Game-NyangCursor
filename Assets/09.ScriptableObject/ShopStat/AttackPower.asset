@@ -10,10 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a5684de4ca4cdf43b8cc1e1e7eb265c, type: 3}
-  m_Name: TempItem1
+  m_Name: AttackPower
   m_EditorClassIdentifier: 
-  itemName: "\uC544\uC774\uD15C1"
+  itemName: "\uACF5\uACA9\uB825"
   icon: {fileID: 21300000, guid: e76786b2576424846b208103bdf1923f, type: 3}
-  price: 5
-  itemStatName: Health
+  price: 10
+  itemStatType: 0
   itemStatValue: 5
+  description: "\uACF5\uACA9\uB825 5 \uC99D\uAC00"

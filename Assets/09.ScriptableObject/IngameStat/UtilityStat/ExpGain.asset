@@ -9,11 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5684de4ca4cdf43b8cc1e1e7eb265c, type: 3}
-  m_Name: TempItem2
+  m_Script: {fileID: 11500000, guid: a6c4f72fecefa84488bdf572f17c8051, type: 3}
+  m_Name: ExpGain
   m_EditorClassIdentifier: 
-  itemName: "\uC544\uC774\uD15C2"
-  icon: {fileID: 21300000, guid: 06cee3acc77d4044dae3d8ccb8c885b7, type: 3}
-  price: 10
-  itemStatName: Attack
-  itemStatValue: 5
+  optionStatType: 7
+  maxvalue: 5
+  minvalue: 1
+  optionDescription: "\uD68D\uB4DD \uACBD\uD5D8\uCE58 \uC99D\uAC00"
