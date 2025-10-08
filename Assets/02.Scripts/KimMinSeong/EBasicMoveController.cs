@@ -3,8 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class EBasicMoveController : MonoBehaviour, IMoveable
 {
-    private Enemy owner;
     private Transform target;
+    private Enemy owner;
     private Rigidbody2D rb;
     private float moveSpeed;
     private bool isMoving = true;
@@ -22,15 +22,6 @@ public class EBasicMoveController : MonoBehaviour, IMoveable
         this.owner = enemy;
         rb = GetComponent<Rigidbody2D>();
         moveSpeed = enemy.Data.moveSpeed;
-
-
-        // 플레이어 찾기
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-            SetTarget(player.transform);
-
-        else
-            Debug.LogError($"{enemy.name}: Player 태그를 가진 오브젝트를 찾을 수 없습니다");
     }
 
     public void UpdateMovement(float fixedDeltaTime)

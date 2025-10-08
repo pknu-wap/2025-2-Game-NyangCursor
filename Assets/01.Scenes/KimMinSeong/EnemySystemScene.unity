@@ -849,6 +849,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnPeriod: 2
   maxEnemies: 50
+  playerTransform: {fileID: 1488490367}
   enemyPrefabsToSpawn:
   - {fileID: 1146727613942615151, guid: dbe13d43ab80f134d83301055740344e, type: 3}
   spawnZoneCollider: {fileID: 1778057120}
@@ -2035,7 +2036,7 @@ GameObject:
   - component: {fileID: 1488490368}
   m_Layer: 6
   m_Name: Player
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

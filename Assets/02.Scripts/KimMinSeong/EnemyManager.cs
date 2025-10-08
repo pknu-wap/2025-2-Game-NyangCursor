@@ -18,6 +18,7 @@ public class EnemyManager : MonoBehaviour
 
     // 내부에서 관리하는 멤버 변수
     private int currentEnemies;
+    [SerializeField] private Transform playerTransform;  // 생성한 적에게 주입할 플레이어 좌표
     [SerializeField] private List<GameObject> enemyPrefabsToSpawn; // 스폰할 적 리스트
     [SerializeField] private CircleCollider2D spawnZoneCollider;  // 스폰 영역
     [SerializeField] private CircleCollider2D combatZoneCollider; // 적이 활동하는 영역
@@ -59,8 +60,12 @@ public class EnemyManager : MonoBehaviour
             {
                 GameObject randomEnemyPrefab = enemyPrefabsToSpawn[Random.Range(0, enemyPrefabsToSpawn.Count)]; // 현재는 랜덤하게 선택
                 Vector2 spawnPosition = GetRandomSpawnPosition();
+
                 GameObject enemy = PoolManager.instance.Spawn(randomEnemyPrefab, spawnPosition);
-                
+
+                IMoveable moveable = enemy.GetComponent<IMoveable>();   // 적의 타깃으로 쓸 플레이어 좌표 주입
+                moveable?.SetTarget(playerTransform);
+
                 if (enemy != null)
                 {
                     currentEnemies++;
