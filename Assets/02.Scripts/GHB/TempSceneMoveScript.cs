@@ -6,6 +6,6 @@ public class TempSceneMoveScript : MonoBehaviour
 {
     public void LoadPlayScene()
     {
-        SceneManager.LoadScene("TempInGameScene");
+        SceneManager.LoadScene("StageManagerMakeScene");
     }
 }

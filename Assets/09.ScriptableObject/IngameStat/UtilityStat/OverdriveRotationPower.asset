@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6c4f72fecefa84488bdf572f17c8051, type: 3}
+  m_Name: OverdriveRotationPower
+  m_EditorClassIdentifier: 
+  optionStatType: 13
+  maxvalue: 5
+  minvalue: 1
+  optionDescription: "\uC624\uBC84\uB4DC\uB77C\uC774\uBE0C \uD68C\uC804\uB825 \uC99D\uAC00"
