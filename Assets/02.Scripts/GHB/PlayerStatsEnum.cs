@@ -24,8 +24,11 @@ public enum StatType
     // 유틸리티 관련 스탯 (저점/편의/안정성 ↑)
     // ================================
 
-    /// <summary>이동 속도 증가</summary>
-    MoveSpeed,
+    /// <summary>일반모드 이동 속도</summary>
+    NormalModeMoveSpeed,
+
+    /// <summary>일반모드 이동 속도</summary>
+    OverdriveModeMoveSpeed,
 
     /// <summary>최대 체력 증가</summary>
     MaxHealth,
@@ -48,7 +51,7 @@ public enum StatType
     /// <summary>폭주 모드 지속 시간 증가</summary>
     BerserkDuration,
 
-    /// <summary>오버드라이브 회전력 증가</summary>
+    /// <summary>오버드라이브 회전력</summary>
     OverdriveRotationPower,
 
     /// <summary>적 처치 시 탑승 게이지 증가량 증가</summary>
@@ -56,6 +59,12 @@ public enum StatType
 
     /// <summary>탑승 게이지 보정량 증가</summary>
     MountCorrection,
+
+    /// <summary>순간부스트가 켜져있는 시간</summary>
+    BoostOnDuration,
+
+    /// <summary>순간부스트가 가속력</summary>
+    BoostExtraSpeed,
 
     // ================================
     // 속성 강화 관련 스탯 (속성 증강 및 시너지)

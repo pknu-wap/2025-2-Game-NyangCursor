@@ -220,6 +220,7 @@ public class UpgradeManager : MonoBehaviour
 
         if (button != null)
         {
+            Debug.Log("됨");
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => ApplyStat(choice));
         }

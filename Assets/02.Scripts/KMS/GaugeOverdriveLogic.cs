@@ -7,9 +7,6 @@ using static PlayerStateLogic;
 
 public class GaugeOverdriveLogic : MonoBehaviour
 {
-    [SerializeField] private PlayerStat playerStat;
-
-
     [Header("Feel per Tier (PresetBlend)")]
     [Tooltip("티어별 묵직함(1=가벼움 ~ 100=묵직). 순서대로 20,50,80,100")]
     [Range(1, 100)] public int[] tierPresetBlend = { 30, 45, 65, 80 };
@@ -58,8 +55,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
     void Awake()
     {
         OnOverDriveTick?.Invoke(overdrive);//UI이벤트발송(GaugeUI)
-        ClampGauge(); //각종 게이지 최소값,최대값 보정 
-        ApplyTierSpeed(currentTier); // 시작 구간 속도 반영
+        
 
         //BOOST 시작 시엔 꺼두기(참조가 있을 때만)
         if (boostObject)
@@ -70,6 +66,13 @@ public class GaugeOverdriveLogic : MonoBehaviour
         GaugeRidingLogic.OnOverDriveEvent += HandleInitialOverDrive;
 
     }
+
+    void Start()
+    {
+        ClampGauge(); //각종 게이지 최소값,최대값 보정 
+        ApplyTierSpeed(currentTier); // 시작 구간 속도 반영
+    }
+
     private void OnDestroy()
     {
         GaugeRidingLogic.OnOverDriveEvent -= HandleInitialOverDrive;
@@ -224,7 +227,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
         }
 
         // 최종 속도 계산 
-        float finalSpeed = playerStat.speed * mul; //todo 참조변경
+        float finalSpeed = PlayerStatsManager.instance.GetStat(StatType.OverdriveModeMoveSpeed) * mul; //todo 참조변경
         overDriveModController.speed = finalSpeed;
         
     }
@@ -340,13 +343,13 @@ public class GaugeOverdriveLogic : MonoBehaviour
         float tierMul = (tier >= 1) ? tierSpeedMul[idx] : 1f;
 
         // 부스터 동안 속도 ↑
-        float boostedSpeed = playerStat.speed * tierMul * playerStat.boostExtraSpeed; //todo 참조변경
+        float boostedSpeed = PlayerStatsManager.instance.GetStat(StatType.OverdriveModeMoveSpeed) * tierMul * PlayerStatsManager.instance.GetStat(StatType.BoostExtraSpeed); //todo 참조변경
 
         // overDriveModController 속도 갱신
         overDriveModController.speed = boostedSpeed;
 
         float t = 0f;
-        while (t < playerStat.boostOnDuration)  //todo 참조변경
+        while (t < PlayerStatsManager.instance.GetStat(StatType.BoostOnDuration))  //todo 참조변경
         {
             t += Time.deltaTime;
             yield return null;

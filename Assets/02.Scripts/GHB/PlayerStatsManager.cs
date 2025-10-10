@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class PlayerStatsManager : MonoBehaviour
 {
+    public static PlayerStatsManager instance;
     // ================================
     // StatEntry 클래스 정의 (인스펙터 노출용)
     // ================================
@@ -30,8 +31,17 @@ public class PlayerStatsManager : MonoBehaviour
     private Dictionary<StatType, float> baseStats = new Dictionary<StatType, float>();
     private Dictionary<StatType, float> currentStats = new Dictionary<StatType, float>();
 
-    void Start()
+    void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
         InitializeBaseStats();
         InitializeCurrentStats();
     }
