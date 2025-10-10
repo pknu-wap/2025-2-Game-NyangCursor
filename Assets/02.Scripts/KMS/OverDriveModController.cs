@@ -129,7 +129,6 @@ public class OverDriveModController : MonoBehaviour
     {
         if (PlayerStateLogic.Instance.CurrentState != PlayerState.OverDrive)
             return;
-        speed = PlayerStatsManager.instance.GetStat(StatType.OverdriveModeMoveSpeed);
         // --- 마우스 위치 ---
         Vector3 m = Input.mousePosition;
         m.z = Mathf.Abs(cam.transform.position.z);

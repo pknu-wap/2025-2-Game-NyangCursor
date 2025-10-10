@@ -14,7 +14,14 @@ public class AttributeStatus
 
 public class PlayerElementsManager : MonoBehaviour
 {
-    private Dictionary<AttributeType, AttributeStatus> Attributes = new Dictionary<AttributeType, AttributeStatus>();
+    private Dictionary<AttributeType, AttributeStatus> Attributes = new Dictionary<AttributeType, AttributeStatus>()
+    {
+        { AttributeType.Fire, new AttributeStatus() },
+        { AttributeType.Water, new AttributeStatus() },
+        { AttributeType.Lightning, new AttributeStatus() },
+        { AttributeType.Wind, new AttributeStatus() }
+    };
+
 
     // 최초 융합 결정 속성 2개
     private AttributeType? fusionA = null;

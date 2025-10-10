@@ -44234,7 +44234,6 @@ GameObject:
   - component: {fileID: 1979479479}
   - component: {fileID: 1979479478}
   - component: {fileID: 1979479477}
-  - component: {fileID: 1979479472}
   - component: {fileID: 1979479476}
   - component: {fileID: 1979479471}
   - component: {fileID: 1979479475}
@@ -44298,33 +44297,6 @@ MonoBehaviour:
   snapThreshold: 22
   smoothTimeSnap: 0.03
   drawDeadzoneGizmos: 1
---- !u!114 &1979479472
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1979479469}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f34649a46a40e449908452e3f5dbac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  walkSpeed: 0
-  attackDamage: 0
-  fuelRechargePerSec: 5
-  fuelConsumePerSec: 10
-  speed: 6
-  turnRateDeg: 1
-  odGainPerFuel: 0.7
-  odDecayDelay: 3
-  odDecayPerSec: 8
-  boostOnDuration: 1
-  boostExtraSpeed: 1.3
-  maxHP: 3
-  shield: 0
-  goldMultiplier: 1
-  expMultiplier: 1
 --- !u!70 &1979479473
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -44529,7 +44501,7 @@ MonoBehaviour:
   - statType: 6
     value: 6
   - statType: 14
-    value: 3
+    value: 1
   - statType: 17
     value: 1
   - statType: 18
@@ -45145,6 +45117,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 875425843}
+  - {fileID: 1850293430}
   - {fileID: 1428534430}
   - {fileID: 2055263783}
   - {fileID: 1850284221}
@@ -45152,5 +45125,4 @@ SceneRoots:
   - {fileID: 262597500}
   - {fileID: 479815713}
   - {fileID: 1554678221}
-  - {fileID: 1850293430}
   - {fileID: 1430160871}
