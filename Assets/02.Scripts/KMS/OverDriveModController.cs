@@ -8,7 +8,6 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody2D))]
 public class OverDriveModController : MonoBehaviour
 {
-    [SerializeField] PlayerStat playerStat;
 
     [Header("Move (RUNTIME VALUES) - 읽기용")]
     [SerializeField] private float currentTurnRateDeg;
@@ -78,7 +77,7 @@ public class OverDriveModController : MonoBehaviour
 
     private void Awake()
     {
-        speed = playerStat.speed; //처음 속도 초기화
+        
 
         cam = followCam.GetComponent<Camera>();
         rb = GetComponent<Rigidbody2D>();
@@ -86,11 +85,15 @@ public class OverDriveModController : MonoBehaviour
         smoothedTarget = transform.position;
         lastTarget = smoothedTarget;
         desiredAngle = rb.rotation;
-
-        ApplyPresetBlend();
-
         GaugeOverdriveLogic.OnGetOffEvent += HandleResetOverDrive;
     }
+
+    private void Start()
+    {
+        ApplyPresetBlend();
+        speed = PlayerStatsManager.instance.GetStat(StatType.OverdriveModeMoveSpeed); //처음 속도 초기화
+    }
+
     private void OnDestroy()
     {
         GaugeOverdriveLogic.OnGetOffEvent -= HandleResetOverDrive;
@@ -126,7 +129,6 @@ public class OverDriveModController : MonoBehaviour
     {
         if (PlayerStateLogic.Instance.CurrentState != PlayerState.OverDrive)
             return;
-
         // --- 마우스 위치 ---
         Vector3 m = Input.mousePosition;
         m.z = Mathf.Abs(cam.transform.position.z);
@@ -251,7 +253,7 @@ public class OverDriveModController : MonoBehaviour
     private void ApplyPresetBlend()
     {
         // playerStat.turnRateDeg → 1일 때 10f, 10일 때 360f
-        float trNorm = Mathf.InverseLerp(1f, 10f, playerStat.turnRateDeg); //todo 참조변경
+        float trNorm = Mathf.InverseLerp(1f, 10f, PlayerStatsManager.instance.GetStat(StatType.OverdriveRotationPower)); //todo 참조변경
         trNorm = Mathf.Clamp01(trNorm); // 안전하게 0~1 범위 제한
 
         // --- playerStat 기반 "동적 heavyPreset" ---

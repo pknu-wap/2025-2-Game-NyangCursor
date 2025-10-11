@@ -33,6 +33,10 @@ public class NormalModController : MonoBehaviour
 
         GaugeOverdriveLogic.OnNormalEvent += HandleResetNormal;
     }
+    private void Start()
+    {
+        speed = PlayerStatsManager.instance.GetStat(StatType.NormalModeMoveSpeed);
+    }
     private void OnDestroy()
     {
         GaugeOverdriveLogic.OnNormalEvent -= HandleResetNormal;
@@ -44,7 +48,7 @@ public class NormalModController : MonoBehaviour
         if (PlayerStateLogic.Instance.CurrentState != PlayerState.Normal)
             return;
             
-
+        speed = PlayerStatsManager.instance.GetStat(StatType.NormalModeMoveSpeed);
         // 우클릭 입력 → 목표 지점 설정
         if (Input.GetMouseButtonDown(1))
         {

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerHpController : MonoBehaviour, IDamageable
 {
-    [SerializeField] private float maxHp = 100f;
+    private float maxHp;
 
     private Component owner;  // Player 참조
     private float currentHp;
@@ -15,6 +15,7 @@ public class PlayerHpController : MonoBehaviour, IDamageable
     public void Initialize(Component owner)
     {
         this.owner = owner;
+        maxHp = PlayerStatsManager.instance.GetStat(StatType.MaxHealth);
         currentHp = maxHp;
         isDead = false;
     }
