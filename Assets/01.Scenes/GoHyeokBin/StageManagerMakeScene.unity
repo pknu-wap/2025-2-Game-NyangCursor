@@ -1985,36 +1985,58 @@ MonoBehaviour:
   slot2Prefab: {fileID: 176111559}
   slot3Prefab: {fileID: 864026459}
   slot4Prefab: {fileID: 255050792}
-  attackPool:
-  - {fileID: 11400000, guid: 8ed6d7021aabb9d43b7465c3d2fabd93, type: 2}
-  - {fileID: 11400000, guid: 037ce20f9e2a2af489b5a673ace3160c, type: 2}
-  - {fileID: 11400000, guid: 01edb7ce4f60a634b8a8fcd835eac7b1, type: 2}
-  - {fileID: 11400000, guid: c7e72d974884b7344be4e07f5a5f84b3, type: 2}
-  - {fileID: 11400000, guid: 2c3435f0ffeea26418acb246192390cc, type: 2}
-  utilityPool:
-  - {fileID: 11400000, guid: 68b24dd8f0101d14ab2cd63a1a38999a, type: 2}
-  - {fileID: 11400000, guid: f8f71018aeb9ba745ab0c6653f44eabb, type: 2}
-  - {fileID: 11400000, guid: d7424b34202dbb643b8daed3f59ffa5a, type: 2}
-  - {fileID: 11400000, guid: 16b51e467935be6469eae5ac0050279c, type: 2}
-  - {fileID: 11400000, guid: 89de08f7c1a6f7c408c95ddfd445ceb9, type: 2}
-  - {fileID: 11400000, guid: 7de09d6537835ec449a6926a4c8caae0, type: 2}
-  - {fileID: 11400000, guid: 9c7028d7159e1fa4ab12b07caee5e77c, type: 2}
-  - {fileID: 11400000, guid: f65c64e2d8d5cce44bb5c57ddefb547f, type: 2}
-  - {fileID: 11400000, guid: e4fdcbb24348cd944af549a0248940cd, type: 2}
-  - {fileID: 11400000, guid: c0152064ef4f2bc469251f384de26a5c, type: 2}
-  - {fileID: 11400000, guid: 6cfdf49f2c47c2743baed2820f308107, type: 2}
-  elementPool:
-  - {fileID: 11400000, guid: c7d964003b5cb2d41b83ed98a58474c0, type: 2}
-  - {fileID: 11400000, guid: 903a699a133cbf14cbc43ff929d796bf, type: 2}
-  - {fileID: 11400000, guid: 4563588d39708e84a86b1c9a90a40bdd, type: 2}
+  resourceStatPool:
+  - {fileID: 11400000, guid: 2451aa7a1bbe80143b64294d7d7cd523, type: 2}
+  - {fileID: 11400000, guid: b7eb2ce457d3e1f4ebbc7c772929dc7a, type: 2}
+  - {fileID: 11400000, guid: c7f85fdc2fd992841b462f94308b4ad1, type: 2}
+  - {fileID: 11400000, guid: 26488d1de3490ff4689e09e87e61ed5a, type: 2}
+  - {fileID: 11400000, guid: 5e995c007ad689e438e9b4528b12907a, type: 2}
+  - {fileID: 11400000, guid: 88434d8d627eacc4585d58bfbd8b9880, type: 2}
+  economyNGrowthStatPool:
+  - {fileID: 11400000, guid: a2fc5b7765d44204aae380fe56f2bf14, type: 2}
+  - {fileID: 11400000, guid: 05cd3a039b7439f48a8bdf255b8651d7, type: 2}
+  - {fileID: 11400000, guid: 86dd82ffca0d08340acad50a066cf3d6, type: 2}
+  - {fileID: 11400000, guid: 9d263cacb9ba8924ca60ec6b45b0a61f, type: 2}
+  - {fileID: 11400000, guid: 5d377490a5c62f2418775e8bce5b57ac, type: 2}
+  movementStatPool:
+  - {fileID: 11400000, guid: 84a489319f99e964a8a3595a67e5f6f6, type: 2}
+  - {fileID: 11400000, guid: 8c3f61439e72ee14dbe4e9252bdee7fe, type: 2}
+  - {fileID: 11400000, guid: 9a82245b52c8e6744a265875a2c0febc, type: 2}
+  generalElementStatPool:
+  - {fileID: 11400000, guid: a52528d9ba9f8a7458df227b816e7bc7, type: 2}
+  - {fileID: 11400000, guid: cbe9b33db3d5702438d992ea4f1fea0f, type: 2}
+  - {fileID: 11400000, guid: f5505c84c41dbe741bc09f3c1034ba8b, type: 2}
+  - {fileID: 11400000, guid: 616f325235926334a810b9852b067b0e, type: 2}
+  - {fileID: 11400000, guid: 7c6c7aef4e6ada14799c82c0eb183f1d, type: 2}
+  specificElementStatPool:
+  - {fileID: 11400000, guid: 7a7d1f301ee6a084f8397680937b8c8d, type: 2}
+  - {fileID: 11400000, guid: 7e5ce4d60ee6ab74baa7feb88440a6ad, type: 2}
+  - {fileID: 11400000, guid: fc16ce36cb71c1943bf6117eadf427fa, type: 2}
+  - {fileID: 11400000, guid: a22158e11b8e45f408bbaadcf502110d, type: 2}
+  - {fileID: 11400000, guid: e514249711d5c1d46854f5669e30e584, type: 2}
+  - {fileID: 11400000, guid: 83ad9eefb02a13c4591e206a7a549c8f, type: 2}
+  - {fileID: 11400000, guid: 3716ea62a62ef154a96662664ccb323f, type: 2}
+  - {fileID: 11400000, guid: b4860fe68f98a984381a84d081992b7f, type: 2}
+  - {fileID: 11400000, guid: c1785ab7b0363fe45ade5d6b6ccca43e, type: 2}
+  - {fileID: 11400000, guid: 3bc16010e18a1e247919ef0b47d573ff, type: 2}
+  - {fileID: 11400000, guid: ac1c15eda1a6e4344911b798757649d0, type: 2}
+  - {fileID: 11400000, guid: e9e094b6b9daaee498ee42392332077e, type: 2}
+  - {fileID: 11400000, guid: 75b9ff465fdc3fa49aa9d15d3f0b88f9, type: 2}
+  - {fileID: 11400000, guid: b1ca5989826820647a57429235ddea16, type: 2}
+  - {fileID: 11400000, guid: 702a4895b6e380748b1284b998fba93d, type: 2}
+  - {fileID: 11400000, guid: 39309058d7cb6584ba097958e4110d1d, type: 2}
+  - {fileID: 11400000, guid: 3bcb0ea7672467b47866e23a4393d15d, type: 2}
+  - {fileID: 11400000, guid: fe695526487d62b47a7355061bc63420, type: 2}
+  - {fileID: 11400000, guid: a0a83cbef3fac9b42832ddb9a0fab9aa, type: 2}
+  - {fileID: 11400000, guid: 2981f8ef7aef6d649b739ae877612d68, type: 2}
   demonPool:
-  - {fileID: 11400000, guid: d157fce707e07df4496ea19eacc67eea, type: 2}
-  - {fileID: 11400000, guid: 18cd9ff1510166445b9ca50d4e58decc, type: 2}
-  - {fileID: 11400000, guid: 3ae5dada3b6db974eba63eff551056c0, type: 2}
-  - {fileID: 11400000, guid: 40e1ae3d3120ecf408efccdf3f3f3302, type: 2}
-  demonProbability: 1
+  - {fileID: 11400000, guid: 01461857d4382a34097af9a3b7c46267, type: 2}
+  - {fileID: 11400000, guid: 705a7899cef0f784689ee98e4a9d3f8f, type: 2}
+  - {fileID: 11400000, guid: 8c69147dae12ddb4f9afc479535249b1, type: 2}
   playerStatsManager: {fileID: 1884627982}
   playerElementsManager: {fileID: 1884627984}
+  cycleStep: 1
+  cycleRound: 0
 --- !u!1 &1884627981
 GameObject:
   m_ObjectHideFlags: 0
@@ -2324,6 +2346,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c03cc6fe1e2f8734eba5c24e141c2b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stageIndex: 0
 --- !u!1 &1989647987
 GameObject:
   m_ObjectHideFlags: 0

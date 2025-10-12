@@ -8,29 +8,31 @@ using Unity.VisualScripting;
 public class UpgradeManager : MonoBehaviour
 {
     [Header("UI 슬롯 (프리팹 부모 오브젝트)")]
-    [SerializeField] private GameObject slot1Prefab; // 속성 전용 슬롯
+    [SerializeField] private GameObject slot1Prefab;
     [SerializeField] private GameObject slot2Prefab;
     [SerializeField] private GameObject slot3Prefab;
     [SerializeField] private GameObject slot4Prefab;
 
     [Header("스탯 풀")]
-    [SerializeField] private List<UpgradeScriptableObjects> attackPool = new List<UpgradeScriptableObjects>();
-    [SerializeField] private List<UpgradeScriptableObjects> utilityPool = new List<UpgradeScriptableObjects>();
-    [SerializeField] private List<UpgradeScriptableObjects> elementPool = new List<UpgradeScriptableObjects>();
+    [SerializeField] private List<UpgradeScriptableObjects> resourceStatPool = new List<UpgradeScriptableObjects>();
+    [SerializeField] private List<UpgradeScriptableObjects> economyNGrowthStatPool = new List<UpgradeScriptableObjects>();
+    [SerializeField] private List<UpgradeScriptableObjects> movementStatPool = new List<UpgradeScriptableObjects>();
+    [SerializeField] private List<UpgradeScriptableObjects> generalElementStatPool = new List<UpgradeScriptableObjects>(); // 속성강화
+    [SerializeField] private List<UpgradeScriptableObjects> specificElementStatPool = new List<UpgradeScriptableObjects>(); // 속성강화
     [SerializeField] private List<UpgradeScriptableObjects> demonPool = new List<UpgradeScriptableObjects>();
 
-    [Header("악마 증강 확률")]
-    [Range(0f, 1f)]
-    [SerializeField] private float demonProbability = 0.1f; // 10% 확률
-
     [Header("플레이어 참조")]
-    [SerializeField] private PlayerStatsManager playerStatsManager; // 스탯 관리 매니저 참조
-    [SerializeField] private PlayerElementsManager playerElementsManager; // 속성 관리 매니저 참조
+    [SerializeField] private PlayerStatsManager playerStatsManager;
+    [SerializeField] private PlayerElementsManager playerElementsManager;
 
     private Dictionary<UpgradeScriptableObjects, float> slotValues = new Dictionary<UpgradeScriptableObjects, float>();
     private HashSet<UpgradeScriptableObjects> obtainedDemons = new HashSet<UpgradeScriptableObjects>();
 
     public static event Action OnAugmentSelected;
+
+    [Header("사이클 진행도")]
+    [SerializeField] private int cycleStep = 1;   // 1~5
+    [SerializeField] private int cycleRound = 0;  // 완료된 라운드 수
 
     private void OnEnable()
     {
@@ -41,87 +43,167 @@ public class UpgradeManager : MonoBehaviour
     {
         slotValues.Clear();
 
-        // =============================
-        // 슬롯 2,3 풀
-        // =============================
-        List<UpgradeScriptableObjects> pool23 = new List<UpgradeScriptableObjects>();
-        pool23.AddRange(attackPool);
-        pool23.AddRange(utilityPool);
-        pool23.AddRange(elementPool);
+        // ✅ 0단계: 모든 속성이 레벨 0이면 1~4 전부 속성 슬롯
+        if (AreAllAttributesZero())
+        {
+            // 고정된 속성 순서로 각 슬롯에 배정
+            AssignAttributeSlot(slot1Prefab, new List<AttributeType> { AttributeType.Fire });
+            AssignAttributeSlot(slot2Prefab, new List<AttributeType> { AttributeType.Water });
+            AssignAttributeSlot(slot3Prefab, new List<AttributeType> { AttributeType.Lightning });
+            AssignAttributeSlot(slot4Prefab, new List<AttributeType> { AttributeType.Wind });
+            return;
+        }
 
-        // =============================
-        // 1번 슬롯: 속성 전용 가능 여부 체크
-        // =============================
+        // ✅ 현재 사이클 풀 계산
+        List<UpgradeScriptableObjects> pool234 = BuildPoolForCurrentCycle();
         List<AttributeType> validAttributes = GetValidAttributes();
 
-        // 속성 선택 가능 여부에 따라 슬롯 1 분기
+        // ✅ 1번 슬롯
         if (validAttributes.Count > 0)
-            AssignSlot1(validAttributes);          // 속성 전용 슬롯
+        {
+            // 속성 가능 → 속성전용
+            AssignAttributeSlot(slot1Prefab, validAttributes);
+        }
         else
-            AssignSlot(slot1Prefab, pool23);      // 일반 풀로 처리 (5/5/5/5 상황 대비)
+        {
+            // 모든 속성이 만렙 → 현재 사이클에 맞는 풀에서 선택
+            AssignSlot(slot1Prefab, pool234, true);
+        }
 
-        // =============================
-        // 슬롯 2,3 일반 풀
-        // =============================
-        AssignSlot(slot2Prefab, pool23);
-        AssignSlot(slot3Prefab, pool23);
+        // ✅ 2,3번 슬롯 (중복 방지)
+        List<UpgradeScriptableObjects> workingPool23 = new List<UpgradeScriptableObjects>(pool234);
+        AssignSlot(slot2Prefab, workingPool23, true);
+        AssignSlot(slot3Prefab, workingPool23, true);
 
-        // =============================
-        // 슬롯 4: demon 확률 적용
-        // =============================
-        AssignSlotForSlot4(slot4Prefab);
+        // ✅ 4번 슬롯
+        if (cycleStep == 5)
+            AssignDemonSlot(slot4Prefab);
+        else
+            AssignSlot(slot4Prefab, pool234, true);
+
+        // ✅ 사이클 진행
+        AdvanceCycle();
+    }
+
+    private GameObject GetSlotByIndex(int index)
+    {
+        switch (index)
+        {
+            case 0: return slot1Prefab;
+            case 1: return slot2Prefab;
+            case 2: return slot3Prefab;
+            case 3: return slot4Prefab;
+            default: return null;
+        }
     }
 
     // =============================
-    // 유효 속성 체크 함수 (레벨 < 5 && 융합 아님)
+    // 사이클 로직
     // =============================
+    private List<UpgradeScriptableObjects> BuildPoolForCurrentCycle()
+    {
+        //1,3 케이스, 2,4케이스 묶은것
+        switch (cycleStep)
+        {
+            case 1:
+            case 3:
+                return BuildPool(resourceStatPool, economyNGrowthStatPool, movementStatPool); // R/E/M
+            case 2:
+            case 4:
+                return BuildPool(generalElementStatPool, specificElementStatPool); // G/S
+            case 5:
+                return BuildPool(
+                    resourceStatPool, economyNGrowthStatPool, movementStatPool,
+                    generalElementStatPool, specificElementStatPool
+                ); // R/E/M/G/S
+            default:
+                return new List<UpgradeScriptableObjects>();
+        }
+    }
+
+    private void AdvanceCycle()
+    {
+        if (cycleStep < 5)
+            cycleStep++;
+        else
+        {
+            cycleStep = 1;
+            cycleRound++;
+        }
+    }
+
+    private List<UpgradeScriptableObjects> BuildPool(params List<UpgradeScriptableObjects>[] pools)
+    {
+        List<UpgradeScriptableObjects> list = new List<UpgradeScriptableObjects>();
+        foreach (var p in pools)
+        {
+            if (p != null && p.Count > 0)
+                list.AddRange(p);
+        }
+        return list;
+    }
+
+    // =============================
+    // 속성 관련 함수
+    // =============================
+    private bool AreAllAttributesZero()
+    {
+        foreach (AttributeType attr in Enum.GetValues(typeof(AttributeType)))
+        {
+            if (playerElementsManager.GetAttributeLevel(attr) > 0)
+                return false;
+        }
+        return true;
+    }
+
+    //지금은 안쓰는데 playerElementsManager 변경으로 필요할수도 있어서 놔둠
+    private bool AreAllAttributesMax()
+    {
+        foreach (AttributeType attr in Enum.GetValues(typeof(AttributeType)))
+        {
+            if (playerElementsManager.GetAttributeLevel(attr) < 5)
+                return false;
+        }
+        return true;
+    }
+
     private List<AttributeType> GetValidAttributes()
     {
-        List<AttributeType> validAttributes = new List<AttributeType>();
+        List<AttributeType> valid = new List<AttributeType>();
         foreach (AttributeType attr in Enum.GetValues(typeof(AttributeType)))
         {
             int level = playerElementsManager.GetAttributeLevel(attr);
             bool isFusion = playerElementsManager.IsFusionAttribute(attr);
             if (level < 5 && !isFusion)
-                validAttributes.Add(attr);
+                valid.Add(attr);
         }
-        return validAttributes;
+        return valid;
     }
 
-    // =============================
-    // 슬롯 1: 속성 전용
-    // =============================
-    private void AssignSlot1(List<AttributeType> validAttributes)
+    private void AssignAttributeSlot(GameObject slotPrefab, List<AttributeType> validAttrs)
     {
-        if (slot1Prefab == null || validAttributes.Count == 0)
-            return;
+        if (slotPrefab == null || validAttrs.Count == 0) return;
 
-        // 랜덤 속성 선택
-        AttributeType chosenAttr = validAttributes[UnityEngine.Random.Range(0, validAttributes.Count)];
+        AttributeType chosen = validAttrs[UnityEngine.Random.Range(0, validAttrs.Count)];
 
-        // =============================
-        // UI 요소 접근
-        // =============================
-        Button button = slot1Prefab.GetComponentInChildren<Button>();
-        TMP_Text descriptionText = slot1Prefab.transform.Find("UpgradeDescription")?.GetComponent<TMP_Text>();
-        Image backgroundImage = slot1Prefab.transform.Find("BackGround")?.GetComponent<Image>();
+        Button button = slotPrefab.GetComponentInChildren<Button>();
+        TMP_Text desc = slotPrefab.transform.Find("UpgradeDescription")?.GetComponent<TMP_Text>();
+        Image bg = slotPrefab.transform.Find("BackGround")?.GetComponent<Image>();
 
-        // 색상 적용 (유니티 기본 색상)
-        if (backgroundImage != null)
+        if (bg != null)
         {
-            switch (chosenAttr)
+            switch (chosen)
             {
-                case AttributeType.Fire: backgroundImage.color = Color.red; break;
-                case AttributeType.Water: backgroundImage.color = Color.blue; break;
-                case AttributeType.Lightning: backgroundImage.color = Color.yellow; break;
-                case AttributeType.Wind: backgroundImage.color = Color.gray; break;
+                case AttributeType.Fire: bg.color = Color.red; break;
+                case AttributeType.Water: bg.color = Color.blue; break;
+                case AttributeType.Lightning: bg.color = Color.yellow; break;
+                case AttributeType.Wind: bg.color = Color.gray; break;
             }
         }
 
-        // 텍스트 적용 (한글)
-        if (descriptionText != null)
+        if (desc != null)
         {
-            string attrName = chosenAttr switch
+            string name = chosen switch
             {
                 AttributeType.Fire => "불",
                 AttributeType.Water => "물",
@@ -129,44 +211,46 @@ public class UpgradeManager : MonoBehaviour
                 AttributeType.Wind => "바람",
                 _ => "속성"
             };
-
-            descriptionText.text = $"{attrName} 증강 레벨 업";
+            desc.text = $"{name} 증강 레벨 업";
         }
 
-        // 버튼 클릭 시 레벨 업
         if (button != null)
         {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() =>
             {
-                playerElementsManager.IncreaseAttribute(chosenAttr, 1);
-                Debug.Log($"{chosenAttr} 속성 레벨 업!");
+                playerElementsManager.IncreaseAttribute(chosen, 1);
+                Debug.Log($"{chosen} 속성 레벨 업!");
                 OnAugmentSelected?.Invoke();
             });
         }
     }
 
     // =============================
-    // 슬롯 2,3 일반 풀
+    // 일반 슬롯 (중복 방지 지원)
     // =============================
-    private void AssignSlot(GameObject slotPrefab, List<UpgradeScriptableObjects> pool)
+    private void AssignSlot(GameObject slotPrefab, List<UpgradeScriptableObjects> pool, bool removeFromPool)
     {
-        UpgradeScriptableObjects choice = pool[UnityEngine.Random.Range(0, pool.Count)];
+        if (slotPrefab == null || pool == null || pool.Count == 0) return;
+
+        int index = UnityEngine.Random.Range(0, pool.Count);
+        UpgradeScriptableObjects choice = pool[index];
+        if (removeFromPool) pool.RemoveAt(index);
+
         float value = UnityEngine.Random.Range(choice.minvalue, choice.maxvalue);
         slotValues[choice] = value;
 
-        // =============================
-        // UI 요소 접근
-        // =============================
         Button button = slotPrefab.GetComponentInChildren<Button>();
-        TMP_Text descriptionText = slotPrefab.transform.Find("UpgradeDescription")?.GetComponent<TMP_Text>();
-        Image backgroundImage = slotPrefab.transform.Find("BackGround")?.GetComponent<Image>();
+        TMP_Text desc = slotPrefab.transform.Find("UpgradeDescription")?.GetComponent<TMP_Text>();
+        Image bg = slotPrefab.transform.Find("BackGround")?.GetComponent<Image>();
 
-        if (descriptionText != null)
-            descriptionText.text = $"{choice.optionDescription} +{value:F1}";
+        if (desc != null)
+            desc.text = $"{choice.optionDescription} +{value:F1}";
 
-        if (backgroundImage != null)
-            backgroundImage.color = demonPool.Contains(choice) ? new Color(0.6f, 0.2f, 0.8f) : new Color(0.3f, 0.6f, 1f);
+        if (bg != null)
+            bg.color = demonPool.Contains(choice)
+                ? new Color(0.6f, 0.2f, 0.8f)
+                : new Color(0.3f, 0.6f, 1f);
 
         if (button != null)
         {
@@ -176,63 +260,45 @@ public class UpgradeManager : MonoBehaviour
     }
 
     // =============================
-    // 슬롯 4: demon 확률 적용
+    // Demon 슬롯 (5사이클의 4번)
     // =============================
-    private void AssignSlotForSlot4(GameObject slotPrefab)
+    private void AssignDemonSlot(GameObject slotPrefab)
     {
-        UpgradeScriptableObjects choice;
+        if (slotPrefab == null) return;
 
-        // 악마 증강 등장 여부 판단
-        if (demonPool.Count > 0 && UnityEngine.Random.value < demonProbability)
-        {
-            List<UpgradeScriptableObjects> availableDemons = new List<UpgradeScriptableObjects>();
-            foreach (var demon in demonPool)
-            {
-                if (!obtainedDemons.Contains(demon))
-                    availableDemons.Add(demon);
-            }
+        UpgradeScriptableObjects choice = null;
+        List<UpgradeScriptableObjects> availableDemons = new List<UpgradeScriptableObjects>();
 
-            choice = availableDemons.Count > 0 ?
-                     availableDemons[UnityEngine.Random.Range(0, availableDemons.Count)] :
-                     GetRandomNormalOption();
-        }
+        foreach (var d in demonPool)
+            if (!obtainedDemons.Contains(d)) availableDemons.Add(d);
+
+        if (availableDemons.Count > 0)
+            choice = availableDemons[UnityEngine.Random.Range(0, availableDemons.Count)];
         else
         {
-            // 일반 풀에서 선택
-            choice = GetRandomNormalOption();
+            var fallback = BuildPool(resourceStatPool, economyNGrowthStatPool, movementStatPool,
+                                     generalElementStatPool, specificElementStatPool);
+            if (fallback.Count == 0) return;
+            choice = fallback[UnityEngine.Random.Range(0, fallback.Count)];
         }
 
         float value = UnityEngine.Random.Range(choice.minvalue, choice.maxvalue);
         slotValues[choice] = value;
 
-        // =============================
-        // UI 요소 접근
-        // =============================
         Button button = slotPrefab.GetComponentInChildren<Button>();
-        TMP_Text descriptionText = slotPrefab.transform.Find("UpgradeDescription")?.GetComponent<TMP_Text>();
-        Image backgroundImage = slotPrefab.transform.Find("BackGround")?.GetComponent<Image>();
+        TMP_Text desc = slotPrefab.transform.Find("UpgradeDescription")?.GetComponent<TMP_Text>();
+        Image bg = slotPrefab.transform.Find("BackGround")?.GetComponent<Image>();
 
-        if (descriptionText != null)
-            descriptionText.text = $"{choice.optionDescription} +{value:F1}";
-
-        if (backgroundImage != null)
-            backgroundImage.color = demonPool.Contains(choice) ? new Color(0.6f, 0.2f, 0.8f) : new Color(0.3f, 0.6f, 1f);
+        if (desc != null)
+            desc.text = $"{choice.optionDescription} +{value:F1}";
+        if (bg != null)
+            bg.color = new Color(0.6f, 0.2f, 0.8f);
 
         if (button != null)
         {
-            Debug.Log("됨");
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => ApplyStat(choice));
         }
-    }
-
-    private UpgradeScriptableObjects GetRandomNormalOption()
-    {
-        List<UpgradeScriptableObjects> normalPool = new List<UpgradeScriptableObjects>();
-        normalPool.AddRange(attackPool);
-        normalPool.AddRange(utilityPool);
-        normalPool.AddRange(elementPool);
-        return normalPool[UnityEngine.Random.Range(0, normalPool.Count)];
     }
 
     private void ApplyStat(UpgradeScriptableObjects option)
@@ -242,7 +308,6 @@ public class UpgradeManager : MonoBehaviour
             playerStatsManager.AddStat(option.optionStatType, value);
             Debug.Log($"선택한 스탯: {option.optionStatType} +{value:F1}");
 
-            // 획득한 악마 기록
             if (demonPool.Contains(option))
                 obtainedDemons.Add(option);
         }

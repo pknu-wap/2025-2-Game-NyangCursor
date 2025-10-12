@@ -15,7 +15,7 @@ public class PlayerHpController : MonoBehaviour, IDamageable
     public void Initialize(Component owner)
     {
         this.owner = owner;
-        maxHp = PlayerStatsManager.instance.GetStat(StatType.MaxHealth);
+        maxHp = PlayerStatsManager.instance.GetStat(StatType.MaxHealthUp);
         currentHp = maxHp;
         isDead = false;
     }
