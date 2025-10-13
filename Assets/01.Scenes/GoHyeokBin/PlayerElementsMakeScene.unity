@@ -2145,12 +2145,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeText: {fileID: 1940415955}
-  pausePanel: {fileID: 0}
-  augmentPanel: {fileID: 0}
-  gameEndPanel: {fileID: 0}
-  clearTimeText: {fileID: 0}
-  rewardText: {fileID: 0}
-  resultText: {fileID: 0}
+  PausePanel: {fileID: 57767146}
+  AugmentPanel: {fileID: 936046368}
 --- !u!1 &1168834406
 GameObject:
   m_ObjectHideFlags: 0
@@ -43753,6 +43749,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c03cc6fe1e2f8734eba5c24e141c2b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stageIndex: 0
 --- !u!4 &1728949961
 Transform:
   m_ObjectHideFlags: 0
@@ -44633,20 +44630,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 493ed343b8e9a8f43aae2ab609386462, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Fire_Level1to4: {fileID: 0}
-  Fire_Level5Plus: {fileID: 0}
-  Water_Level1to4: {fileID: 0}
-  Water_Level5Plus: {fileID: 0}
-  Lightning_Level1to4: {fileID: 0}
-  Lightning_Level5Plus: {fileID: 0}
-  Wind_Level1to4: {fileID: 0}
-  Wind_Level5Plus: {fileID: 0}
-  FireWater_Fusion: {fileID: 0}
-  FireLightning_Fusion: {fileID: 0}
-  FireWind_Fusion: {fileID: 0}
-  WaterLightning_Fusion: {fileID: 0}
-  WaterWind_Fusion: {fileID: 0}
-  LightningWind_Fusion: {fileID: 0}
+  SingleEffects:
+  - type: 0
+    Level1to5Effect: {fileID: 729825640}
+  - type: 1
+    Level1to5Effect: {fileID: 1651640872}
+  - type: 2
+    Level1to5Effect: {fileID: 44037616}
+  - type: 3
+    Level1to5Effect: {fileID: 1909804723}
+  FusionEffectsList:
+  - main: 0
+    sub: 1
+    fusionEffect: {fileID: 1998526592}
+  - main: 0
+    sub: 2
+    fusionEffect: {fileID: 831969262}
+  - main: 0
+    sub: 3
+    fusionEffect: {fileID: 439409654}
+  - main: 1
+    sub: 0
+    fusionEffect: {fileID: 2122416891}
+  - main: 1
+    sub: 2
+    fusionEffect: {fileID: 1976762914}
+  - main: 1
+    sub: 3
+    fusionEffect: {fileID: 1168834406}
+  - main: 2
+    sub: 0
+    fusionEffect: {fileID: 1884197531}
+  - main: 2
+    sub: 1
+    fusionEffect: {fileID: 1700563146}
+  - main: 2
+    sub: 3
+    fusionEffect: {fileID: 1887119618}
+  - main: 3
+    sub: 0
+    fusionEffect: {fileID: 1124312077}
+  - main: 3
+    sub: 1
+    fusionEffect: {fileID: 389600523}
+  - main: 3
+    sub: 2
+    fusionEffect: {fileID: 678461373}
 --- !u!1 &1983897940
 GameObject:
   m_ObjectHideFlags: 0
