@@ -3,6 +3,7 @@ using System;
 
 public class TimerManager : MonoBehaviour
 {
+    [SerializeField] StageFlowManager flowManager;
     [Header("스테이지 클리어까지 버텨야 하는 시간 (분 단위)")]
     [SerializeField] private float clearMinutes;
     private float clearSeconds;
@@ -18,6 +19,7 @@ public class TimerManager : MonoBehaviour
     // 외부에서 읽기 가능하도록 프로퍼티 추가
     public float CurrentTime => currentTime;
     public float ClearSeconds => clearSeconds;
+    public bool IsCleared => isCleared;
 
     void Start()
     {
@@ -45,7 +47,7 @@ public class TimerManager : MonoBehaviour
         {
             isCleared = true;
             Debug.Log("스테이지 클리어!");
-            OnStageClear?.Invoke();
+            flowManager.SetState(StageFlowManager.StageState.End);
         }
     }
 
