@@ -1,97 +1,116 @@
-
 public enum StatType
 {
     // ================================
-    // 공격 관련 스탯 (순수 전투력 ↑)
+    // 자원 순환형 (Resource Loop Stat)
     // ================================
 
-    /// <summary>기본 공격력 증가</summary>
-    AttackPower,
+    /// <summary>적 처치 시 OD 게이지 획득량 증가</summary>
+    ODGainOnKill,
 
-    /// <summary>공격 속도 증가 (공격 간격 감소)</summary>
-    AttackSpeed,
+    /// <summary>충돌 시 OD 게이지 감소량 완화</summary>
+    ODLossOnHit,
 
-    /// <summary>사거리 증가 (자동 발사 기준)</summary>
-    AttackRange,
-
-    /// <summary>탄환/공격 관통력 증가</summary>
-    Penetration,
-
-    /// <summary>발사 탄 수 증가 (한 번에 발사되는 탄 수)</summary>
-    ProjectileCount,
-
-    // ================================
-    // 유틸리티 관련 스탯 (저점/편의/안정성 ↑)
-    // ================================
-
-    /// <summary>일반모드 이동 속도</summary>
-    NormalModeMoveSpeed,
-
-    /// <summary>일반모드 이동 속도</summary>
-    OverdriveModeMoveSpeed,
-
-    /// <summary>최대 체력 증가</summary>
-    MaxHealth,
-
-    /// <summary>획득 경험치 증가</summary>
-    ExpGain,
-
-    /// <summary>자력 증가 (예: 회전력/회전 모멘텀)</summary>
-    Magnetism,
-
-    /// <summary>아이템 획득 확률 증가</summary>
-    ItemDropRate,
-
-    /// <summary>적 처치 시 오버드라이브 게이지 상승량 증가</summary>
-    OverdriveGainOnKill,
-
-    /// <summary>충돌 시 오버드라이브 게이지 감소량 감소</summary>
-    OverdriveLossOnHitReduction,
+    /// <summary>공격 시 탑승 게이지 획득량 증가</summary>
+    RidingGaugeGainOnAttack,
 
     /// <summary>폭주 모드 지속 시간 증가</summary>
-    BerserkDuration,
+    BerserkModeDurationUp,
 
-    /// <summary>오버드라이브 회전력</summary>
-    OverdriveRotationPower,
+    /// <summary>오버드라이브 진입 시 초기 게이지 증가</summary>
+    InitialODBoost,
 
-    /// <summary>적 처치 시 탑승 게이지 증가량 증가</summary>
-    MountGainOnKill,
-
-    /// <summary>탑승 게이지 보정량 증가</summary>
-    MountCorrection,
-
-    /// <summary>순간부스트가 켜져있는 시간</summary>
-    BoostOnDuration,
-
-    /// <summary>순간부스트가 가속력</summary>
-    BoostExtraSpeed,
+    /// <summary>오버드라이브 자연 감소 속도 완화</summary>
+    ODDrainRateDown,
 
     // ================================
-    // 속성 강화 관련 스탯 (속성 증강 및 시너지)
+    // 경제·성장형 (Economy & Growth Stat)
     // ================================
 
-    /// <summary>상태이상 효과 지속시간 증가 (중복 통합)</summary>
-    StatusEffectDuration,
+    /// <summary>경험치 획득량 증가</summary>
+    ExpGainUp,
 
-    /// <summary>지속형 스킬 지속시간 증가 (불길/물 잔상 등)</summary>
-    PersistentSkillDuration,
+    /// <summary>코인 획득량 증가</summary>
+    CoinGainUp,
 
-    /// <summary>속성 공격 쿨타임 감소</summary>
-    ElementalCooldownReduction,
+    /// <summary>상자 드랍 확률 증가</summary>
+    ChestDropRateUp,
+
+    /// <summary>자력(아이템 흡입 범위) 증가</summary>
+    MagnetRangeUp,
+
+    /// <summary>최대 체력 증가</summary>
+    MaxHealthUp,
 
     // ================================
-    // 악마 증강 (인게임 특수 증강)
+    // 🏃 이동·기동형 (Movement & Control Stat)
     // ================================
 
-    /// <summary>폭주 모드 시 충돌 시 광역 피해, 잔상 공격 등 추가 효과 발동</summary>
-    BerserkCollisionEffect,
+    /// <summary>기본 이동속도 증가</summary>
+    MoveSpeedUp,
 
-    /// <summary>속도에 따른 보상 (속도가 빠를수록 공격/점수 증가)</summary>
-    SpeedRewardBonus,
+    /// <summary>오버드라이브 이동속도 증가</summary>
+    OverdriveMoveSpeedUp,
 
-    /// <summary>폭주 종료 시 특수 효과 발동 (폭발, 넉백 등)</summary>
-    BerserkEndEffect,
+    /// <summary>회전력 증가</summary>
+    RotationPowerUp,
 
-    /// <summary>회전 저항 완전 제거 (자유로운 컨트롤 가능)</summary>
-    NoRotationResistance
+    // ================================
+    // 범용 속성강화 (Universal Elemental Buff)
+    // ================================
+
+    /// <summary>모든 속성 피해 증가</summary>
+    AllElementDamageUp,
+
+    /// <summary>모든 속성 범위 증가</summary>
+    AllElementRangeUp,
+
+    /// <summary>모든 속성 지속시간 증가</summary>
+    AllElementDurationUp,
+
+    /// <summary>모든 속성 쿨타임 감소</summary>
+    AllElementCooldownDown,
+
+    /// <summary>모든 속성 초당 공격 횟수 증가</summary>
+    AllElementAttackSpeedUp,
+
+    // ================================
+    // 특정 속성강화 (Specific Elemental Buff)
+    // ================================
+
+    // ----- Fire (불의 고리)
+    FireRingDamageUp,
+    FireRingRangeUp,
+    FireRingDurationUp,
+    FireRingCooldownDown,
+    FireRingAttackSpeedUp,
+
+    // ----- Water (물의 잔상)
+    WaterTrailDamageUp,
+    WaterTrailRangeUp,
+    WaterTrailDurationUp,
+    WaterTrailCooldownDown,
+    WaterTrailAttackSpeedUp,
+
+    // ----- Lightning (번개의 질주)
+    LightningDashDamageUp,
+    LightningDashRangeUp,
+    LightningDashDurationUp,
+    LightningDashCooldownDown,
+    LightningDashAttackSpeedUp,
+
+    // ----- Wind (바람의 폭풍)
+    WindStormDamageUp,
+    WindStormRangeUp,
+    WindStormDurationUp,
+    WindStormCooldownDown,
+    WindStormAttackSpeedUp,
+
+    // ================================
+    // 특정 속성강화 (Specific Elemental Buff)
+    // ================================
+    TestDemon1,
+    TestDemon2, 
+    TestDemon3
+
+
 }

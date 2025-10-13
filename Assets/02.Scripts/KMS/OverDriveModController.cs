@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.Playables;
 using UnityEngine.UIElements;
@@ -91,7 +91,7 @@ public class OverDriveModController : MonoBehaviour
     private void Start()
     {
         ApplyPresetBlend();
-        speed = PlayerStatsManager.instance.GetStat(StatType.OverdriveModeMoveSpeed); //처음 속도 초기화
+        speed = PlayerStatsManager.instance.GetStat(StatType.OverdriveMoveSpeedUp); //처음 속도 초기화
     }
 
     private void OnDestroy()
@@ -253,7 +253,7 @@ public class OverDriveModController : MonoBehaviour
     private void ApplyPresetBlend()
     {
         // playerStat.turnRateDeg → 1일 때 10f, 10일 때 360f
-        float trNorm = Mathf.InverseLerp(1f, 10f, PlayerStatsManager.instance.GetStat(StatType.OverdriveRotationPower)); //todo 참조변경
+        float trNorm = Mathf.InverseLerp(1f, 10f, PlayerStatsManager.instance.GetStat(StatType.RotationPowerUp)); //todo 참조변경
         trNorm = Mathf.Clamp01(trNorm); // 안전하게 0~1 범위 제한
 
         // --- playerStat 기반 "동적 heavyPreset" ---

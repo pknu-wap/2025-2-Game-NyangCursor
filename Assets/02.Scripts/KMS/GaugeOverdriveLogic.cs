@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI; // Image 사용
 using System;
@@ -51,6 +51,10 @@ public class GaugeOverdriveLogic : MonoBehaviour
     public static event Action<float> OnOverDriveTick;//오버드라이브 게이지 틱 이벤트 발생
     public static event Action OnGetOffEvent; //게이지0으로 내리는 이벤트 발생 
     public static event Action OnNormalEvent; //노말모드 진입 이벤트 발생
+
+    //부스터임시 
+    private float boostDuration = 1;
+    private float boostExtraSpeed = 1.5f;
 
     void Awake()
     {
@@ -227,7 +231,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
         }
 
         // 최종 속도 계산 
-        float finalSpeed = PlayerStatsManager.instance.GetStat(StatType.OverdriveModeMoveSpeed) * mul; //todo 참조변경
+        float finalSpeed = PlayerStatsManager.instance.GetStat(StatType.OverdriveMoveSpeedUp) * mul; //todo 참조변경
         overDriveModController.speed = finalSpeed;
         
     }
@@ -343,13 +347,13 @@ public class GaugeOverdriveLogic : MonoBehaviour
         float tierMul = (tier >= 1) ? tierSpeedMul[idx] : 1f;
 
         // 부스터 동안 속도 ↑
-        float boostedSpeed = PlayerStatsManager.instance.GetStat(StatType.OverdriveModeMoveSpeed) * tierMul * PlayerStatsManager.instance.GetStat(StatType.BoostExtraSpeed); //todo 참조변경
+        float boostedSpeed = PlayerStatsManager.instance.GetStat(StatType.OverdriveMoveSpeedUp) * tierMul * boostExtraSpeed; //추가속도
 
         // overDriveModController 속도 갱신
         overDriveModController.speed = boostedSpeed;
 
         float t = 0f;
-        while (t < PlayerStatsManager.instance.GetStat(StatType.BoostOnDuration))  //todo 참조변경
+        while (t < boostDuration)  //부스터 지속시간 1초
         {
             t += Time.deltaTime;
             yield return null;

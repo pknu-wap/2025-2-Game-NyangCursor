@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using static PlayerStateLogic;
 
@@ -35,7 +35,7 @@ public class NormalModController : MonoBehaviour
     }
     private void Start()
     {
-        speed = PlayerStatsManager.instance.GetStat(StatType.NormalModeMoveSpeed);
+        speed = PlayerStatsManager.instance.GetStat(StatType.MoveSpeedUp);
     }
     private void OnDestroy()
     {
@@ -48,7 +48,7 @@ public class NormalModController : MonoBehaviour
         if (PlayerStateLogic.Instance.CurrentState != PlayerState.Normal)
             return;
             
-        speed = PlayerStatsManager.instance.GetStat(StatType.NormalModeMoveSpeed);
+        speed = PlayerStatsManager.instance.GetStat(StatType.MoveSpeedUp);
         // 우클릭 입력 → 목표 지점 설정
         if (Input.GetMouseButtonDown(1))
         {
