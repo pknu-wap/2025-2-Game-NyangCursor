@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -7,6 +7,9 @@ using UnityEngine.Networking;
 
 public class EffectDatabase : MonoBehaviour
 {
+    //싱글톤 인스턴스
+    public static EffectDatabase Instance { get; private set; }
+
     [Serializable]
     public class EffectData
     {
@@ -25,6 +28,23 @@ public class EffectDatabase : MonoBehaviour
     public string googleSheetsCSVUrl;
 
     public Dictionary<string, EffectData> effectTable = new();
+    public List<EffectData> allEffects = new(); // 모든 효과 리스트
+
+
+    public bool isLoaded = false;
+
+    //싱글톤 초기화
+    void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     void Start()
     {
@@ -35,7 +55,7 @@ public class EffectDatabase : MonoBehaviour
     {
         if (string.IsNullOrEmpty(googleSheetsCSVUrl))
         {
-            Debug.LogError("❌ Google Sheets CSV URL이 설정되지 않았습니다.");
+            Debug.LogError("Google Sheets CSV URL이 설정되지 않았습니다.");
             yield break;
         }
 
@@ -44,13 +64,17 @@ public class EffectDatabase : MonoBehaviour
 
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError("❌ CSV 다운로드 실패: " + www.error);
+            Debug.LogError("CSV 다운로드 실패: " + www.error);
             yield break;
         }
 
         string csvText = www.downloadHandler.text;
         LoadCSVFromText(csvText);
-        PrintAllEffects();
+     
+        FinalizeList();
+
+        //PrintAllEffects();
+        isLoaded = true;
     }
 
     void LoadCSVFromText(string csvText)
@@ -138,7 +162,7 @@ public class EffectDatabase : MonoBehaviour
 
     void PrintAllEffects()
     {
-        Debug.Log("------EffectTable 전체 목록 ------");
+        Debug.Log("------ EffectTable 전체 목록 ------");
 
         foreach (var kvp in effectTable)
         {
@@ -146,6 +170,33 @@ public class EffectDatabase : MonoBehaviour
             Debug.Log($"{e.name} => {e.title}, {e.info}, {e.type}, {e.startValue}, {e.minValue}, {e.maxValue}, {e.maxLevel}, {e.unit}");
         }
 
-        Debug.Log("------출력 완료 ------");
+        Debug.Log("------ 출력 완료 ------");
+    }
+
+    void FinalizeList()
+    {
+        allEffects = new List<EffectData>(effectTable.Values);
+    }
+
+
+
+    // 외부 접근용 Getter 함수 -------------------------
+
+    /// <summary>
+    /// 이름으로 EffectData 가져오기
+    /// </summary>
+    public EffectData GetEffectData(string name)
+    {
+        if (!isLoaded)
+        {
+            Debug.LogWarning("EffectDatabase가 아직 로드되지 않았습니다.");
+            return null;
+        }
+
+        if (effectTable.TryGetValue(name, out var data))
+            return data;
+
+        Debug.LogWarning($"EffectData '{name}'를 찾을 수 없습니다.");
+        return null;
     }
 }

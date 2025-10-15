@@ -47,6 +47,8 @@ public class NormalModController : MonoBehaviour
     {
         if (PlayerStateLogic.Instance.CurrentState != PlayerState.Normal)
             return;
+
+        print("클릭함!!!");
             
         speed = PlayerStatsManager.instance.GetStat(StatType.MoveSpeedUp);
         // 우클릭 입력 → 목표 지점 설정
