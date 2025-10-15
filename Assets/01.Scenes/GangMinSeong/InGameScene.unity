@@ -909,7 +909,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 633e057f0c7ff0743b5cae6e42154479, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerStat: {fileID: 816579071}
   currentTurnRateDeg: 0
   currentDeadzone: 0
   currentTargetSmooth: 0
@@ -42042,7 +42041,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c32a251789e08db489d2d0303c6d55ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerStat: {fileID: 816579071}
   tierPresetBlend: 1e0000002d0000004100000050000000
   presetBlendLerpTime: 0.15
   overDriveModController: {fileID: 816579066}
