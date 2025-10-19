@@ -19,7 +19,7 @@ public class StageFlowManager : MonoBehaviour
     void Start()
     {
         // 업그레이드 매니저 선택 이벤트 구독
-        UpgradeManager.OnAugmentSelected += SetStateToPlay;
+        UpgradeManager.OnUpgradeSelected += SelectedandSetStateToPlay;
         // 시작은 플레이
         SetState(StageState.Play);
     }
@@ -27,7 +27,7 @@ public class StageFlowManager : MonoBehaviour
 
     void OnDestroy()
     {
-        UpgradeManager.OnAugmentSelected -= SetStateToPlay;
+        UpgradeManager.OnUpgradeSelected -= SelectedandSetStateToPlay;
     }
 
     // 임시 ESC 토글 일시정지
@@ -90,6 +90,11 @@ public class StageFlowManager : MonoBehaviour
     public void SetStateToEnd()
     {
         SetState(StageState.End);
+    }
+
+    public void SelectedandSetStateToPlay(UpgradeEventData data)
+    {
+        SetState(StageState.Play);
     }
 
     // 임시 씬 이동 메서드
