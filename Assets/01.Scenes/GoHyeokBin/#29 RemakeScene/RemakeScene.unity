@@ -593,7 +593,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &237568296
 Transform:
   m_ObjectHideFlags: 0
@@ -621,6 +621,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillName: 
   usedStats: 0000000001000000
   baseDamage: 10
   baseCooldown: 5
@@ -1146,7 +1147,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &755151527
 Transform:
   m_ObjectHideFlags: 0
@@ -1174,6 +1175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillName: 
   usedStats: 0400000005000000
   baseDamage: 10
   baseCooldown: 5
@@ -1842,7 +1844,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &883535678
 Transform:
   m_ObjectHideFlags: 0
@@ -1870,6 +1872,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillName: 
   usedStats: 0600000007000000
   baseDamage: 10
   baseCooldown: 5
@@ -1889,7 +1892,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &914756308
 Transform:
   m_ObjectHideFlags: 0
@@ -1917,6 +1920,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillName: 
   usedStats: 0100000002000000
   baseDamage: 10
   baseCooldown: 5
@@ -2162,7 +2166,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &941772717
 Transform:
   m_ObjectHideFlags: 0
@@ -2190,6 +2194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillName: 
   usedStats: 0300000004000000
   baseDamage: 10
   baseCooldown: 5
@@ -2393,7 +2398,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1099681747
 Transform:
   m_ObjectHideFlags: 0
@@ -2421,6 +2426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillName: 
   usedStats: 0200000003000000
   baseDamage: 10
   baseCooldown: 5
@@ -2491,7 +2497,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1176139240
 Transform:
   m_ObjectHideFlags: 0
@@ -2519,6 +2525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillName: 
   usedStats: 0600000007000000
   baseDamage: 10
   baseCooldown: 5
@@ -42888,7 +42895,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1274167858
 Transform:
   m_ObjectHideFlags: 0
@@ -44509,7 +44516,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1695795979
 Transform:
   m_ObjectHideFlags: 0
@@ -44555,7 +44562,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1707230992
 Transform:
   m_ObjectHideFlags: 0
@@ -44583,6 +44590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillName: 
   usedStats: 0500000006000000
   baseDamage: 10
   baseCooldown: 5
@@ -44906,7 +44914,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1929863665
 Transform:
   m_ObjectHideFlags: 0
@@ -44934,6 +44942,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skillName: 
   usedStats: 0700000000000000
   baseDamage: 10
   baseCooldown: 5

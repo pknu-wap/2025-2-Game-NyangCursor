@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class TempSkillManager : MonoBehaviour, ISkillUpgradable
 {
-    [Header("스킬 이름 (UpgradeEvent 비교용)")]
-    public string skillName;
+    // PlayerSkillManager가 초기화해주는 스킬 이름, 추후 업그레이드 시 비교값으로 사용됨
+    private string skillName;
     [Header("이 스킬이 사용하는 공용 스탯 키들")]
     [SerializeField] private List<SkillStatKey> usedStats = new List<SkillStatKey>();
 
@@ -79,12 +79,6 @@ public class TempSkillManager : MonoBehaviour, ISkillUpgradable
     public void SetSkillName(string skillName)
     {
         this.skillName = skillName;
-    }
-
-    // 외부에서 현재 스탯 값 조회용
-    public float GetStatValue(SkillStatKey key)
-    {
-        return statValues.TryGetValue(key, out float value) ? value : 0f;
     }
 
     // UsedStats 공개
