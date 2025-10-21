@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 25275953}
   - component: {fileID: 25275952}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: CurrentSkill3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2751,7 +2751,7 @@ MonoBehaviour:
   timeText: {fileID: 1940415955}
   pausePanel: {fileID: 57767146}
   augmentPanel: {fileID: 936046368}
-  altarPanel: {fileID: 0}
+  altarPanel: {fileID: 1247127112}
   gameEndPanel: {fileID: 755937675}
   clearTimeText: {fileID: 869826415}
   rewardText: {fileID: 1694495012}
@@ -2904,6 +2904,7 @@ GameObject:
   - component: {fileID: 1247127113}
   - component: {fileID: 1247127115}
   - component: {fileID: 1247127114}
+  - component: {fileID: 1247127116}
   m_Layer: 5
   m_Name: AltarUIPannel
   m_TagString: Untagged
@@ -2969,6 +2970,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1247127112}
   m_CullTransparentMesh: 1
+--- !u!114 &1247127116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1247127112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 689377e4d2c1fe040a808567a553b36a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillButtons:
+  - {fileID: 1296604658}
+  - {fileID: 1855255219}
+  - {fileID: 25275952}
+  - {fileID: 1318633052}
+  playerSkillsManager: {fileID: 1979479485}
 --- !u!1 &1248707639
 GameObject:
   m_ObjectHideFlags: 0
@@ -43356,7 +43375,7 @@ GameObject:
   - component: {fileID: 1296604659}
   - component: {fileID: 1296604658}
   m_Layer: 5
-  m_Name: Button
+  m_Name: CurrentSkill1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43476,7 +43495,7 @@ GameObject:
   - component: {fileID: 1318633053}
   - component: {fileID: 1318633052}
   m_Layer: 5
-  m_Name: Button (3)
+  m_Name: CurrentSkill4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45442,7 +45461,7 @@ GameObject:
   - component: {fileID: 1855255220}
   - component: {fileID: 1855255219}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: CurrentSkill2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
