@@ -64,6 +64,9 @@ public class PlayerSkillsManager : MonoBehaviour
             slot.icon = icon; // 여기서 아이콘 주입
 
         unlockedSkills.Add(slot);
+        if (slot.icon != null)
+            SkillIconUIManager.Instance.AddSkillIcon(slot.skillName, slot.icon);
+
     }
 
     public void LockSkill(string skillName)
@@ -75,6 +78,8 @@ public class PlayerSkillsManager : MonoBehaviour
         slot.skillManagerObject.SetActive(false);
 
         unlockedSkills.Remove(slot);
+
+        SkillIconUIManager.Instance?.RemoveSkillIcon(slot.skillName);
 
         // 스탯 초기화
         var skillMgr = slot.skillManagerObject.GetComponent<ISkill>();
