@@ -577,6 +577,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 4843985084834002234, guid: 4df65875567da7c4da48c4ddd41bce3b, type: 3}
+--- !u!114 &225258783 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9127323137138368071, guid: 2e4a3e61f20492046a03eb54c2e6f8ae, type: 3}
+  m_PrefabInstance: {fileID: 274167907}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &237568295
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,7 +632,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 
   usedStats: 0000000001000000
   baseDamage: 10
   baseCooldown: 5
@@ -939,6 +949,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 337861649}
   m_CullTransparentMesh: 1
+--- !u!114 &467799174 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6932910660208463088, guid: 2e4a3e61f20492046a03eb54c2e6f8ae, type: 3}
+  m_PrefabInstance: {fileID: 1875735921}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &479815708
 GameObject:
   m_ObjectHideFlags: 0
@@ -1058,6 +1079,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &493193445 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6932910660208463088, guid: 2e4a3e61f20492046a03eb54c2e6f8ae, type: 3}
+  m_PrefabInstance: {fileID: 1409987052}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &552992029
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1131,6 +1163,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 4843985084834002234, guid: 730a68c63a41f8c45803d7e039c1029e, type: 3}
+--- !u!114 &606995341 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9127323137138368071, guid: 2e4a3e61f20492046a03eb54c2e6f8ae, type: 3}
+  m_PrefabInstance: {fileID: 1409987052}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &755151526
 GameObject:
   m_ObjectHideFlags: 0
@@ -1175,7 +1218,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 
   usedStats: 0400000005000000
   baseDamage: 10
   baseCooldown: 5
@@ -1872,7 +1914,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 
   usedStats: 0600000007000000
   baseDamage: 10
   baseCooldown: 5
@@ -1920,7 +1961,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 
   usedStats: 0100000002000000
   baseDamage: 10
   baseCooldown: 5
@@ -2034,6 +2074,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1979479470}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -632.4}
+--- !u!114 &932043216 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6932910660208463088, guid: 2e4a3e61f20492046a03eb54c2e6f8ae, type: 3}
+  m_PrefabInstance: {fileID: 107910157}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &936046368
 GameObject:
   m_ObjectHideFlags: 0
@@ -2065,11 +2116,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 699a687a02ffc8b419fd536e81379cec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slotObjects:
-  - {fileID: 1875735922}
-  - {fileID: 107910158}
-  - {fileID: 274167908}
-  - {fileID: 1409987053}
+  slotPrefabObjects:
+  - slotObj: {fileID: 1875735922}
+    background: {fileID: 467799174}
+    icon: {fileID: 2054860959}
+  - slotObj: {fileID: 107910158}
+    background: {fileID: 932043216}
+    icon: {fileID: 1773033383}
+  - slotObj: {fileID: 274167908}
+    background: {fileID: 1033536411}
+    icon: {fileID: 225258783}
+  - slotObj: {fileID: 1409987053}
+    background: {fileID: 493193445}
+    icon: {fileID: 606995341}
   upgradePool:
   - {fileID: 11400000, guid: c0cc9c43945d7434d898c56e6b55d931, type: 2}
   - {fileID: 11400000, guid: 293398ca714e09a4184913c811a7ab4d, type: 2}
@@ -2194,7 +2253,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 
   usedStats: 0300000004000000
   baseDamage: 10
   baseCooldown: 5
@@ -2249,6 +2307,17 @@ MonoBehaviour:
   - {fileID: 1146727613942615151, guid: dbe13d43ab80f134d83301055740344e, type: 3}
   spawnZoneCollider: {fileID: 1983897943}
   combatZoneCollider: {fileID: 788909392}
+--- !u!114 &1033536411 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6932910660208463088, guid: 2e4a3e61f20492046a03eb54c2e6f8ae, type: 3}
+  m_PrefabInstance: {fileID: 274167907}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1079391491
 GameObject:
   m_ObjectHideFlags: 0
@@ -2426,7 +2495,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 
   usedStats: 0200000003000000
   baseDamage: 10
   baseCooldown: 5
@@ -2525,7 +2593,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 
   usedStats: 0600000007000000
   baseDamage: 10
   baseCooldown: 5
@@ -44590,7 +44657,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 
   usedStats: 0500000006000000
   baseDamage: 10
   baseCooldown: 5
@@ -44604,6 +44670,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1728949961}
   - component: {fileID: 1728949960}
+  - component: {fileID: 1728949962}
   m_Layer: 0
   m_Name: StageFlowManager
   m_TagString: Untagged
@@ -44638,6 +44705,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1850293430}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1728949962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1728949959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3977460078334e14e885d9056959fbc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerManager: {fileID: 1695795980}
+  stageIndex: 0
+  rewardRatio: 0
+--- !u!114 &1773033383 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9127323137138368071, guid: 2e4a3e61f20492046a03eb54c2e6f8ae, type: 3}
+  m_PrefabInstance: {fileID: 107910157}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1850284219
 GameObject:
   m_ObjectHideFlags: 0
@@ -44942,7 +45035,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillName: 
   usedStats: 0700000000000000
   baseDamage: 10
   baseCooldown: 5
@@ -45827,6 +45919,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2035910570}
   m_CullTransparentMesh: 1
+--- !u!114 &2054860959 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 9127323137138368071, guid: 2e4a3e61f20492046a03eb54c2e6f8ae, type: 3}
+  m_PrefabInstance: {fileID: 1875735921}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2055263780
 GameObject:
   m_ObjectHideFlags: 0

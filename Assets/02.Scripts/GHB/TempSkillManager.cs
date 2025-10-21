@@ -2,10 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TempSkillManager : MonoBehaviour, ISkillUpgradable
+public class TempSkillManager : MonoBehaviour, ISkill
 {
     // PlayerSkillManager가 초기화해주는 스킬 이름, 추후 업그레이드 시 비교값으로 사용됨
     private string skillName;
+
+    // 스킬 타입
+    public SkillType skillType;
+
     [Header("이 스킬이 사용하는 공용 스탯 키들")]
     [SerializeField] private List<SkillStatKey> usedStats = new List<SkillStatKey>();
 
@@ -48,6 +52,9 @@ public class TempSkillManager : MonoBehaviour, ISkillUpgradable
         UpgradeManager.OnUpgradeSelected -= ApplyUpgrade;
     }
 
+    // 이벤트를 받아서 작동
+    // 1) 우선적으로 딕셔너리 값 갱신 후
+    // 2) 해당 딕셔너리 값을 실제 변수에 반영시켜야 함
     public void ApplyUpgrade(UpgradeEventData data)
     {
         SkillStatKey key = data.statKey;
@@ -55,6 +62,7 @@ public class TempSkillManager : MonoBehaviour, ISkillUpgradable
         // 1. 스킬 이벤트인지 확인
         if (data.isSkillUpgrade)
         {
+            // 자신에 대한 스킬 이벤트가 아니라면 얼리 리턴
             if (!string.Equals(data.skillName, skillName, StringComparison.OrdinalIgnoreCase))
                 return;
         }
@@ -64,9 +72,11 @@ public class TempSkillManager : MonoBehaviour, ISkillUpgradable
             return;
 
         // 3. statValues 갱신
+        // 해당 부분이 1)
         statValues[key] *= 1f + data.upgradeRatio;
 
         // 4. current 변수 갱신
+        // 해당 부분이 2)
         if (key == SkillStatKey.Damage)
             currentDamage = statValues[key];
         else if (key == SkillStatKey.Cooldown)
@@ -83,4 +93,7 @@ public class TempSkillManager : MonoBehaviour, ISkillUpgradable
 
     // UsedStats 공개
     public List<SkillStatKey> UsedStats => usedStats;
+    
+    // 스킬 타입(쿨타임형, 패시브형)
+    public SkillType SkillType => skillType;
 }

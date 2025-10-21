@@ -36,7 +36,7 @@ public class PlayerSkillsManager : MonoBehaviour
         {
             if (slot.skillManagerObject != null)
             {
-                var tempMgr = slot.skillManagerObject.GetComponent<ISkillUpgradable>();
+                var tempMgr = slot.skillManagerObject.GetComponent<ISkill>();
                 if (tempMgr != null)
                 {
                     tempMgr.SetSkillName(slot.skillName);
@@ -64,19 +64,6 @@ public class PlayerSkillsManager : MonoBehaviour
         slot.skillManagerObject.SetActive(true);
 
         Debug.Log($"스킬 '{skillName}' 활성화됨!");
-    }
-
-    public string GetRandomLockedSkill()
-    {
-        var locked = skillSlots.FindAll(s => !s.isUnlocked);
-        if (locked.Count == 0)
-        {
-            Debug.Log("모든 스킬이 이미 해금됨!");
-            return null;
-        }
-
-        int rand = UnityEngine.Random.Range(0, locked.Count);
-        return locked[rand].skillName;
     }
 
     public SkillSlot GetSkillSlot(string skillName)

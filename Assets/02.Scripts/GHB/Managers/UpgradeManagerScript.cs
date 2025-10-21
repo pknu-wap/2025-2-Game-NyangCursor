@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
+using System.Data.Common;
 
 public class UpgradeManager : MonoBehaviour
 {
     [Header("UI 슬롯 4개")]
-    [SerializeField] private List<GameObject> slotObjects = new();
+    [SerializeField] private List<UpgradeSlotUI> slotPrefabObjects = new();
 
     [Header("업그레이드 풀 (스킬 + 비전서)")]
     [SerializeField] private List<UpgradeOptionSO> upgradePool = new();
@@ -43,16 +45,16 @@ public class UpgradeManager : MonoBehaviour
             UpgradeOptionSO chosen = tempPool[index];
             tempPool.RemoveAt(index);
             currentSelection.Add(chosen);
-            SetupSlot(slotObjects[i], chosen);
+            SetupSlot(slotPrefabObjects[i], chosen);
         }
     }
 
-    private void SetupSlot(GameObject slotObj, UpgradeOptionSO data)
+    private void SetupSlot(UpgradeSlotUI slotPrefab, UpgradeOptionSO data)
     {
-        if (slotObj == null || data == null) return;
+        if (slotPrefab.slotObj == null || data == null) return;
 
-        TMP_Text text = slotObj.GetComponentInChildren<TMP_Text>();
-        Button button = slotObj.GetComponentInChildren<Button>();
+        TMP_Text text = slotPrefab.slotObj.GetComponentInChildren<TMP_Text>();
+        Button button = slotPrefab.slotObj.GetComponentInChildren<Button>();
 
         float ratio = UnityEngine.Random.Range(data.minUpgradeRatio, data.maxUpgradeRatio);
         string percentText = $"{ratio * 100f:F1}%";
@@ -66,13 +68,29 @@ public class UpgradeManager : MonoBehaviour
             var slot = playerSkillsManager.GetSkillSlot(data.optionName);
             isUnlocked = slot != null && slot.isUnlocked;
 
-            ISkillUpgradable skillMgr = GetSkillManager(data.optionName);
+            ISkill skillMgr = GetSkillManager(data.optionName);
             if (skillMgr != null && skillMgr.UsedStats.Count > 0)
             {
                 int r = UnityEngine.Random.Range(0, skillMgr.UsedStats.Count);
                 chosenStatKey = skillMgr.UsedStats[r];
             }
         }
+
+        // 아이콘 배치
+        if (data.icon != null && slotPrefab.icon != null)
+        {
+            slotPrefab.icon.sprite = data.icon;
+        }
+
+        // 배경색 설정(임시로 스킬은 하늘색, 비전서는 보라색)
+        if (slotPrefab.background != null)
+        {
+            if (data.isSkill)
+                slotPrefab.background.color = new Color(0.53f, 0.81f, 0.98f); // 하늘색
+            else
+                slotPrefab.background.color = new Color(0.6f, 0.4f, 0.8f); // 보라색
+        }
+
 
         // UI 텍스트
         if (text != null)
@@ -95,44 +113,15 @@ public class UpgradeManager : MonoBehaviour
         {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() =>
-    {
-        if (data.isSkill && !isUnlocked)
-        {
-            // 해금 처리
-            playerSkillsManager.UnlockSkill(data.optionName);
-
-            // UI 닫기 위해 UpgradeEvent 발동 (dummy 값)
-            var dummyEvent = new UpgradeEventData
             {
-                isSkillUpgrade = true,
-                skillName = data.optionName,
-                statKey = chosenStatKey,
-                upgradeRatio = 0f // 실제 값은 의미 없음
-            };
-            Debug.Log($"선택됨: {data.optionName}");
-            OnUpgradeSelected?.Invoke(dummyEvent);
-        }
-        else
-        {
-            // 기존 업그레이드 이벤트
-            var eventData = new UpgradeEventData
-            {
-                isSkillUpgrade = data.isSkill,
-                skillName = data.isSkill ? data.optionName : null,
-                statKey = chosenStatKey,
-                upgradeRatio = ratio
-            };
-            Debug.Log($"선택됨: {(data.isSkill ? "스킬" : "비전서")} - {data.optionName} ({chosenStatKey}, +{percentText})");
-            OnUpgradeSelected?.Invoke(eventData);
-        }
-    });
-
+                var eventData = CreateUpgradeEvent(data, chosenStatKey, ratio, isUnlocked);
+                Debug.Log($"선택됨: {data.optionName}");
+                OnUpgradeSelected?.Invoke(eventData);
+            });
         }
     }
 
-
-    // 인터페이스 기반으로 스킬 참조 가져오기
-    private ISkillUpgradable GetSkillManager(string skillName)
+    private ISkill GetSkillManager(string skillName)
     {
         if (playerSkillsManager == null)
         {
@@ -143,10 +132,32 @@ public class UpgradeManager : MonoBehaviour
         var slot = playerSkillsManager.GetSkillSlot(skillName);
         if (slot != null && slot.skillManagerObject != null)
         {
-            // ISkillUpgradable 구현체를 가져옴
-            return slot.skillManagerObject.GetComponent<ISkillUpgradable>();
+            return slot.skillManagerObject.GetComponent<ISkill>();
         }
 
         return null;
+    }
+
+    private UpgradeEventData CreateUpgradeEvent(UpgradeOptionSO data, SkillStatKey chosenStatKey, float ratio, bool isUnlocked)
+    {
+        if (data.isSkill && !isUnlocked)
+        {
+            playerSkillsManager.UnlockSkill(data.optionName);
+            return new UpgradeEventData
+            {
+                isSkillUpgrade = true,
+                skillName = data.optionName,
+                statKey = chosenStatKey,
+                upgradeRatio = 0f
+            };
+        }
+
+        return new UpgradeEventData
+        {
+            isSkillUpgrade = data.isSkill,
+            skillName = data.isSkill ? data.optionName : null,
+            statKey = chosenStatKey,
+            upgradeRatio = ratio
+        };
     }
 }
