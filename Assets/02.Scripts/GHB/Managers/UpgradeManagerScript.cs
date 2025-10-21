@@ -8,7 +8,7 @@ using System.Data.Common;
 
 public class UpgradeManager : MonoBehaviour
 {
-    [Header("UI 슬롯 4개")]
+    [Header("업그레이드 슬롯 4개")]
     [SerializeField] private List<UpgradeSlotUI> slotPrefabObjects = new();
 
     [Header("업그레이드 풀 (스킬 + 비전서)")]
@@ -38,9 +38,18 @@ public class UpgradeManager : MonoBehaviour
 
         List<UpgradeOptionSO> tempPool = new(upgradePool);
 
+        // 해금된 스킬이 4개 이상이면 새로운 스킬은 제외하고, 기존 스킬의 업그레이드만 표시됨
+        if (playerSkillsManager.UnlockedSkills.Count >= 4)
+        {
+            tempPool.RemoveAll(x => x.isSkill &&
+                                    !playerSkillsManager.UnlockedSkills.Any(s => s.skillName == x.optionName));
+        }
+
         // 중복 없는 4개 랜덤 선택
         for (int i = 0; i < 4; i++)
         {
+            if (tempPool.Count == 0) break;
+
             int index = UnityEngine.Random.Range(0, tempPool.Count);
             UpgradeOptionSO chosen = tempPool[index];
             tempPool.RemoveAt(index);
@@ -48,6 +57,7 @@ public class UpgradeManager : MonoBehaviour
             SetupSlot(slotPrefabObjects[i], chosen);
         }
     }
+
 
     private void SetupSlot(UpgradeSlotUI slotPrefab, UpgradeOptionSO data)
     {
@@ -142,7 +152,7 @@ public class UpgradeManager : MonoBehaviour
     {
         if (data.isSkill && !isUnlocked)
         {
-            playerSkillsManager.UnlockSkill(data.optionName);
+            playerSkillsManager.UnlockSkill(data.optionName, data.icon);
             return new UpgradeEventData
             {
                 isSkillUpgrade = true,

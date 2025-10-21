@@ -25,10 +25,15 @@ public class PlayerSkillsManager : MonoBehaviour
         public string skillName;
         public GameObject skillManagerObject;
         [HideInInspector] public bool isUnlocked = false;
+        [HideInInspector] public Sprite icon; // UI용 아이콘
     }
 
     [Header("플레이어 자식으로 둘 9개의 스킬 매니저")]
     [SerializeField] private List<SkillSlot> skillSlots = new();
+
+    // 해금된 순서대로 저장
+    private List<SkillSlot> unlockedSkills = new();
+    public IReadOnlyList<SkillSlot> UnlockedSkills => unlockedSkills;
 
     void Awake()
     {
@@ -45,25 +50,38 @@ public class PlayerSkillsManager : MonoBehaviour
         }
     }
 
-    public void UnlockSkill(string skillName)
+    public void UnlockSkill(string skillName, Sprite icon = null)
     {
         var slot = skillSlots.Find(s => s.skillName == skillName);
-        if (slot == null)
-        {
-            Debug.LogWarning($"스킬 '{skillName}'을(를) 찾을 수 없습니다.");
-            return;
-        }
+        if (slot == null) return;
 
-        if (slot.isUnlocked)
-        {
-            Debug.Log($"스킬 '{skillName}'은(는) 이미 해금됨.");
-            return;
-        }
+        if (slot.isUnlocked) return;
 
         slot.isUnlocked = true;
         slot.skillManagerObject.SetActive(true);
 
-        Debug.Log($"스킬 '{skillName}' 활성화됨!");
+        if (icon != null)
+            slot.icon = icon; // 여기서 아이콘 주입
+
+        unlockedSkills.Add(slot);
+    }
+
+    public void LockSkill(string skillName)
+    {
+        var slot = skillSlots.Find(s => s.skillName == skillName);
+        if (slot == null || !slot.isUnlocked) return;
+
+        slot.isUnlocked = false;
+        slot.skillManagerObject.SetActive(false);
+
+        unlockedSkills.Remove(slot);
+
+        // 스탯 초기화
+        var skillMgr = slot.skillManagerObject.GetComponent<ISkill>();
+        if (skillMgr != null)
+        {
+            skillMgr.ResetSkill();
+        }
     }
 
     public SkillSlot GetSkillSlot(string skillName)

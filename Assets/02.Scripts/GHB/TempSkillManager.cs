@@ -18,7 +18,7 @@ public class TempSkillManager : MonoBehaviour, ISkill
     [SerializeField] private float baseCooldown = 5f;
 
     // 각 STATKEY별 현재 값
-    private Dictionary<SkillStatKey, float> statValues = new Dictionary<SkillStatKey, float> ();
+    private Dictionary<SkillStatKey, float> statValues = new Dictionary<SkillStatKey, float>();
 
     // 현재값 변수
     public float currentDamage { get; private set; }
@@ -86,6 +86,25 @@ public class TempSkillManager : MonoBehaviour, ISkill
         Debug.Log($"[UpgradeEvent] {gameObject.name}: {key} +{data.upgradeRatio:P1} -> {statValues[key]:F2}");
     }
 
+    public void ResetSkill()
+    {
+        // statValues 초기화
+        foreach (SkillStatKey key in Enum.GetValues(typeof(SkillStatKey)))
+        {
+            statValues[key] = key switch
+            {
+                SkillStatKey.Damage => baseDamage,
+                SkillStatKey.Cooldown => baseCooldown,
+                _ => 0f
+            };
+        }
+
+        currentDamage = baseDamage;
+        currentCooldown = baseCooldown;
+
+        Debug.Log($"{gameObject.name} 스킬 초기화 완료");
+    }
+
     public void SetSkillName(string skillName)
     {
         this.skillName = skillName;
@@ -93,7 +112,7 @@ public class TempSkillManager : MonoBehaviour, ISkill
 
     // UsedStats 공개
     public List<SkillStatKey> UsedStats => usedStats;
-    
+
     // 스킬 타입(쿨타임형, 패시브형)
     public SkillType SkillType => skillType;
 }

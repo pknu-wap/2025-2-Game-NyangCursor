@@ -8,6 +8,7 @@ public class StageFlowManager : MonoBehaviour
     {
         Play,       // 일반 플레이
         Augment,    // 증강 선택 UI 활성화
+        Altar, // 제단 접속
         Pause,       // 완전 일시정지
         End       // 게임 종료
     }
@@ -20,6 +21,7 @@ public class StageFlowManager : MonoBehaviour
     {
         // 업그레이드 매니저 선택 이벤트 구독
         UpgradeManager.OnUpgradeSelected += SelectedandSetStateToPlay;
+        AltarUIManager.OnAltarEvent += SetStateToPlay;
         // 시작은 플레이
         SetState(StageState.Play);
     }
@@ -28,6 +30,7 @@ public class StageFlowManager : MonoBehaviour
     void OnDestroy()
     {
         UpgradeManager.OnUpgradeSelected -= SelectedandSetStateToPlay;
+        AltarUIManager.OnAltarEvent -= SetStateToPlay;
     }
 
     // 임시 ESC 토글 일시정지
@@ -56,6 +59,18 @@ public class StageFlowManager : MonoBehaviour
                 SetStateToPlay();
             }
         }
+        // 임시 제단 단축키
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            if (CurrentState == StageState.Play)
+            {
+                SetStateToAltar();
+            }
+            else if (CurrentState == StageState.Altar)
+            {
+                SetStateToPlay();
+            }
+        }
         if (Input.GetKeyDown(KeyCode.O))
         {
             GoToLobby();
@@ -80,6 +95,11 @@ public class StageFlowManager : MonoBehaviour
     public void SetStateToAugment()
     {
         SetState(StageState.Augment);
+    }
+
+    public void SetStateToAltar()
+    {
+        SetState(StageState.Altar);
     }
 
     public void SetStateToPause()
