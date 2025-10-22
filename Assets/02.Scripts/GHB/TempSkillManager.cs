@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TempSkillManager : MonoBehaviour, ISkill
 {
+    // 스킬의 현재 레벨, 디폴트 1
+    private int currentLevel = 1;
     // PlayerSkillManager가 초기화해주는 스킬 이름, 추후 업그레이드 시 비교값으로 사용됨
     private string skillName;
 
@@ -65,6 +67,9 @@ public class TempSkillManager : MonoBehaviour, ISkill
             // 자신에 대한 스킬 이벤트가 아니라면 얼리 리턴
             if (!string.Equals(data.skillName, skillName, StringComparison.OrdinalIgnoreCase))
                 return;
+            
+            // 만약 자신에 대한 스킬 이벤트라면 레벨 증가
+            currentLevel++;
         }
 
         // 2. usedStats에 있는 키만 처리
@@ -98,7 +103,7 @@ public class TempSkillManager : MonoBehaviour, ISkill
                 _ => 0f
             };
         }
-
+        currentLevel = 1;
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
 
@@ -115,4 +120,11 @@ public class TempSkillManager : MonoBehaviour, ISkill
 
     // 스킬 타입(쿨타임형, 패시브형)
     public SkillType SkillType => skillType;
+
+    public int CurrentLevel
+    {
+        get => currentLevel;
+        set => currentLevel = value;
+    }
+
 }

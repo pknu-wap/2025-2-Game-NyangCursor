@@ -107,6 +107,18 @@ public class UpgradeManager : MonoBehaviour
         {
             string typeText = data.isSkill ? "[스킬]" : "[비전서]";
             string statText = chosenStatKey.ToString();
+            string levelText = "";
+
+            // 스킬인 경우 레벨 정보 표시
+            if (data.isSkill)
+            {
+                ISkill skillMgr = GetSkillManager(data.optionName);
+                if (skillMgr != null && isUnlocked)
+                {
+                    int currentLv = skillMgr.CurrentLevel;
+                    levelText = $"\n<size=60%>{currentLv}Lv → {currentLv + 1}Lv</size>";
+                }
+            }
 
             if (data.isSkill && !isUnlocked)
             {
@@ -114,9 +126,10 @@ public class UpgradeManager : MonoBehaviour
             }
             else
             {
-                text.text = $"{typeText} {data.optionName}\n<size=80%>{data.description}\n({statText} +{percentText})</size>";
+                text.text = $"{typeText} {data.optionName}{levelText}<size=80%>{data.description}\n({statText} +{percentText})</size>";
             }
         }
+
 
         // 버튼 동작
         if (button != null)
