@@ -46317,6 +46317,8 @@ MonoBehaviour:
     value: 1.3
   - statType: 7
     value: 30
+  - statType: 12
+    value: 6
   shopStats:
   - {fileID: 11400000, guid: ef9bdb39921bfff469a20eacb810be85, type: 2}
   - {fileID: 11400000, guid: 424691941664fb4449b9cb726c654ab9, type: 2}
