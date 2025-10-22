@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
 public class TempSkillManager : MonoBehaviour, ISkill
 {
-    // 스킬의 현재 레벨, 디폴트 1
     private int currentLevel = 1;
-    // PlayerSkillManager가 초기화해주는 스킬 이름, 추후 업그레이드 시 비교값으로 사용됨
     private string skillName;
 
-    // 스킬 타입
     public SkillType skillType;
 
     [Header("이 스킬이 사용하는 공용 스탯 키들")]
@@ -26,6 +24,9 @@ public class TempSkillManager : MonoBehaviour, ISkill
     public float currentDamage { get; private set; }
     public float currentCooldown { get; private set; }
 
+    private bool isOnCooldown = false;
+    private Coroutine cooldownRoutine;
+
     private void Awake()
     {
         // 모든 SkillStatKey 항목 초기화
@@ -36,7 +37,7 @@ public class TempSkillManager : MonoBehaviour, ISkill
 
         // 각 스킬 스크립트에서 쓰이는 변수는 따로 초기화
         statValues[SkillStatKey.Damage] = baseDamage;
-        statValues[SkillStatKey.Cooldown] = baseCooldown;
+        //statValues[SkillStatKey.Cooldown] = baseCooldown;
 
         // 현재값 변수도 초기화
         currentDamage = baseDamage;
@@ -54,9 +55,65 @@ public class TempSkillManager : MonoBehaviour, ISkill
         UpgradeManager.OnUpgradeSelected -= ApplyUpgrade;
     }
 
-    // 이벤트를 받아서 작동
-    // 1) 우선적으로 딕셔너리 값 갱신 후
-    // 2) 해당 딕셔너리 값을 실제 변수에 반영시켜야 함
+    public void Activate()
+    {
+        // 수정했어요: UI 참조 가져오기
+        SkillCooldownUI cdUI = null;
+        SkillIconUIManager.Instance.TryGetCooldownUI(skillName, out cdUI);
+
+        bool hasCooldownStat = usedStats.Contains(SkillStatKey.Cooldown); // 수정했어요
+
+        if (skillType == SkillType.Active)
+        {
+            if (isOnCooldown)
+            {
+                Debug.Log($"{skillName} 쿨타임 중입니다!");
+                return;
+            }
+
+            Debug.Log($"{skillName} 발동! (Damage {currentDamage})");
+
+            // 수정했어요: 쿨다운 StatKey가 있는 경우만 UI 실행
+            if (hasCooldownStat)
+                cdUI?.StartCooldown(currentCooldown);
+
+            cooldownRoutine = StartCoroutine(CooldownRoutine(currentCooldown));
+        }
+        else // 패시브형
+        {
+            // 수정했어요: 패시브 루프 UI 연동, StatKey 없으면 UI 생략
+            if (cooldownRoutine == null)
+                cooldownRoutine = StartCoroutine(PassiveLoop(currentCooldown, cdUI, hasCooldownStat));
+        }
+    }
+
+    // 수정했어요: PassiveLoop에 StatKey 체크 추가
+    private IEnumerator PassiveLoop(float cd, SkillCooldownUI cdUI, bool showUI)
+    {
+        while (true)
+        {
+            Debug.Log($"{skillName} (패시브 효과 발동 중...)");
+
+            // 쿨다운 StatKey가 있는 경우만 UI 표시
+            if (showUI)
+                cdUI?.StartCooldown(cd);
+
+            yield return new WaitForSeconds(cd);
+        }
+    }
+
+
+    private IEnumerator CooldownRoutine(float cooldown)
+    {
+        isOnCooldown = true;
+        Debug.Log($"{skillName} 쿨다운 시작 ({cooldown:F1}s)");
+
+        yield return new WaitForSeconds(cooldown);
+
+        isOnCooldown = false;
+        Debug.Log($"{skillName} 준비 완료!");
+    }
+
     public void ApplyUpgrade(UpgradeEventData data)
     {
         SkillStatKey key = data.statKey;
@@ -67,7 +124,7 @@ public class TempSkillManager : MonoBehaviour, ISkill
             // 자신에 대한 스킬 이벤트가 아니라면 얼리 리턴
             if (!string.Equals(data.skillName, skillName, StringComparison.OrdinalIgnoreCase))
                 return;
-            
+
             // 만약 자신에 대한 스킬 이벤트라면 레벨 증가
             currentLevel++;
         }
@@ -126,5 +183,4 @@ public class TempSkillManager : MonoBehaviour, ISkill
         get => currentLevel;
         set => currentLevel = value;
     }
-
 }

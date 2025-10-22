@@ -16,17 +16,8 @@ public enum SkillStatKey
     // 필요하면 여기에 추가
 }
 
-
 public class PlayerSkillsManager : MonoBehaviour
 {
-    [Serializable]
-    public class SkillSlot
-    {
-        public string skillName;
-        public GameObject skillManagerObject;
-        [HideInInspector] public bool isUnlocked = false;
-        [HideInInspector] public Sprite icon; // UI용 아이콘
-    }
 
     [Header("플레이어 자식으로 둘 9개의 스킬 매니저")]
     [SerializeField] private List<SkillSlot> skillSlots = new();
@@ -53,21 +44,36 @@ public class PlayerSkillsManager : MonoBehaviour
     public void UnlockSkill(string skillName, Sprite icon = null)
     {
         var slot = skillSlots.Find(s => s.skillName == skillName);
-        if (slot == null) return;
-
-        if (slot.isUnlocked) return;
+        if (slot == null || slot.isUnlocked) return;
 
         slot.isUnlocked = true;
         slot.skillManagerObject.SetActive(true);
 
-        if (icon != null)
-            slot.icon = icon; // 여기서 아이콘 주입
+        if (icon != null) slot.icon = icon;
 
         unlockedSkills.Add(slot);
+
+        // 정렬 적용
+        // 액티브형 앞, 패시브형 뒤, 같은 타입은 획득 순서 유지
+        unlockedSkills.Sort((a, b) =>
+        {
+            ISkill skillA = a.skillManagerObject.GetComponent<ISkill>();
+            ISkill skillB = b.skillManagerObject.GetComponent<ISkill>();
+            int typeA = skillA.SkillType == SkillType.Active ? 0 : 1;
+            int typeB = skillB.SkillType == SkillType.Active ? 0 : 1;
+            return typeA.CompareTo(typeB);
+        });
+
         if (slot.icon != null)
             SkillIconUIManager.Instance.AddSkillIcon(slot.skillName, slot.icon);
 
+        // 아이콘 순서도 unlockedSkills 기준으로 맞추기
+        SkillIconUIManager.Instance.RefreshIcons(unlockedSkills);
+
+        ISkill skill = slot.skillManagerObject.GetComponent<ISkill>();
+        skill.Activate(); // 패시브 루프 시작
     }
+
 
     public void LockSkill(string skillName)
     {
@@ -94,4 +100,14 @@ public class PlayerSkillsManager : MonoBehaviour
         return skillSlots.Find(s => s.skillName.Equals(skillName, StringComparison.OrdinalIgnoreCase));
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            foreach (var ski in UnlockedSkills)
+            {
+                Debug.Log(ski.skillName);
+            }
+        }
+    }
 }

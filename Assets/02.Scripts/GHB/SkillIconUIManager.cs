@@ -10,6 +10,7 @@ public class SkillIconUIManager : MonoBehaviour
     [SerializeField] private GameObject iconPrefab; // SkillIcon 프리팹
 
     private readonly List<Image> activeIcons = new List<Image>();
+    private readonly Dictionary<string, SkillCooldownUI> cooldownUIs = new();
 
     private void Awake()
     {
@@ -36,7 +37,11 @@ public class SkillIconUIManager : MonoBehaviour
         img.raycastTarget = false;
 
         activeIcons.Add(img);
-        RefreshOrder();
+        // 쿨타임 UI 연결
+        SkillCooldownUI cdUI = iconObj.GetComponent<SkillCooldownUI>();
+        if (cdUI != null)
+            cooldownUIs[skillName] = cdUI;
+
     }
 
     // 스킬 아이콘 제거 (비해금 시)
@@ -47,17 +52,24 @@ public class SkillIconUIManager : MonoBehaviour
 
         activeIcons.Remove(target);
         Destroy(target.gameObject);
-        RefreshOrder();
     }
 
-    // 오른쪽 정렬 상태로 순서 유지 (LayoutGroup이 있으면 sibling index로 제어)
-    private void RefreshOrder()
+    // 현재 순서를 unlockedSkills 기준으로 맞춰서 UI에 적용
+    public void RefreshIcons(IReadOnlyList<SkillSlot> orderedSlots)
     {
-        // LayoutGroup이 Right-anchored 상태라면, sibling index를 0..n-1로 설정해도
-        // 오른쪽 정렬을 유지합니다. (HorizontalLayoutGroup의 ChildAlignment = UpperRight)
-        for (int i = 0; i < activeIcons.Count; i++)
+        for (int i = 0; i < orderedSlots.Count; i++)
         {
-            activeIcons[i].transform.SetSiblingIndex(i);
+            var slot = orderedSlots[i];
+            var img = activeIcons.Find(x => x.name == slot.skillName);
+            if (img != null)
+            {
+                img.transform.SetSiblingIndex(i);
+            }
         }
+    }
+
+    public bool TryGetCooldownUI(string skillName, out SkillCooldownUI cdUI)
+    {
+        return cooldownUIs.TryGetValue(skillName, out cdUI);
     }
 }
