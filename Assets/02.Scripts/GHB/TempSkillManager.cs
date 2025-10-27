@@ -5,7 +5,7 @@ using System.Collections;
 
 public class TempSkillManager : MonoBehaviour, ISkill
 {
-    private int currentLevel = 1;
+    private int currentLevel = 0;
     private string skillName;
 
     public SkillType skillType;
