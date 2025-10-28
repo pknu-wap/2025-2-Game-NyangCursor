@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 // 제단 UI에서 실행될 모든 로직을 담습니다.
-public class AltarUIManager : MonoBehaviour
+public class SkillRemoveAltarUIManager : MonoBehaviour
 {
     [Header("현재 활성화된 스킬 버튼 4개")]
     [SerializeField] private List<Button> skillButtons = new();

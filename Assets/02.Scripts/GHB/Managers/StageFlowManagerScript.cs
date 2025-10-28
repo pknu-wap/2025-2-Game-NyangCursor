@@ -35,7 +35,7 @@ public class StageFlowManager : MonoBehaviour
     {
         // 업그레이드 매니저 선택 이벤트 구독
         UpgradeManager.OnUpgradeSelected += SelectedandSetStateToPlay;
-        AltarUIManager.OnAltarEvent += SetStateToPlay;
+        SkillRemoveAltarUIManager.OnAltarEvent += SetStateToPlay;
         // 시작은 플레이
         SetState(StageState.Play);
     }
@@ -44,7 +44,7 @@ public class StageFlowManager : MonoBehaviour
     void OnDestroy()
     {
         UpgradeManager.OnUpgradeSelected -= SelectedandSetStateToPlay;
-        AltarUIManager.OnAltarEvent -= SetStateToPlay;
+        SkillRemoveAltarUIManager.OnAltarEvent -= SetStateToPlay;
     }
 
     // 임시 ESC 토글 일시정지
