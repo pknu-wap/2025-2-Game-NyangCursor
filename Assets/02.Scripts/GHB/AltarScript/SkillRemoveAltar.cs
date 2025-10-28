@@ -10,6 +10,7 @@ public class SkillRemoveAltar : AltarBase
 
     public override void Execute(Transform player)
     {
+        StageFlowManager.instance.SetStateToAltar();
         // UI 활성화
         removeAltarPanel.SetActive(true);
     }

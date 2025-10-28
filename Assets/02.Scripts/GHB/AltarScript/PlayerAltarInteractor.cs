@@ -35,7 +35,6 @@ public class PlayerAltarInteractor : MonoBehaviour
             {
                 currentAltar.Execute(transform);
                 currentAltar.isUsed = true;
-                StageFlowManager.instance.SetStateToAltar();
                 ResetGaugeState();
             }
         }
