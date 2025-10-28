@@ -56,5 +56,14 @@ public class AltarUIManager : MonoBehaviour
 
         // UI 갱신
         RefreshSkillButtons();
+
+        // 1회용으로 쓰고싶다면 해당 부분 유지
+        CloseAltarUI();
+    }
+
+    public void CloseAltarUI()
+    {
+        OnAltarEvent.Invoke();
+        gameObject.SetActive(false);
     }
 }
