@@ -121,11 +121,9 @@ public class TempSkillManager : MonoBehaviour, ISkill
         // 1. 스킬 이벤트인지 확인
         if (data.isSkillUpgrade)
         {
-            // 자신에 대한 스킬 이벤트가 아니라면 얼리 리턴
             if (!string.Equals(data.skillName, skillName, StringComparison.OrdinalIgnoreCase))
                 return;
 
-            // 만약 자신에 대한 스킬 이벤트라면 레벨 증가
             currentLevel++;
         }
 
@@ -134,19 +132,18 @@ public class TempSkillManager : MonoBehaviour, ISkill
             return;
 
         // 3. statValues 갱신
-        // 해당 부분이 1)
-        statValues[key] *= 1f + data.upgradeRatio;
+        // 주석 처리: 쿨다운 값이 0으로 초기화되는 문제 방지
+        // statValues[key] *= 1f + data.upgradeRatio;
 
         // 4. current 변수 갱신
-        // 해당 부분이 2)
         if (key == SkillStatKey.Damage)
             currentDamage = statValues[key];
         else if (key == SkillStatKey.Cooldown)
-            currentCooldown = statValues[key];
+            currentCooldown = statValues[key]; // 현재 값 그대로 유지
 
-        // 5. 디버그 로그
         Debug.Log($"[UpgradeEvent] {gameObject.name}: {key} +{data.upgradeRatio:P1} -> {statValues[key]:F2}");
     }
+
 
     public void ResetSkill()
     {

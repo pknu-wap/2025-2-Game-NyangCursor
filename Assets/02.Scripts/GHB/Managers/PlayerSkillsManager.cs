@@ -30,6 +30,8 @@ public class PlayerSkillsManager : MonoBehaviour
     {
         foreach (var slot in skillSlots)
         {
+            // 모든 스킬들에 대해 SO 값으로 클래스 값 여기에서 갱신
+            slot.skillName = slot.linkedUpgradeSO.optionName;
             if (slot.skillManagerObject != null)
             {
                 var tempMgr = slot.skillManagerObject.GetComponent<ISkill>();

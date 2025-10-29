@@ -17,8 +17,6 @@ public class UpgradeManager : MonoBehaviour
     [Header("플레이어 스킬 관리자")]
     [SerializeField] private PlayerSkillsManager playerSkillsManager;
 
-    private List<UpgradeOptionSO> currentSelection = new();
-
     public static event Action<UpgradeEventData> OnUpgradeSelected;
 
     private void OnEnable()
@@ -28,7 +26,6 @@ public class UpgradeManager : MonoBehaviour
 
     private void GenerateRandomOptions()
     {
-        currentSelection.Clear();
 
         if (upgradePool.Count < 4)
         {
@@ -53,7 +50,6 @@ public class UpgradeManager : MonoBehaviour
             int index = UnityEngine.Random.Range(0, tempPool.Count);
             UpgradeOptionSO chosen = tempPool[index];
             tempPool.RemoveAt(index);
-            currentSelection.Add(chosen);
             SetupSlot(slotPrefabObjects[i], chosen);
         }
     }

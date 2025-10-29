@@ -17,11 +17,25 @@ public class StageFlowManager : MonoBehaviour
 
     public static event Action<StageState> OnStageStateChanged;
 
+    public static StageFlowManager instance;
+
+    void Awake()
+    {
+        if (null == instance)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void Start()
     {
         // 업그레이드 매니저 선택 이벤트 구독
         UpgradeManager.OnUpgradeSelected += SelectedandSetStateToPlay;
-        AltarUIManager.OnAltarEvent += SetStateToPlay;
+        SkillRemoveAltarUIManager.OnAltarEvent += SetStateToPlay;
         // 시작은 플레이
         SetState(StageState.Play);
     }
@@ -30,7 +44,7 @@ public class StageFlowManager : MonoBehaviour
     void OnDestroy()
     {
         UpgradeManager.OnUpgradeSelected -= SelectedandSetStateToPlay;
-        AltarUIManager.OnAltarEvent -= SetStateToPlay;
+        SkillRemoveAltarUIManager.OnAltarEvent -= SetStateToPlay;
     }
 
     // 임시 ESC 토글 일시정지
@@ -59,18 +73,6 @@ public class StageFlowManager : MonoBehaviour
                 SetStateToPlay();
             }
         }
-        // 임시 제단 단축키
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            if (CurrentState == StageState.Play)
-            {
-                SetStateToAltar();
-            }
-            else if (CurrentState == StageState.Altar)
-            {
-                SetStateToPlay();
-            }
-        }
         if (Input.GetKeyDown(KeyCode.O))
         {
             GoToLobby();
@@ -84,6 +86,7 @@ public class StageFlowManager : MonoBehaviour
         CurrentState = newState;
         // 전역 이벤트로 알림 (UIManager, EnemySpawner 등에서 구독 가능)
         OnStageStateChanged?.Invoke(CurrentState);
+        Debug.Log(CurrentState);
     }
 
     // 버튼 참조용
