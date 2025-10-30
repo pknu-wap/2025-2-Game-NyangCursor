@@ -1,12 +1,19 @@
+using System;
 using UnityEngine;
 
 public class BulletColliderManager : MonoBehaviour
 {
     [Header("총알 데미지 설정")]
     [SerializeField] private float damage = 10f;
+    [Header("총알 유지시간")]
     [SerializeField] private float lifeTime = 3f; // 일정 시간 후 자동 제거
+    [Header("적 레이어 지정")]
     [SerializeField] private LayerMask targetLayer; // 적 Layer 지정
+    [Header("총알을 맞췄을 때 게이지 증가량")]
+    [SerializeField] private float gaugeIncreaseAmount = 10f;
 
+
+    public static event Action<float> OnBulletHit;
     private void OnEnable()
     {
         // 총알이 활성화될 때 수명 타이머 시작
@@ -30,7 +37,8 @@ public class BulletColliderManager : MonoBehaviour
         if (damageable != null && !damageable.IsDead)
         {
             damageable.TakeDamage(damage);
-            Debug.Log($"{collision.name} 에게 {damage} 데미지를 줌");
+            OnBulletHit?.Invoke(gaugeIncreaseAmount);
+            Debug.Log($"{collision.name} 에게 {damage} 데미지를 줌, trigger");
         }
 
         // 맞추면 풀로 반환
@@ -47,7 +55,8 @@ public class BulletColliderManager : MonoBehaviour
         if (damageable != null && !damageable.IsDead)
         {
             damageable.TakeDamage(damage);
-            Debug.Log($"{collision.gameObject.name} 에게 {damage} 데미지를 줌");
+            OnBulletHit?.Invoke(gaugeIncreaseAmount); // 이벤트 호출
+            Debug.Log($"{collision.gameObject.name} 에게 {damage} 데미지를 줌, collider");
         }
 
         DespawnSelf();
