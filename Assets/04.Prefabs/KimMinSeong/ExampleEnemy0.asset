@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: ExampleEnemy0
   icon: {fileID: 0}
   exp: 1
-  maxHP: 10
+  maxHP: 20
   moveSpeed: 2
   attackDamage: 2
   attackRate: 0.5
