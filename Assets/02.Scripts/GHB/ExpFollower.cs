@@ -5,6 +5,16 @@ public class ExpFollower : MonoBehaviour
     private Transform target;
     private float speed;
 
+    void OnEnable()
+    {
+        ExpAltar.expAltarEvent += SetTarget;
+    }
+
+    void OnDisable()
+    {
+        ExpAltar.expAltarEvent -= SetTarget;
+    }
+
     public void SetTarget(Transform player, float moveSpeed)
     {
         target = player;
