@@ -247,8 +247,7 @@ public class TempSkillManager : MonoBehaviour, ISkill
     public bool IsSkillAllowed()
     {
         var state = PlayerStateLogic.Instance.CurrentState;
-        return state == PlayerStateLogic.PlayerState.Riding ||
-               state == PlayerStateLogic.PlayerState.OverDrive ||
+        return state == PlayerStateLogic.PlayerState.OverDrive ||
                state == PlayerStateLogic.PlayerState.Berserk;
     }
 }
