@@ -2,53 +2,44 @@ using UnityEngine;
 
 public class PlayerAltarInteractor : MonoBehaviour
 {
-    [SerializeField] private KeyCode interactKey = KeyCode.E;
-
     private AltarBase currentAltar;
     private float holdTimer = 0f;
-    private bool isHolding = false; // 게이지 진행 중인지
+    private bool isCharging = false;
 
     private void Update()
     {
+        // 제단이 없거나 이미 사용된 경우 초기화
         if (currentAltar == null || !currentAltar.IsPlayerInside || currentAltar.isUsed)
         {
             ResetGaugeState();
             return;
         }
 
-        // 키 눌러서 게이지 시작
-        if (Input.GetKeyDown(interactKey))
+        // 범위 안에 있을 때 자동 진행
+        if (!isCharging)
         {
-            isHolding = true;
+            isCharging = true;
             holdTimer = 0f;
             currentAltar.ShowGauge();
         }
 
-        // 키 누르고 있는 동안 게이지 증가
-        if (isHolding && Input.GetKey(interactKey))
-        {
-            holdTimer += Time.deltaTime;
-            float progress = Mathf.Clamp01(holdTimer / currentAltar.RequiredHoldTime);
-            currentAltar.UpdateGauge(progress);
+        // 게이지 자동 증가
+        holdTimer += Time.deltaTime;
+        float progress = Mathf.Clamp01(holdTimer / currentAltar.RequiredHoldTime);
+        currentAltar.UpdateGauge(progress);
 
-            if (progress >= 1f)
-            {
-                currentAltar.Execute(transform);
-                currentAltar.isUsed = true;
-                ResetGaugeState();
-            }
-        }
-
-        // 키 뗐을 때 초기화
-        if (Input.GetKeyUp(interactKey))
+        // 완료 시 실행
+        if (progress >= 1f)
         {
+            currentAltar.Execute(transform);
+            currentAltar.isUsed = true;
             ResetGaugeState();
         }
     }
 
     private void ResetGaugeState()
     {
-        isHolding = false;
+        isCharging = false;
         holdTimer = 0f;
         if (currentAltar != null)
             currentAltar.HideGauge();

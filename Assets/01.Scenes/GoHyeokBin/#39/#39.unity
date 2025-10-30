@@ -329,7 +329,7 @@ GameObject:
   - component: {fileID: 64573226}
   - component: {fileID: 64573225}
   m_Layer: 0
-  m_Name: Circle
+  m_Name: TempExp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3031,7 +3031,7 @@ Transform:
   m_GameObject: {fileID: 937997318}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.67, y: -0.58089536, z: 0}
+  m_LocalPosition: {x: -4.26, y: -0.58089536, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -47263,7 +47263,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9830261933e03bf4ea5d7017838b1554, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactKey: 101
 --- !u!1 &1983897940
 GameObject:
   m_ObjectHideFlags: 0

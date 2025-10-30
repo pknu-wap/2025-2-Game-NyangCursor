@@ -71,12 +71,6 @@ public abstract class AltarBase : MonoBehaviour
             gaugeFill.fillAmount = progress;
     }
 
-    public void ResetGauge()
-    {
-        if (gaugeFill != null)
-            gaugeFill.fillAmount = 0f;
-    }
-
     // 제단별 기능 구현
     public abstract void Execute(Transform player);
 }
