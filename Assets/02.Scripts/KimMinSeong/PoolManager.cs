@@ -88,7 +88,9 @@ public class PoolManager : MonoBehaviour
             instance.transform.position = spawnPosition;
             instance.SetActive(true); // 해당 instance 를 활성화
 
-            instanceDict.Add(instance, prefab); // 역추적을 위해 instance 가 어떤 Prefab 에서 왔는지 기록
+            // 역추적을 위해 instance 가 어떤 Prefab 에서 왔는지 기록
+            // TryAdd 를 사용하여 이미 캐싱되어 있다면 추가하지 않음
+            instanceDict.TryAdd(instance, prefab);
             return instance;
         }
         else
@@ -106,7 +108,6 @@ public class PoolManager : MonoBehaviour
         {
             instance.SetActive(false);
             pools[prefab].Push(instance);
-            instanceDict.Remove(instance);
         }
         // 없다면 에러 출력 후 해당 인스턴스를 파괴
         else
