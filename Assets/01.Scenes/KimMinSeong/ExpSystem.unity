@@ -1567,6 +1567,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialPrefabs:
   - {fileID: 1146727613942615151, guid: dbe13d43ab80f134d83301055740344e, type: 3}
+  - {fileID: 5897547034953215948, guid: f90405bd017e75f4399db0b66120d4d1, type: 3}
   initialPoolSize: 10
   maxPoolSize: 100
 --- !u!1 &755937675

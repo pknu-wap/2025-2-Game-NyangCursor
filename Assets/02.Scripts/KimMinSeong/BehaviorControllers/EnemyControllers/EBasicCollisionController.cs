@@ -8,7 +8,7 @@ public class EBasicCollisionController : MonoBehaviour, ICollidable
     [SerializeField] private LayerMask damageableLayer;
 
     // 내부적으로 사용하는 변수
-    private Component owner;
+    private Enemy owner;
     private float lastDamageTime;
 
     public void Initialize(Component owner)
@@ -20,7 +20,7 @@ public class EBasicCollisionController : MonoBehaviour, ICollidable
             return;
         }
 
-        this.owner = owner;
+        this.owner = enemy;
         lastDamageTime = -damageCoolTime; // 시작 시 즉시 데미지 가능
     }
 

@@ -45,7 +45,7 @@ public interface ICollidable
 // 드랍 처리 인터페이스
 public interface IDroppable
 {
-    void Initialize();
+    void Initialize(Component owner);
     void Drop();
     void Cleanup();
 }

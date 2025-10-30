@@ -37,7 +37,7 @@ public class Enemy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        moveable?.TargetInterface?.UpdateMovement(Time.fixedDeltaTime);
+        Moveable.UpdateMovement(Time.fixedDeltaTime);
     }
 
     private void InitializeComponents()
@@ -47,6 +47,7 @@ public class Enemy : MonoBehaviour
         TryInvokeMethod(moveable, "Initialize", "Moveable");
         TryInvokeMethod(attackable, "Initialize", "Attackable");
         TryInvokeMethod(collidable, "Initialize", "Collidable");
+        TryInvokeMethod(droppable, "Initialize", "IDroppable");
     }
 
     private void CleanupComponents()
@@ -56,6 +57,7 @@ public class Enemy : MonoBehaviour
         TryInvokeMethod(moveable, "Cleanup");
         TryInvokeMethod(attackable, "Cleanup");
         TryInvokeMethod(collidable, "Cleanup");
+        TryInvokeMethod(droppable, "Cleanup");
     }
 
     private void SubscribeEvents()
