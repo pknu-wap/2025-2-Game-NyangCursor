@@ -14,6 +14,87 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/01.Scenes/GoHyeokBin/StageManagerMakeScene.unity
     guid: 34432cefb2513d14280a63fea5200af4
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_aoe.unity
+    guid: 283b05eea9ead0544aa1e37cdbf0fb58
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_aura.unity
+    guid: 27f678a331798d34887cc39800f31171
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_aura2.unity
+    guid: b26d377b60afd7a4a8c9b54ba50b5460
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_auracast.unity
+    guid: 6adf3abefdccfb14588f734a89f3a273
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_charge.unity
+    guid: df3f445d429f4694dad011a48a1e8740
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_beams.unity
+    guid: 0bc746c23ebc23f468cf026e404c8b09
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_curse.unity
+    guid: 69189110af505614a9e7d4d513486d2c
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_walls.unity
+    guid: 58f8db9124cc886449cfbcd267b324b1
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_beamblast.unity
+    guid: 98d65673d247c664198a78c7de92e8c4
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_orbitsphere.unity
+    guid: 57e4dfb67235ceb4cb5b2e0ada95f3ef
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_slash.unity
+    guid: 52be665b31be8bd43b7b167e1705ba19
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_sphereblast.unity
+    guid: 0d8da5f75a021ea428cb91c298ac7eee
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_sprays.unity
+    guid: 73f30dfb7f2bd764caed3119a48a505a
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_dot.unity
+    guid: e7c8f94e6c31e934cb09da5c98b727cc
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_enchant.unity
+    guid: 0c900609b41d1364abae8a160b34c3f0
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_projectiles.unity
+    guid: 4d6f7df301810bd4b87d7ad934d35fbc
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_shields.unity
+    guid: 502bc141da8b3ea4da84b810979194fc
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_rain.unity
+    guid: 6a65a27c1beca9b40a6d4b83bf2cd4db
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_pillarblast.unity
+    guid: b6d68d11f335cec41ac5052ee943ef3b
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_flame.unity
+    guid: 732f4ee1f533ddc48b952332d17110c2
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_meshglow.unity
+    guid: 9f87ba6aaa0e379439fd1ba7154ad6b3
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_nova.unity
+    guid: 099cc41521cb6574388ca6d131b7cafb
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_modular.unity
+    guid: aea57987c632a0a4693d39bc0687de3d
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_domes.unity
+    guid: 86e32af37f1e5cf4f82353613901b838
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_aura3.unity
+    guid: 6b8f8461463206641bd638dfdc3a8232
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_cleave.unity
+    guid: e08a222b2cbace24c9fae6c7cd048fce
+  - enabled: 1
+    path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_auracast2.unity
+    guid: cd49926deebe1714689a983452e127bf
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
