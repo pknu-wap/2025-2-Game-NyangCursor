@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PlayerStateLogic : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class PlayerStateLogic : MonoBehaviour
      Die //죽음
     }
 
+    public event Action<PlayerState> OnStateChanged;
     public PlayerState CurrentState = PlayerState.Normal;
 
     private void Awake()
@@ -33,7 +35,7 @@ public class PlayerStateLogic : MonoBehaviour
 
             // 상태 변경
         CurrentState = newState;
-
+        OnStateChanged?.Invoke(newState);
         Debug.Log($"[PlayerStateLogic] 상태 변경: {newState}");
     }
 }
