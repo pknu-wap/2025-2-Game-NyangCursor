@@ -28,8 +28,15 @@ public class PlayerShotManager : MonoBehaviour
         UpdateAmmoUI();
     }
 
+    private bool IsAbleToShoot()
+    {
+        return PlayerStateLogic.Instance.CurrentState == PlayerStateLogic.PlayerState.Normal;
+    }
+
     private void Update()
     {
+        // 노말 모드 아니면 총 쏠수 없게
+        if (!IsAbleToShoot()) return;
         if (isReloading) return;
 
         // 발사 입력
@@ -66,9 +73,9 @@ public class PlayerShotManager : MonoBehaviour
             return;
         }
 
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        // PoolManager에서 가져오기
+        GameObject bullet = PoolManager.instance.Spawn(bulletPrefab, firePoint.position);
 
-        // 커서 방향 계산
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mousePos - firePoint.position).normalized;
 
@@ -76,6 +83,7 @@ public class PlayerShotManager : MonoBehaviour
         if (rb != null)
             rb.linearVelocity = direction * bulletSpeed;
     }
+
 
     private IEnumerator FireCooldownRoutine()
     {
@@ -108,7 +116,9 @@ public class PlayerShotManager : MonoBehaviour
     {
         for (int i = 0; i < ammoImages.Count; i++)
         {
-            ammoImages[i].enabled = i < currentAmmo;
+            int reversedIndex = ammoImages.Count - 1 - i;
+            ammoImages[reversedIndex].enabled = i < currentAmmo;
         }
     }
+
 }
