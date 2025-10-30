@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private InterfaceReference<IMoveable> moveable;
     [SerializeField] private InterfaceReference<IAttackable> attackable;
     [SerializeField] private InterfaceReference<ICollidable> collidable;
+    [SerializeField] private InterfaceReference<IDroppable> droppable;
 
 
     // 외부에서 인터페이스 메서드를 쉽게 접근할 수 있도록 하기 위한 프로퍼티들
@@ -20,15 +21,23 @@ public class Enemy : MonoBehaviour
     public IMoveable Moveable => moveable?.TargetInterface;
     public IAttackable Attackable => attackable?.TargetInterface;
     public ICollidable Collidable => collidable?.TargetInterface;
-
-    private void Awake()
-    {
-        InitializeComponents();
-    }
+    public IDroppable Droppable => droppable?.TargetInterface;
 
     private void OnEnable()
     {
+        SubscribeEvents();
         InitializeComponents();
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeEvents();
+        CleanupComponents();
+    }
+
+    private void FixedUpdate()
+    {
+        moveable?.TargetInterface?.UpdateMovement(Time.fixedDeltaTime);
     }
 
     private void InitializeComponents()
@@ -40,18 +49,39 @@ public class Enemy : MonoBehaviour
         TryInvokeMethod(collidable, "Initialize", "Collidable");
     }
 
-    private void FixedUpdate()
-    {
-        moveable?.TargetInterface?.UpdateMovement(Time.fixedDeltaTime);
-    }
-
-    private void OnDestroy()
+    private void CleanupComponents()
     {
         // 정리 작업
         TryInvokeMethod(damageable, "Cleanup");
         TryInvokeMethod(moveable, "Cleanup");
         TryInvokeMethod(attackable, "Cleanup");
         TryInvokeMethod(collidable, "Cleanup");
+    }
+
+    private void SubscribeEvents()
+    {
+        if (Damageable != null)
+        {
+            Damageable.OnDeath += HandleDeath;
+        }
+    }
+
+    private void UnsubscribeEvents()
+    {
+        if (Damageable != null)
+        {
+            Damageable.OnDeath -= HandleDeath;
+        }
+    }
+
+    // 적 사망 이벤트 핸들러
+    private void HandleDeath()
+    {
+        // 드랍 처리
+        Droppable?.Drop();
+
+        // PoolManager를 통한 오브젝트 반환
+        PoolManager.instance.Despawn(this.gameObject);
     }
 
     // 유효한 인터페이스 참조 변수에 대해서 주어진 인터페이스 메서드를 실행하는 함수
