@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerHpController : MonoBehaviour, IDamageable
@@ -11,6 +12,8 @@ public class PlayerHpController : MonoBehaviour, IDamageable
     public float CurrentHp => currentHp;
     public float MaxHp => maxHp;
     public bool IsDead => isDead;
+
+    public event Action OnDeath;
 
     public void Initialize(Component owner)
     {

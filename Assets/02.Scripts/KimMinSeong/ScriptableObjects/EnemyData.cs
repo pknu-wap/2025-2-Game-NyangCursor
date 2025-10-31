@@ -13,10 +13,6 @@ public class EnemyData : ScriptableObject
     [Tooltip("적 아이콘")]
     public Sprite icon;
 
-    [Space(5)]
-    [Tooltip("처치 시 드롭되는 경험치량")]
-    public int exp = 1;
-
     [Header("=== 개별 데이터 ===")]
 
     [Space(5)]

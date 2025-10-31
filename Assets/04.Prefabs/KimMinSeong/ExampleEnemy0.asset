@@ -17,5 +17,5 @@ MonoBehaviour:
   exp: 1
   maxHP: 20
   moveSpeed: 2
-  attackDamage: 2
+  attackDamage: 0
   attackRate: 0.5
