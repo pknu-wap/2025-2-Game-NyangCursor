@@ -1,4 +1,5 @@
 
+using System;
 using UnityEngine;
 
 public class EBasicHpController : MonoBehaviour, IDamageable
@@ -12,6 +13,8 @@ public class EBasicHpController : MonoBehaviour, IDamageable
     public float CurrentHp => currentHp;
     public float MaxHp => maxHp;
     public bool IsDead => isDead;
+
+    public event Action OnDeath;
 
     public void Initialize(Component owner)
     {
@@ -53,14 +56,10 @@ public class EBasicHpController : MonoBehaviour, IDamageable
             return;
 
         isDead = true;
-        // 사망 처리 로직 추가 가능
-        // 예: 사망 애니메이션 재생
-        // 예: 아이템 드랍
 
-        Debug.Log("Die 호출 테스트");
-
-        // PoolManager를 통한 오브젝트 반환
-        PoolManager.instance.Despawn(owner.gameObject);
+        // 여기에 사망 처리 로직 추가 가능 (ex. 아이템, 경험치 드랍, 애니메이션 재생 등)
+        // 죽었을때 이벤트 발행
+        OnDeath?.Invoke();
     }
 
     public void Cleanup()

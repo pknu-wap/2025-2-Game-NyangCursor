@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 // 데미지 처리 인터페이스
 public interface IDamageable
@@ -10,6 +11,7 @@ public interface IDamageable
     float CurrentHp { get; }
     float MaxHp { get; }
     bool IsDead { get; }
+    event Action OnDeath;
 }
 
 // 이동 처리 인터페이스
@@ -37,5 +39,13 @@ public interface ICollidable
     void Initialize(Component owner);
     void OnCollisionDetected(Collision2D collision);
     void OnTriggerDetected(Collider2D collider);
+    void Cleanup();
+}
+
+// 드랍 처리 인터페이스
+public interface IDroppable
+{
+    void Initialize(Component owner);
+    void Drop();
     void Cleanup();
 }
