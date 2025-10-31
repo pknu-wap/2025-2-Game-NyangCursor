@@ -113,7 +113,7 @@ public class PoolManager : MonoBehaviour
         else
         {
             Debug.Log("풀링되지 않은 Instance 를 반납 시도하였습니다");
-            Destroy(instance);
+            //Destroy(instance);
             return;
         }
     }
