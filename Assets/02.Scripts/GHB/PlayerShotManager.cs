@@ -7,7 +7,8 @@ public class PlayerShotManager : MonoBehaviour
 {
     [Header("Bullet Settings")]
     [SerializeField] private GameObject bulletPrefab;
-    [SerializeField] private Transform firePoint; // 총알 발사 위치
+    [SerializeField] private GameObject firePoint; // 총알 발사 위치
+    private CursorMove cursorMove;
     [SerializeField] private float bulletSpeed = 10f;
 
     [Header("Ammo Settings")]
@@ -24,6 +25,8 @@ public class PlayerShotManager : MonoBehaviour
 
     private void Start()
     {
+        // 캐싱
+        cursorMove = firePoint.GetComponent<CursorMove>();
         currentAmmo = maxAmmo;
         UpdateAmmoUI();
     }
@@ -74,14 +77,20 @@ public class PlayerShotManager : MonoBehaviour
         }
 
         // PoolManager에서 가져오기
-        GameObject bullet = PoolManager.instance.Spawn(bulletPrefab, firePoint.position);
+        GameObject bullet = PoolManager.instance.Spawn(bulletPrefab, firePoint.transform.position);
 
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (mousePos - firePoint.position).normalized;
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = Mathf.Abs(Camera.main.transform.position.z); // 카메라에서 월드로의 거리 지정
+        Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
+
+        Vector2 direction = (worldMousePos - firePoint.transform.position).normalized;
+
 
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         if (rb != null)
             rb.linearVelocity = direction * bulletSpeed;
+        
+        cursorMove.RotateTowardDirection(direction);
     }
 
 

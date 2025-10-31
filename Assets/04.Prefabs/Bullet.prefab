@@ -115,7 +115,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!114 &8861292990773757813
 MonoBehaviour:
@@ -134,6 +134,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 128
+  gaugeIncreaseAmount: 10
 --- !u!58 &-7950146420773891291
 CircleCollider2D:
   m_ObjectHideFlags: 0
