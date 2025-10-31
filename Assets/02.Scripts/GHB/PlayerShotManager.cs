@@ -76,8 +76,12 @@ public class PlayerShotManager : MonoBehaviour
         // PoolManager에서 가져오기
         GameObject bullet = PoolManager.instance.Spawn(bulletPrefab, firePoint.position);
 
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (mousePos - firePoint.position).normalized;
+        Vector3 mousePos = Input.mousePosition;
+        mousePos.z = Mathf.Abs(Camera.main.transform.position.z); // 카메라에서 월드로의 거리 지정
+        Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
+
+        Vector2 direction = (worldMousePos - firePoint.position).normalized;
+
 
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         if (rb != null)
