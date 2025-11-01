@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
 
@@ -34,7 +34,8 @@ public class StageFlowManager : MonoBehaviour
     void Start()
     {
         // 업그레이드 매니저 선택 이벤트 구독
-        UpgradeManager.OnUpgradeSelected += SelectedandSetStateToPlay;
+        //UpgradeManager.OnUpgradeSelected += SelectedandSetStateToPlay;
+        UpgradeManager1.OnUpgradeSelected1 += SelectedandSetStateToPlay; //신규
         SkillRemoveAltarUIManager.OnAltarEvent += SetStateToPlay;
         // 시작은 플레이
         SetState(StageState.Play);
@@ -43,7 +44,8 @@ public class StageFlowManager : MonoBehaviour
 
     void OnDestroy()
     {
-        UpgradeManager.OnUpgradeSelected -= SelectedandSetStateToPlay;
+        //UpgradeManager.OnUpgradeSelected -= SelectedandSetStateToPlay;
+        UpgradeManager1.OnUpgradeSelected1 -= SelectedandSetStateToPlay; //신규
         SkillRemoveAltarUIManager.OnAltarEvent -= SetStateToPlay;
     }
 

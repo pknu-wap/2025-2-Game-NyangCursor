@@ -4,9 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
-using System.Data.Common;
 
-public class UpgradeManager : MonoBehaviour
+public class UpgradeManager1 : MonoBehaviour
 {
     [Header("업그레이드 슬롯 4개")]
     [SerializeField] private List<UpgradeSlotUI> slotPrefabObjects = new();
@@ -17,7 +16,7 @@ public class UpgradeManager : MonoBehaviour
     [Header("플레이어 스킬 관리자")]
     [SerializeField] private PlayerSkillsManager playerSkillsManager;
 
-    public static event Action<UpgradeEventData> OnUpgradeSelected;
+    public static event Action<UpgradeEventData> OnUpgradeSelected1;
 
     private void OnEnable()
     {
@@ -26,7 +25,6 @@ public class UpgradeManager : MonoBehaviour
 
     private void GenerateRandomOptions()
     {
-
         if (upgradePool.Count < 4)
         {
             Debug.LogWarning("풀에 아이템이 4개 미만입니다!");
@@ -35,7 +33,7 @@ public class UpgradeManager : MonoBehaviour
 
         List<UpgradeOptionSO> tempPool = new(upgradePool);
 
-        // 해금된 스킬이 4개 이상이면 새로운 스킬은 제외하고, 기존 스킬의 업그레이드만 표시됨
+        // 해금된 스킬이 4개 이상이면 새로운 스킬 제외
         if (playerSkillsManager.UnlockedSkills.Count >= 4)
         {
             tempPool.RemoveAll(x => x.isSkill &&
@@ -54,19 +52,18 @@ public class UpgradeManager : MonoBehaviour
         }
     }
 
-
-    private void SetupSlot(UpgradeSlotUI slotPrefab, UpgradeOptionSO data)
+    private void SetupSlot(UpgradeSlotUI slotUI, UpgradeOptionSO data)
     {
-        if (slotPrefab.slotObj == null || data == null) return;
+        if (slotUI.slotObj == null || data == null) return;
 
-        TMP_Text text = slotPrefab.slotObj.GetComponentInChildren<TMP_Text>();
-        Button button = slotPrefab.slotObj.GetComponentInChildren<Button>();
+        // 버튼은 자식에서 찾기 (기존 방식 유지)
+        Button button = slotUI.slotObj.GetComponentInChildren<Button>();
 
+        // 강화 수치 계산
         float ratio = UnityEngine.Random.Range(data.minUpgradeRatio, data.maxUpgradeRatio);
         string percentText = $"{ratio * 100f:F1}%";
 
         SkillStatKey chosenStatKey = data.affectedStat;
-
         bool isUnlocked = true;
 
         if (data.isSkill)
@@ -82,60 +79,57 @@ public class UpgradeManager : MonoBehaviour
             }
         }
 
-        // 아이콘 배치
-        if (data.icon != null && slotPrefab.icon != null)
+        // 아이콘 설정
+        if (data.icon != null && slotUI.icon != null)
         {
-            slotPrefab.icon.sprite = data.icon;
+            slotUI.icon.sprite = data.icon;
         }
 
-        // 배경색 설정(임시로 스킬은 하늘색, 비전서는 보라색)
-//if (slotPrefab.background != null)
-    //    {
-           // if (data.isSkill)
-              //  slotPrefab.background.color = new Color(0.53f, 0.81f, 0.98f); // 하늘색
-           // else
-             //   slotPrefab.background.color = new Color(0.6f, 0.4f, 0.8f); // 보라색
-       // }
-
-
-        // UI 텍스트
-        if (text != null)
+        // 이름 텍스트 설정
+        if (slotUI.skillnameText != null)
         {
-            string typeText = data.isSkill ? "[스킬]" : "[비전서]";
-            string statText = chosenStatKey.ToString();
-            string levelText = "";
+            string extension = data.isSkill ? ".exe" : ".dll";
+            string displayName = $"[{data.optionName}{extension}]";
+            slotUI.skillnameText.text = displayName;
+        }
 
-            // 스킬인 경우 레벨 정보 표시
+        // 레벨 텍스트 설정
+        if (slotUI.levelText != null)
+        {
             if (data.isSkill)
             {
                 ISkill skillMgr = GetSkillManager(data.optionName);
                 if (skillMgr != null && isUnlocked)
                 {
-                    int currentLv = skillMgr.CurrentLevel;
-                    levelText = $"\n<size=60%>{currentLv}Lv → {currentLv + 1}Lv</size>";
+                    slotUI.levelText.text = $"{skillMgr.CurrentLevel}Lv";
                 }
-            }
-
-            if (data.isSkill && !isUnlocked)
-            {
-                text.text = $"{typeText} {data.optionName}\n<size=80%>해금되지 않은 스킬입니다.\n클릭 시 스킬 해금</size>";
+                else
+                {
+                    slotUI.levelText.text = "Locked";
+                }
             }
             else
             {
-                text.text = $"{typeText} {data.optionName}{levelText}<size=80%>{data.description}\n({statText} +{percentText})</size>";
+                slotUI.levelText.text = "-";
             }
         }
 
+        // 스탯 텍스트 설정
+        if (slotUI.statText != null)
+        {
+            string statKeyText = chosenStatKey.ToString();
+            slotUI.statText.text = $"{statKeyText} +{percentText}";
+        }
 
-        // 버튼 동작
+        // 버튼 클릭 이벤트
         if (button != null)
         {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() =>
             {
                 var eventData = CreateUpgradeEvent(data, chosenStatKey, ratio, isUnlocked);
-                Debug.Log($"선택됨: {data.optionName}");
-                OnUpgradeSelected?.Invoke(eventData);
+                Debug.Log($"[Upgrade] 선택됨: {data.optionName}");
+                OnUpgradeSelected1?.Invoke(eventData);
             });
         }
     }
