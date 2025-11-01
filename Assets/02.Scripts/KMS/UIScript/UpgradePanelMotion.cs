@@ -8,6 +8,9 @@ public class UpgradePanelMotion : MonoBehaviour
 
     private void OnEnable()
     {
+        animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+
+
         // 부모가 켜질 때 애니메이션 실행
         animator.SetTrigger("Show");
 

@@ -15,7 +15,9 @@ public class UpgradeSlotHighLight : MonoBehaviour, IPointerEnterHandler, IPointe
     private void OnEnable()
     {
         // 활성화될 때 Glow 초기화 + 짧은 대기
-        if (glowRoutine != null) StopCoroutine(glowRoutine);
+        if (glowRoutine != null)
+            StopCoroutine(glowRoutine);
+
         StartCoroutine(DisableHighlightForSeconds(0.2f));
     }
 
@@ -35,7 +37,9 @@ public class UpgradeSlotHighLight : MonoBehaviour, IPointerEnterHandler, IPointe
         if (material != null)
             material.SetFloat("_Glow", glowOffValue);
 
-        yield return new WaitForSeconds(delay);
+        // ✅ TimeScale이 0이어도 작동하도록 변경
+        yield return new WaitForSecondsRealtime(delay);
+
         canHighlight = true;
     }
 
@@ -43,6 +47,7 @@ public class UpgradeSlotHighLight : MonoBehaviour, IPointerEnterHandler, IPointe
     {
         if (!canHighlight) return;
         if (glowRoutine != null) StopCoroutine(glowRoutine);
+
         glowRoutine = StartCoroutine(LerpGlow(glowOnValue));
     }
 
@@ -50,6 +55,7 @@ public class UpgradeSlotHighLight : MonoBehaviour, IPointerEnterHandler, IPointe
     {
         if (!canHighlight) return;
         if (glowRoutine != null) StopCoroutine(glowRoutine);
+
         glowRoutine = StartCoroutine(LerpGlow(glowOffValue));
     }
 
@@ -58,9 +64,11 @@ public class UpgradeSlotHighLight : MonoBehaviour, IPointerEnterHandler, IPointe
         if (material == null) yield break;
 
         float current = material.GetFloat("_Glow");
+
         while (!Mathf.Approximately(current, targetGlow))
         {
-            current = Mathf.Lerp(current, targetGlow, Time.deltaTime * glowLerpSpeed);
+            // ✅ TimeScale 영향을 받지 않게 변경
+            current = Mathf.Lerp(current, targetGlow, Time.unscaledDeltaTime * glowLerpSpeed);
             material.SetFloat("_Glow", current);
             yield return null;
         }

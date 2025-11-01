@@ -86,9 +86,34 @@ public class StageFlowManager : MonoBehaviour
         if (CurrentState == newState) return;
 
         CurrentState = newState;
+
+        // 상태별 TimeScale 자동 제어
+        switch (CurrentState)
+        {
+            case StageState.Play:
+                Time.timeScale = 1f;
+                break;
+
+            case StageState.Augment:
+            case StageState.Pause:
+                Time.timeScale = 0f;
+                break;
+
+            case StageState.Altar:
+            case StageState.End:
+                // 필요시 따로 제어 가능 (기본은 1)
+                Time.timeScale = 1f;
+                break;
+
+            default:
+                Time.timeScale = 1f;
+                break;
+        }
+
         // 전역 이벤트로 알림 (UIManager, EnemySpawner 등에서 구독 가능)
         OnStageStateChanged?.Invoke(CurrentState);
-        Debug.Log(CurrentState);
+
+        Debug.Log($"[StageFlow] State Changed → {CurrentState}, TimeScale: {Time.timeScale}");
     }
 
     // 버튼 참조용

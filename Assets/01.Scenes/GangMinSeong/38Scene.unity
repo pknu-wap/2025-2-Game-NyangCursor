@@ -295,7 +295,7 @@ GameObject:
   - component: {fileID: 49964614}
   - component: {fileID: 49964615}
   m_Layer: 0
-  m_Name: shadow_0
+  m_Name: shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -259015,6 +259015,7 @@ GameObject:
   - component: {fileID: 1979479486}
   - component: {fileID: 1979479487}
   - component: {fileID: 1979479488}
+  - component: {fileID: 1979479489}
   m_Layer: 6
   m_Name: player
   m_TagString: Player
@@ -259435,6 +259436,19 @@ MonoBehaviour:
   normalStrength: 5
   normalSmoothing: 1
   computingNormal: 0
+--- !u!114 &1979479489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1979479469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed3da4ed56d2b2c4a8f9ed04397d6506, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shadow: {fileID: 49964613}
 --- !u!1 &1983897940
 GameObject:
   m_ObjectHideFlags: 0
