@@ -26,18 +26,17 @@ public class ExpManager : MonoBehaviour
     private void OnEnable()
     {
         ExpDropObject.OnExpCollected += AddExp;
+        UpgradeManager.OnUpgradeFinished += CompleteLevelUp;
     }
     private void OnDisable()
     {
         ExpDropObject.OnExpCollected -= AddExp;
+        UpgradeManager.OnUpgradeFinished -= CompleteLevelUp;
     }
 
     // 경험치를 먹었을 때 실행할 콜백 함수
     private void AddExp(int expAmount)
     {
-        // 디버그용
-        Debug.Log("경험치 업데이트!");
-
         // 현재 경험치량을 획득한 경험치량 + 보너스 증가량만큼 증가시킴
         currentExp += expAmount + Mathf.RoundToInt(expAmount * expGainBonus);
 
@@ -46,26 +45,28 @@ public class ExpManager : MonoBehaviour
 
         // 레벨업을 할 수 있다면 레벨업
         if (currentExp >= requiredExp)
-            LevelUp();
+            InitiateLevelUp();
     }
 
-    private void LevelUp()
+    // 레벨업의 첫 번째 과정으로 레벨 갱신 및 증강 페이즈 전환을 담당
+    private void InitiateLevelUp()
     {
-        // 디버그용
-        Debug.Log("레벨업!");
-
-        // 1. 레벨업 갱신 및 이벤트 발행
+        // 레벨업 갱신 및 이벤트 발행
         currentLevel += 1;
         OnLevelUp?.Invoke(currentLevel);
 
-        // 2. 증강 페이즈 전환
+        // 증강 페이즈 전환
         StageFlowManager.instance.SetStateToAugment();
+    }
 
-        // 3. 경험치 갱신
+    // 레벨업의 두 번째 과정으로 경험치 갱신을 담당
+    private void CompleteLevelUp()
+    {
+        // 경험치 갱신
         currentExp -= requiredExp;   // 리셋을 하되 이전 레벨에서 초과된 경험치는 반영되도록 설정
         requiredExp = CalculateRequiredExp();   // 필요 경험치량 갱신
 
-        // 4. 경험치 변경 이벤트 발행
+        // 경험치 변경 이벤트 발행
         OnExpChanged?.Invoke(currentExp, requiredExp, ExpRatio);    // UI 업데이트 등등의 작업을 하기 위해 이벤트 발행
     }
 

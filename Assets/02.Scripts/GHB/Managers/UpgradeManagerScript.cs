@@ -18,6 +18,7 @@ public class UpgradeManager : MonoBehaviour
     [SerializeField] private PlayerSkillsManager playerSkillsManager;
 
     public static event Action<UpgradeEventData> OnUpgradeSelected;
+    public static event Action OnUpgradeFinished;   // 증강 선택이 끝났을때 UI 업데이트를 위한 이벤트
 
     private void OnEnable()
     {
@@ -136,6 +137,7 @@ public class UpgradeManager : MonoBehaviour
                 var eventData = CreateUpgradeEvent(data, chosenStatKey, ratio, isUnlocked);
                 Debug.Log($"선택됨: {data.optionName}");
                 OnUpgradeSelected?.Invoke(eventData);
+                OnUpgradeFinished?.Invoke();
             });
         }
     }
