@@ -13,6 +13,7 @@ public enum SkillStatKey
     ProcChance,     // 상태이상 발동확률
     Speed,          // 투사체/이동 속도
     ManaCost,       // 소모 자원
+    ProjectileSize
     // 필요하면 여기에 추가
 }
 
