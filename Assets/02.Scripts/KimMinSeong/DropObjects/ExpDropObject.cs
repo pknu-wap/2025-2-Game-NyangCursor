@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class ExpDropObject : DropObject
@@ -5,13 +6,16 @@ public class ExpDropObject : DropObject
     [SerializeField] private int expAmount = 10;    // 경험치량
     [SerializeField] private LayerMask collectableLayer; // 충돌시 획득 가능한 레이어
 
+    public static event Action<int> OnExpCollected;    // 경험치를 먹었을 때 발행하는 이벤트
+
     // 이 오브젝트를 먹었을때 동작을 정의 
     public override void OnCollected()
     {
-        Debug.Log("경험치를 먹었습니다"); // 디버그용
-        
+        // 디버그용
+        Debug.Log("경험치를 먹었습니다");
+
         // 경험치량만큼 경험치 매니저에게 값을 전달
-        /* 구현 예정 */
+        OnExpCollected?.Invoke(expAmount);
 
         // 먹었다면 풀로 복귀
         PoolManager.instance.Despawn(this.gameObject);
