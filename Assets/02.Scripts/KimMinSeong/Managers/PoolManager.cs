@@ -21,7 +21,7 @@ public class PoolManager : MonoBehaviour
     void Awake()
     {
         // PoolManager 인스턴스, Dictionary 초기화
-        if (instance == null) 
+        if (instance == null)
             instance = this;
         else
         {

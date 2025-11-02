@@ -3,8 +3,7 @@ using UnityEngine;
 public class ExpFollower : MonoBehaviour
 {
     private Transform target;
-    private float speed;
-
+    private float speed = 10f;
     void OnEnable()
     {
         ExpAltar.expAltarEvent += SetTarget;
@@ -12,6 +11,7 @@ public class ExpFollower : MonoBehaviour
 
     void OnDisable()
     {
+        target = null;
         ExpAltar.expAltarEvent -= SetTarget;
     }
 
@@ -25,7 +25,6 @@ public class ExpFollower : MonoBehaviour
     {
         if (target == null) return;
 
-        // 플레이어를 향해 이동
         Vector3 dir = (target.position - transform.position).normalized;
         transform.position += dir * speed * Time.deltaTime;
     }
