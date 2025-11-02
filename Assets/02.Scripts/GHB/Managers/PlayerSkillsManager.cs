@@ -13,7 +13,9 @@ public enum SkillStatKey
     ProcChance,     // 상태이상 발동확률
     Speed,          // 투사체/이동 속도
     ManaCost,       // 소모 자원
-    ProjectileSize
+    ProjectileSize, // 발사체 크기
+    Interval,       // 순차형 스킬일 때, 각 단계 사이의 시간 간격
+    BlockCount,     // 블록 단위 스킬일 때, 총 블록의 개수
     // 필요하면 여기에 추가
 }
 
