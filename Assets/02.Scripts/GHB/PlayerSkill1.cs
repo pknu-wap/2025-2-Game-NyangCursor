@@ -10,6 +10,8 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
 
     public SkillType skillType;
 
+    [SerializeField] private Rigidbody2D playerRb;
+
     [Header("이 스킬이 사용하는 공용 스탯 키들")]
     [SerializeField] private List<SkillStatKey> usedStats = new List<SkillStatKey>();
 
@@ -318,13 +320,17 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
         int projectileCount = Mathf.Max(1, Mathf.RoundToInt(currentProjectileCount));
         float angleStep = 360f / projectileCount;
 
+        Vector2 moveDir = playerRb.linearVelocity.normalized;
+
+        // 🔹 이동 방향의 수직 벡터 (왼쪽 방향)
+        Vector2 perpendicular = new Vector2(-moveDir.y, moveDir.x);
+        float baseAngle = Mathf.Atan2(perpendicular.y, perpendicular.x) * Mathf.Rad2Deg;
         for (int i = 0; i < projectileCount; i++)
         {
             GameObject prefabToUse = GetProjectilePrefabForLevel();
             GameObject proj = Instantiate(prefabToUse, transform.position, Quaternion.identity);
 
-            float angle = i * angleStep;
-            // 2D XY 평면 방향
+            float angle = baseAngle + (i * angleStep);
             Vector2 dir = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
 
             if (proj.TryGetComponent<IProjectile>(out var projectile))
@@ -333,13 +339,13 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
                 projectile.SetDuration(currentDuration);
             }
 
-            // Rigidbody2D velocity 적용
             if (proj.TryGetComponent<Rigidbody2D>(out var rb2d))
             {
                 rb2d.linearVelocity = dir.normalized * currentSpeed;
             }
         }
     }
+
 
 
 
