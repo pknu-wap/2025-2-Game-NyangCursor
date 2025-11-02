@@ -90,13 +90,13 @@ public class UpgradeManager : MonoBehaviour
         }
 
         // 배경색 설정(임시로 스킬은 하늘색, 비전서는 보라색)
-        if (slotPrefab.background != null)
-        {
-            if (data.isSkill)
-                slotPrefab.background.color = new Color(0.53f, 0.81f, 0.98f); // 하늘색
-            else
-                slotPrefab.background.color = new Color(0.6f, 0.4f, 0.8f); // 보라색
-        }
+//if (slotPrefab.background != null)
+    //    {
+           // if (data.isSkill)
+              //  slotPrefab.background.color = new Color(0.53f, 0.81f, 0.98f); // 하늘색
+           // else
+             //   slotPrefab.background.color = new Color(0.6f, 0.4f, 0.8f); // 보라색
+       // }
 
 
         // UI 텍스트

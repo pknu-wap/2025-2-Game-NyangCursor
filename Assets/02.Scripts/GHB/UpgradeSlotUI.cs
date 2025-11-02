@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,7 +7,9 @@ using UnityEngine.UI;
 public class UpgradeSlotUI
 {
     public GameObject slotObj;
-    public Image background;
     public Image icon;
+    public TMP_Text skillnameText;
+    public TMP_Text statText;
+    public TMP_Text levelText;
 }
 

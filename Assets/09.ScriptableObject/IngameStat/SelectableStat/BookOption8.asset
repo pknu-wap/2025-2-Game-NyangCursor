@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BookOption8
   m_EditorClassIdentifier: 
   isSkill: 0
-  optionName: 
+  optionName: "\uB9C8\uB098 \uC18C\uBAA8 \uAC10\uC18C"
   affectedStat: 7
   icon: {fileID: 21300000, guid: 06cee3acc77d4044dae3d8ccb8c885b7, type: 3}
   minUpgradeRatio: 0.05

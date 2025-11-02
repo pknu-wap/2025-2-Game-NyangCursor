@@ -48,7 +48,8 @@ public class TempSkillManager : MonoBehaviour, ISkill
 
     private void OnEnable()
     {
-        UpgradeManager.OnUpgradeSelected += ApplyUpgrade;
+        //UpgradeManager.OnUpgradeSelected += ApplyUpgrade;
+        UpgradeManager1.OnUpgradeSelected1 += ApplyUpgrade; //신규
         PlayerStateLogic.Instance.OnStateChanged += HandleStateChanged;
 
         // 시작 시 현재 상태 확인
@@ -57,7 +58,8 @@ public class TempSkillManager : MonoBehaviour, ISkill
 
     private void OnDisable()
     {
-        UpgradeManager.OnUpgradeSelected -= ApplyUpgrade;
+        //UpgradeManager.OnUpgradeSelected -= ApplyUpgrade;
+        UpgradeManager1.OnUpgradeSelected1 -= ApplyUpgrade; //신규
         PlayerStateLogic.Instance.OnStateChanged -= HandleStateChanged;
     }
 

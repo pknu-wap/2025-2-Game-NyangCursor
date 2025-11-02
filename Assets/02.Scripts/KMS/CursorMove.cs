@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Unity.VisualScripting;
 
@@ -25,7 +25,7 @@ public class CursorMove : MonoBehaviour
     private void OnDestroy()
     {
         GaugeRidingLogic.OnRidingEvent -= HandleRidingMotion;
-        GaugeOverdriveLogic.OnGetOffEvent += HandleGetOffMotion;
+        GaugeOverdriveLogic.OnGetOffEvent -= HandleGetOffMotion;
     }
 
     void Update()
