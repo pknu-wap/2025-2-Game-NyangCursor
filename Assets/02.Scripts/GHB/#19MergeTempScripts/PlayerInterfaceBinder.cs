@@ -11,7 +11,7 @@ public class PlayerInterfaceBinder : MonoBehaviour
 
     private void Awake()
     {
-        damageable?.TargetInterface?.Initialize(this);
-        collidable?.TargetInterface?.Initialize(this);
+        Damageable.Initialize(this);
+        Collidable.Initialize(this);
     }
 }
