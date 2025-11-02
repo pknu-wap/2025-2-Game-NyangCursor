@@ -26,12 +26,12 @@ public class ExpManager : MonoBehaviour
     private void OnEnable()
     {
         ExpDropObject.OnExpCollected += AddExp;
-        UpgradeManager.OnUpgradeFinished += CompleteLevelUp;
+        UpgradeManager1.OnUpgradeFinished += CompleteLevelUp;
     }
     private void OnDisable()
     {
         ExpDropObject.OnExpCollected -= AddExp;
-        UpgradeManager.OnUpgradeFinished -= CompleteLevelUp;
+        UpgradeManager1.OnUpgradeFinished -= CompleteLevelUp;
     }
 
     // 경험치를 먹었을 때 실행할 콜백 함수
@@ -62,10 +62,10 @@ public class ExpManager : MonoBehaviour
     // 레벨업의 두 번째 과정으로 경험치 갱신을 담당
     private void CompleteLevelUp()
     {
+     
         // 경험치 갱신
         currentExp -= requiredExp;   // 리셋을 하되 이전 레벨에서 초과된 경험치는 반영되도록 설정
         requiredExp = CalculateRequiredExp();   // 필요 경험치량 갱신
-
         // 경험치 변경 이벤트 발행
         OnExpChanged?.Invoke(currentExp, requiredExp, ExpRatio);    // UI 업데이트 등등의 작업을 하기 위해 이벤트 발행
     }

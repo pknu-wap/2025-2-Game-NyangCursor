@@ -16,6 +16,8 @@ public class UpgradeManager1 : MonoBehaviour
     [Header("플레이어 스킬 관리자")]
     [SerializeField] private PlayerSkillsManager playerSkillsManager;
 
+    public static event Action OnUpgradeFinished;
+
     public static event Action<UpgradeEventData> OnUpgradeSelected1;
 
     private void OnEnable()
@@ -130,6 +132,7 @@ public class UpgradeManager1 : MonoBehaviour
                 var eventData = CreateUpgradeEvent(data, chosenStatKey, ratio, isUnlocked);
                 Debug.Log($"[Upgrade] 선택됨: {data.optionName}");
                 OnUpgradeSelected1?.Invoke(eventData);
+                OnUpgradeFinished?.Invoke();
             });
         }
     }
