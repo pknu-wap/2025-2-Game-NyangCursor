@@ -9,6 +9,6 @@ public class ExpAltar : AltarBase
 
     public override void Execute(Transform player)
     {
-        expAltarEvent.Invoke(player,pullSpeed);
+        expAltarEvent?.Invoke(player,pullSpeed);
     }
 }

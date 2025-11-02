@@ -181705,7 +181705,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillType: 0
-  usedStats: 
+  playerRb: {fileID: 1979479478}
+  usedStats: 000000000100000003000000060000000400000008000000
   baseDamage: 10
   baseCooldown: 2
   baseDuration: 3

@@ -71,16 +71,17 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
 
     private void OnEnable()
     {
-        UpgradeManager.OnUpgradeSelected += ApplyUpgrade;
+        //UpgradeManager.OnUpgradeSelected += ApplyUpgrade;
         PlayerStateLogic.Instance.OnStateChanged += HandleStateChanged;
-
+        UpgradeManager1.OnUpgradeSelected1 += ApplyUpgrade;
         // 시작 시 현재 상태 확인
         HandleStateChanged(PlayerStateLogic.Instance.CurrentState);
     }
 
     private void OnDisable()
     {
-        UpgradeManager.OnUpgradeSelected -= ApplyUpgrade;
+        UpgradeManager1.OnUpgradeSelected1 += ApplyUpgrade;
+        //UpgradeManager.OnUpgradeSelected -= ApplyUpgrade;
         PlayerStateLogic.Instance.OnStateChanged -= HandleStateChanged;
     }
 
@@ -262,7 +263,10 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
         bool allowed = IsSkillAllowed();
 
         SkillCooldownUI cdUI = null;
-        SkillIconUIManager.Instance?.TryGetCooldownUI(skillName, out cdUI);
+        bool found = SkillIconUIManager.Instance?.TryGetCooldownUI(skillName, out cdUI) ?? false;
+
+        Debug.Log($"[Skill] {skillName} | State: {newState} | Allowed: {allowed} | Found UI: {found} | cdUI: {cdUI}");
+
         bool hasCooldown = usedStats.Contains(SkillStatKey.Cooldown);
 
         if (!allowed)
@@ -272,8 +276,12 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
             {
                 StopCoroutine(passiveRoutine);
                 passiveRoutine = null;
+                Debug.Log($"[Skill] {skillName} | PassiveRoutine stopped due to disallowed state");
             }
-            cdUI?.ForceFill();
+            if (cdUI != null)
+                cdUI.ForceFill();
+            else
+                Debug.LogWarning($"[Skill] {skillName} | ForceFill skipped, cdUI is null");
             return;
         }
 
@@ -284,20 +292,51 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
             {
                 // 쿨다운 있는 패시브 루프
                 if (passiveRoutine == null)
+                {
                     passiveRoutine = StartCoroutine(PassiveLoop(currentCooldown, cdUI, hasCooldown));
+                    Debug.Log($"[Skill] {skillName} | Started PassiveLoop coroutine");
+
+                    if (cdUI != null)
+                    {
+                        cdUI.StartCooldown(currentCooldown);
+                        Debug.Log($"[Skill] {skillName} | Started cdUI cooldown for {currentCooldown}s");
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[Skill] {skillName} | cdUI null, cannot start cooldown UI");
+                    }
+                }
             }
             else
             {
-                // 쿨다운 없는 패시브 → UI 바로 시전 가능
-                cdUI?.ForceReset();
+                if (cdUI != null)
+                {
+                    cdUI.ForceReset();
+                    Debug.Log($"[Skill] {skillName} | ForceReset (no cooldown)");
+                }
+                else
+                {
+                    Debug.LogWarning($"[Skill] {skillName} | cdUI null, cannot ForceReset");
+                }
             }
         }
         else // 액티브형
         {
             if (!isOnCooldown)
-                cdUI?.ForceReset();
+            {
+                if (cdUI != null)
+                {
+                    cdUI.StartCooldown(currentCooldown);
+                    Debug.Log($"[Skill] {skillName} | Active skill StartCooldown for {currentCooldown}s");
+                }
+                else
+                {
+                    Debug.LogWarning($"[Skill] {skillName} | cdUI null, cannot StartCooldown");
+                }
+            }
         }
     }
+
 
 
 
