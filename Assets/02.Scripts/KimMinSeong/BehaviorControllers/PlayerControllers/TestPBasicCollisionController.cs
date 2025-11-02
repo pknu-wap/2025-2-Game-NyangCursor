@@ -37,6 +37,9 @@ public class TestPCollisionController : MonoBehaviour, ICollidable
 
     private void TryAttackEnemy(GameObject target)
     {
+        if (PlayerStateLogic.Instance.CurrentState != PlayerStateLogic.PlayerState.OverDrive)
+            return;
+
         // 공격 쿨타임 체크
         if (Time.time - lastAttackTime < damageCooltime)
             return;

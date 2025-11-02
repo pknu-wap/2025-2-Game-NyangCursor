@@ -95,6 +95,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/PrivateAssets/nyangCursor-Assets/MagicArsenal/Demo/Scenes/magic_auracast2.unity
     guid: cd49926deebe1714689a983452e127bf
+  - enabled: 1
+    path: Assets/01.Scenes/GangMinSeong/#59.unity
+    guid: b4177612827f145e48fe151449015cef
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

@@ -38,7 +38,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
     private int lastAppliedTier = 0;   // 마지막으로 연출(락)까지 적용한 티어
     private float overdriveTimer = 0f; //오버드라이브 전용 타이머
     private int lockId = 0; //구간별 조종제어 코루틴 아이디
-    [SerializeField] private float baseDecreaseRate = 2f; // 기본 게이지 감소량(초당)
+    [SerializeField] private float baseDecreaseRate = 1f; // 기본 게이지 감소량(초당)
 
 
 
@@ -194,7 +194,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
     //오버드라이브 첫 진입 시 게이지 지급 및 티어 초기화
     void HandleInitialOverDrive()
     {
-        overdrive = 5;
+        overdrive = 21;
         OnOverDriveTick?.Invoke(overdrive);//UI이벤트발송(GaugeUI)
         OnTierChangeEvent?.Invoke(0);  //현재 티어 0 으로 이벤트발송 (overDriveGaugeUI)
         ApplyTierSpeed(currentTier);
