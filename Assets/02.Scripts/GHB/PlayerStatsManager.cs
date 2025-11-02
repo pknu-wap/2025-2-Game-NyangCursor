@@ -64,7 +64,7 @@ public class PlayerStatsManager : MonoBehaviour
             float baseValue = baseStats.ContainsKey(type) ? baseStats[type] : 0f;
             float addedValue = PlayerPrefs.GetFloat(type.ToString(), 0f);
             currentStats[type] = baseValue + addedValue;
-            Debug.Log($"{type} : 기본 {baseValue} + 추가 {addedValue} = {currentStats[type]}");
+           // Debug.Log($"{type} : 기본 {baseValue} + 추가 {addedValue} = {currentStats[type]}");
         }
     }
 
