@@ -82,6 +82,9 @@ public class Enemy : MonoBehaviour
         // 드랍 처리
         Droppable?.Drop();
 
+        // EnemyManager 에서 현재 적 개수 감소
+        EnemyManager.instance.DecreaseCurrentEnemies();
+
         // PoolManager를 통한 오브젝트 반환
         PoolManager.instance.Despawn(this.gameObject);
     }
