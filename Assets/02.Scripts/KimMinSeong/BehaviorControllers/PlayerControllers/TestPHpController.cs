@@ -3,10 +3,9 @@ using UnityEngine;
 
 public class PlayerHpController : MonoBehaviour, IDamageable
 {
-    private float maxHp;
-
-    private Component owner;  // Player 참조
+    private Component owner;
     private float currentHp;
+    private float maxHp;
     private bool isDead;
 
     public float CurrentHp => currentHp;
@@ -14,6 +13,8 @@ public class PlayerHpController : MonoBehaviour, IDamageable
     public bool IsDead => isDead;
 
     public event Action OnDeath;
+    public static event Action<float, float> OnInitializeHp;
+    public static event Action<float, float> OnTakeDamage; 
 
     public void Initialize(Component owner)
     {
@@ -21,6 +22,8 @@ public class PlayerHpController : MonoBehaviour, IDamageable
         maxHp = PlayerStatsManager.instance.GetStat(StatType.MaxHealthUp);
         currentHp = maxHp;
         isDead = false;
+
+        OnInitializeHp?.Invoke(currentHp, maxHp);
     }
 
     public void TakeDamage(float damage)
@@ -31,7 +34,7 @@ public class PlayerHpController : MonoBehaviour, IDamageable
         currentHp -= damage;
         currentHp = Mathf.Max(0, currentHp);
 
-        Debug.Log($"Player 가 {damage} 만큼의 데미지를 입었습니다: {currentHp}/{maxHp}");
+        OnTakeDamage?.Invoke(currentHp, maxHp);
 
         if (currentHp <= 0)
             Die();
@@ -43,36 +46,13 @@ public class PlayerHpController : MonoBehaviour, IDamageable
             return;
 
         isDead = true;
-        Debug.Log("Player 사망");
 
-        // 테스트용: 게임 일시정지
-        Time.timeScale = 0;
+        // 플레이어 사망시 게임 종료 요청
+        StageFlowManager.instance.SetStateToEnd();        
     }
 
     public void Cleanup()
     {
         // 필요시 수정
-    }
-
-    // 디버그용 - 화면에 HP 표시
-    private void OnGUI()
-    {
-        GUI.color = Color.white;
-        GUI.Label(new Rect(10, 10, 300, 30), $"Player HP: {currentHp:F1}/{maxHp:F1}");
-
-        if (isDead)
-        {
-            GUI.color = Color.red;
-            GUI.Label(new Rect(10, 40, 300, 30), "DEAD - Press R to Restart");
-        }
-
-        // R키로 재시작
-        if (isDead && Input.GetKeyDown(KeyCode.R))
-        {
-            Time.timeScale = 1;
-            UnityEngine.SceneManagement.SceneManager.LoadScene(
-                UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
-            );
-        }
     }
 }

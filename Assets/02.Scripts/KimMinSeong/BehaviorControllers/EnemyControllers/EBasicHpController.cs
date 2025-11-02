@@ -15,6 +15,8 @@ public class EBasicHpController : MonoBehaviour, IDamageable
     public bool IsDead => isDead;
 
     public event Action OnDeath;
+    public event Action<float, float> OnInitializeHp;
+    public event Action<float, float> OnTakeDamage;
 
     public void Initialize(Component owner)
     {
