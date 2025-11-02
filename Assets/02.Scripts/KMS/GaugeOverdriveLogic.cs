@@ -69,7 +69,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
         }
 
         GaugeRidingLogic.OnOverDriveEvent += HandleInitialOverDrive;
-
+        Enemy.deathEvent += UpOverDriveGauge;
     }
 
     void Start()
@@ -81,6 +81,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
     private void OnDestroy()
     {
         GaugeRidingLogic.OnOverDriveEvent -= HandleInitialOverDrive;
+        Enemy.deathEvent -= UpOverDriveGauge;
     }
 
     void Update()
