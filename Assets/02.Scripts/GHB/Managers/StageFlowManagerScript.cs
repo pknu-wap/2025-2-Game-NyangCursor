@@ -95,14 +95,19 @@ public class StageFlowManager : MonoBehaviour
                 break;
 
             case StageState.Augment:
+                 Time.timeScale = 0f;
+                break;
             case StageState.Pause:
                 Time.timeScale = 0f;
                 break;
 
             case StageState.Altar:
+                Time.timeScale = 0f; 
+                   break;
+
             case StageState.End:
                 // 필요시 따로 제어 가능 (기본은 1)
-                Time.timeScale = 1f;
+                Time.timeScale = 0f;
                 break;
 
             default:
