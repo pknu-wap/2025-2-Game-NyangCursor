@@ -17,9 +17,8 @@ public class UpgradeManager : MonoBehaviour
     [Header("플레이어 스킬 관리자")]
     [SerializeField] private PlayerSkillsManager playerSkillsManager;
 
-    private List<UpgradeOptionSO> currentSelection = new();
-
     public static event Action<UpgradeEventData> OnUpgradeSelected;
+    public static event Action OnUpgradeFinished;   // 증강 선택이 끝났을때 UI 업데이트를 위한 이벤트
 
     private void OnEnable()
     {
@@ -28,7 +27,6 @@ public class UpgradeManager : MonoBehaviour
 
     private void GenerateRandomOptions()
     {
-        currentSelection.Clear();
 
         if (upgradePool.Count < 4)
         {
@@ -53,7 +51,6 @@ public class UpgradeManager : MonoBehaviour
             int index = UnityEngine.Random.Range(0, tempPool.Count);
             UpgradeOptionSO chosen = tempPool[index];
             tempPool.RemoveAt(index);
-            currentSelection.Add(chosen);
             SetupSlot(slotPrefabObjects[i], chosen);
         }
     }
@@ -93,13 +90,13 @@ public class UpgradeManager : MonoBehaviour
         }
 
         // 배경색 설정(임시로 스킬은 하늘색, 비전서는 보라색)
-        if (slotPrefab.background != null)
-        {
-            if (data.isSkill)
-                slotPrefab.background.color = new Color(0.53f, 0.81f, 0.98f); // 하늘색
-            else
-                slotPrefab.background.color = new Color(0.6f, 0.4f, 0.8f); // 보라색
-        }
+//if (slotPrefab.background != null)
+    //    {
+           // if (data.isSkill)
+              //  slotPrefab.background.color = new Color(0.53f, 0.81f, 0.98f); // 하늘색
+           // else
+             //   slotPrefab.background.color = new Color(0.6f, 0.4f, 0.8f); // 보라색
+       // }
 
 
         // UI 텍스트
@@ -140,6 +137,7 @@ public class UpgradeManager : MonoBehaviour
                 var eventData = CreateUpgradeEvent(data, chosenStatKey, ratio, isUnlocked);
                 Debug.Log($"선택됨: {data.optionName}");
                 OnUpgradeSelected?.Invoke(eventData);
+                OnUpgradeFinished?.Invoke();
             });
         }
     }

@@ -51,6 +51,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
     public static event Action<float> OnOverDriveTick;//오버드라이브 게이지 틱 이벤트 발생
     public static event Action OnGetOffEvent; //게이지0으로 내리는 이벤트 발생 
     public static event Action OnNormalEvent; //노말모드 진입 이벤트 발생
+    public static event Action<int> OnTierChangeEvent; //각 구간 진입 이벤트 발생(구간별 게이지 색상변경 위함)
 
     //부스터임시 
     private float boostDuration = 1;
@@ -131,6 +132,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
                 TriggerBoostObject(currentTier);  //순간부스터
                 lastAppliedTier = currentTier;     // 상승했을 때만 기록
                 print("현재티어 :" + currentTier );
+                OnTierChangeEvent?.Invoke(currentTier);
             }
 
             // 하락 시에는 아무것도 안 함 (lastAppliedTier 유지)
@@ -194,6 +196,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
     {
         overdrive = 5;
         OnOverDriveTick?.Invoke(overdrive);//UI이벤트발송(GaugeUI)
+        OnTierChangeEvent?.Invoke(0);  //현재 티어 0 으로 이벤트발송 (overDriveGaugeUI)
         ApplyTierSpeed(currentTier);
         ApplyTierPresetBlend(currentTier);
         Debug.Log("HandleInitialOverDrive 호출됨");

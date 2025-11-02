@@ -107,5 +107,5 @@ InitTestScene*.unity*
 # Visual Studio Config File
 .vsconfig
 
-Assets/PrivateAssets/nyangCursor-Assets
-
+#Private Assets
+Assets/PrivateAssets/

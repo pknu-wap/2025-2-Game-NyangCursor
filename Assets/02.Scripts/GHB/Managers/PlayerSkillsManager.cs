@@ -13,6 +13,7 @@ public enum SkillStatKey
     ProcChance,     // 상태이상 발동확률
     Speed,          // 투사체/이동 속도
     ManaCost,       // 소모 자원
+    ProjectileSize
     // 필요하면 여기에 추가
 }
 
@@ -30,12 +31,14 @@ public class PlayerSkillsManager : MonoBehaviour
     {
         foreach (var slot in skillSlots)
         {
+            // 모든 스킬들에 대해 SO 값으로 클래스 값 여기에서 갱신
+            slot.skillName = slot.linkedUpgradeSO.optionName;
             if (slot.skillManagerObject != null)
             {
                 var tempMgr = slot.skillManagerObject.GetComponent<ISkill>();
                 if (tempMgr != null)
                 {
-                    tempMgr.SetSkillName(slot.skillName);
+                    tempMgr.SetSkill(slot.skillName);
                 }
             }
         }
@@ -47,14 +50,19 @@ public class PlayerSkillsManager : MonoBehaviour
         if (slot == null || slot.isUnlocked) return;
 
         slot.isUnlocked = true;
-        slot.skillManagerObject.SetActive(true);
 
-        if (icon != null) slot.icon = icon;
+        // 먼저 UI 생성
+        if (icon != null)
+            slot.icon = icon;
+        if (slot.icon != null)
+            SkillIconUIManager.Instance.AddSkillIcon(slot.skillName, slot.icon);
+
+        // SetActive 후 TempSkillManager 활성화
+        slot.skillManagerObject.SetActive(true);
 
         unlockedSkills.Add(slot);
 
         // 정렬 적용
-        // 액티브형 앞, 패시브형 뒤, 같은 타입은 획득 순서 유지
         unlockedSkills.Sort((a, b) =>
         {
             ISkill skillA = a.skillManagerObject.GetComponent<ISkill>();
@@ -64,15 +72,15 @@ public class PlayerSkillsManager : MonoBehaviour
             return typeA.CompareTo(typeB);
         });
 
-        if (slot.icon != null)
-            SkillIconUIManager.Instance.AddSkillIcon(slot.skillName, slot.icon);
-
-        // 아이콘 순서도 unlockedSkills 기준으로 맞추기
+        // 아이콘 순서 적용
         SkillIconUIManager.Instance.RefreshIcons(unlockedSkills);
 
+        // 패시브 루프 시작 / 상태 반영
         ISkill skill = slot.skillManagerObject.GetComponent<ISkill>();
-        skill.Activate(); // 패시브 루프 시작
+        skill.HandleStateChanged(PlayerStateLogic.Instance.CurrentState);
+        skill.Activate();
     }
+
 
 
     public void LockSkill(string skillName)

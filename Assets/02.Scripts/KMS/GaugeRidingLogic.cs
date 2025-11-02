@@ -11,7 +11,7 @@ public class GaugeRidingLogic : MonoBehaviour
 
     private bool activeEkey = false; //게이지 100프로일때 E키를 눌러서 탑승 가능
 
-      //각종 이벤트
+    //각종 이벤트
     public static event Action<float> OnRidingGaugeTick; //라이딩 게이지 틱 이벤트
     public static event Action OnFullRidingGauge; //라이딩 게이지 100퍼센트 달성 이벤트
     public static event Action OnRidingEvent; //E키를 눌렀을때 라이딩 하는 이벤트
@@ -22,16 +22,33 @@ public class GaugeRidingLogic : MonoBehaviour
     {
         OnRidingGaugeTick?.Invoke(ridingGauge);//라이딩 게이지 틱 이벤트 발송
 
-        
+
     }
+
+    private void OnEnable()
+    {
+        BulletColliderManager.OnBulletHit += HandleBulletHit;
+    }
+
+    private void OnDisable()
+    {
+        BulletColliderManager.OnBulletHit -= HandleBulletHit;
+    }
+
+    private void HandleBulletHit(float value)
+    {
+        // 
+        UpRidingGauge(value);
+    }
+
     void Update()
     {
         if (PlayerStateLogic.Instance.CurrentState != PlayerState.Normal)
             return;
 
-       if(activeEkey == true && ridingGauge >= 100f)
+        if (activeEkey == true && ridingGauge >= 100f)
         {
-               // E 키 입력 → Riding() 호출
+            // E 키 입력 → Riding() 호출
             if (Input.GetKeyDown(KeyCode.E))
             {
                 OnRidingEvent?.Invoke(); //라이딩 이벤트 발송 To(PlayerAnimator,NormalCursorMove)
@@ -56,7 +73,7 @@ public class GaugeRidingLogic : MonoBehaviour
         ridingGauge = Mathf.Clamp(ridingGauge + amount, 0, 100);
         OnRidingGaugeTick?.Invoke(ridingGauge);//라이딩 게이지 틱 이벤트 발송
 
-            //100프로 달성 시 E 버튼 활성화
+        //100프로 달성 시 E 버튼 활성화
         if (ridingGauge >= 100f)
         {
             activeEkey = true;
@@ -70,5 +87,5 @@ public class GaugeRidingLogic : MonoBehaviour
         activeEkey = false;
     }
 
-    
+
 }

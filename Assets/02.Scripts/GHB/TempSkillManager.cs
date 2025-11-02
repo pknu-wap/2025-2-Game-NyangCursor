@@ -1,7 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Collections;
 
 public class TempSkillManager : MonoBehaviour, ISkill
 {
@@ -26,6 +26,7 @@ public class TempSkillManager : MonoBehaviour, ISkill
 
     private bool isOnCooldown = false;
     private Coroutine cooldownRoutine;
+    private Coroutine passiveRoutine;
 
     private void Awake()
     {
@@ -37,7 +38,7 @@ public class TempSkillManager : MonoBehaviour, ISkill
 
         // 각 스킬 스크립트에서 쓰이는 변수는 따로 초기화
         statValues[SkillStatKey.Damage] = baseDamage;
-        //statValues[SkillStatKey.Cooldown] = baseCooldown;
+        statValues[SkillStatKey.Cooldown] = baseCooldown;
 
         // 현재값 변수도 초기화
         currentDamage = baseDamage;
@@ -47,21 +48,34 @@ public class TempSkillManager : MonoBehaviour, ISkill
 
     private void OnEnable()
     {
-        UpgradeManager.OnUpgradeSelected += ApplyUpgrade;
+        //UpgradeManager.OnUpgradeSelected += ApplyUpgrade;
+        UpgradeManager1.OnUpgradeSelected1 += ApplyUpgrade; //신규
+        PlayerStateLogic.Instance.OnStateChanged += HandleStateChanged;
+
+        // 시작 시 현재 상태 확인
+        HandleStateChanged(PlayerStateLogic.Instance.CurrentState);
     }
 
     private void OnDisable()
     {
-        UpgradeManager.OnUpgradeSelected -= ApplyUpgrade;
+        //UpgradeManager.OnUpgradeSelected -= ApplyUpgrade;
+        UpgradeManager1.OnUpgradeSelected1 -= ApplyUpgrade; //신규
+        PlayerStateLogic.Instance.OnStateChanged -= HandleStateChanged;
     }
 
     public void Activate()
     {
-        // 수정했어요: UI 참조 가져오기
+        // 현재 상태에서 사용 가능한지 체크
+        if (!IsSkillAllowed())
+        {
+            Debug.Log($"{skillName} 현재 상태에서 사용 불가");
+            return;
+        }
+
         SkillCooldownUI cdUI = null;
         SkillIconUIManager.Instance.TryGetCooldownUI(skillName, out cdUI);
 
-        bool hasCooldownStat = usedStats.Contains(SkillStatKey.Cooldown); // 수정했어요
+        bool hasCooldownStat = usedStats.Contains(SkillStatKey.Cooldown);
 
         if (skillType == SkillType.Active)
         {
@@ -121,11 +135,9 @@ public class TempSkillManager : MonoBehaviour, ISkill
         // 1. 스킬 이벤트인지 확인
         if (data.isSkillUpgrade)
         {
-            // 자신에 대한 스킬 이벤트가 아니라면 얼리 리턴
             if (!string.Equals(data.skillName, skillName, StringComparison.OrdinalIgnoreCase))
                 return;
 
-            // 만약 자신에 대한 스킬 이벤트라면 레벨 증가
             currentLevel++;
         }
 
@@ -134,19 +146,18 @@ public class TempSkillManager : MonoBehaviour, ISkill
             return;
 
         // 3. statValues 갱신
-        // 해당 부분이 1)
-        statValues[key] *= 1f + data.upgradeRatio;
+        // 주석 처리: 쿨다운 값이 0으로 초기화되는 문제 방지
+        // statValues[key] *= 1f + data.upgradeRatio;
 
         // 4. current 변수 갱신
-        // 해당 부분이 2)
         if (key == SkillStatKey.Damage)
             currentDamage = statValues[key];
         else if (key == SkillStatKey.Cooldown)
-            currentCooldown = statValues[key];
+            currentCooldown = statValues[key]; // 현재 값 그대로 유지
 
-        // 5. 디버그 로그
         Debug.Log($"[UpgradeEvent] {gameObject.name}: {key} +{data.upgradeRatio:P1} -> {statValues[key]:F2}");
     }
+
 
     public void ResetSkill()
     {
@@ -164,13 +175,18 @@ public class TempSkillManager : MonoBehaviour, ISkill
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
 
+        StopAllCoroutines();
+        isOnCooldown = false;
+        passiveRoutine = null;
+
         Debug.Log($"{gameObject.name} 스킬 초기화 완료");
     }
 
-    public void SetSkillName(string skillName)
+    public void SetSkill(string skillName)
     {
         this.skillName = skillName;
     }
+
 
     // UsedStats 공개
     public List<SkillStatKey> UsedStats => usedStats;
@@ -182,5 +198,58 @@ public class TempSkillManager : MonoBehaviour, ISkill
     {
         get => currentLevel;
         set => currentLevel = value;
+    }
+
+    // ======================= 상태 제어 로직 =======================
+    public void HandleStateChanged(PlayerStateLogic.PlayerState newState)
+    {
+        bool allowed = IsSkillAllowed();
+
+        SkillCooldownUI cdUI = null;
+        SkillIconUIManager.Instance?.TryGetCooldownUI(skillName, out cdUI);
+        bool hasCooldown = usedStats.Contains(SkillStatKey.Cooldown);
+
+        if (!allowed)
+        {
+            // 상태 불허용
+            if (skillType == SkillType.Passive && passiveRoutine != null)
+            {
+                StopCoroutine(passiveRoutine);
+                passiveRoutine = null;
+            }
+            cdUI?.ForceFill();
+            return;
+        }
+
+        // 상태 허용
+        if (skillType == SkillType.Passive)
+        {
+            if (hasCooldown)
+            {
+                // 쿨다운 있는 패시브 루프
+                if (passiveRoutine == null)
+                    passiveRoutine = StartCoroutine(PassiveLoop(currentCooldown, cdUI, hasCooldown));
+            }
+            else
+            {
+                // 쿨다운 없는 패시브 → UI 바로 시전 가능
+                cdUI?.ForceReset();
+            }
+        }
+        else // 액티브형
+        {
+            if (!isOnCooldown)
+                cdUI?.ForceReset();
+        }
+    }
+
+
+
+
+    public bool IsSkillAllowed()
+    {
+        var state = PlayerStateLogic.Instance.CurrentState;
+        return state == PlayerStateLogic.PlayerState.OverDrive ||
+               state == PlayerStateLogic.PlayerState.Berserk;
     }
 }

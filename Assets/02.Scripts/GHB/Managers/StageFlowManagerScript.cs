@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
 
@@ -17,11 +17,26 @@ public class StageFlowManager : MonoBehaviour
 
     public static event Action<StageState> OnStageStateChanged;
 
+    public static StageFlowManager instance;
+
+    void Awake()
+    {
+        if (null == instance)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void Start()
     {
         // 업그레이드 매니저 선택 이벤트 구독
-        UpgradeManager.OnUpgradeSelected += SelectedandSetStateToPlay;
-        AltarUIManager.OnAltarEvent += SetStateToPlay;
+        //UpgradeManager.OnUpgradeSelected += SelectedandSetStateToPlay;
+        UpgradeManager1.OnUpgradeSelected1 += SelectedandSetStateToPlay; //신규
+        SkillRemoveAltarUIManager.OnAltarEvent += SetStateToPlay;
         // 시작은 플레이
         SetState(StageState.Play);
     }
@@ -29,8 +44,9 @@ public class StageFlowManager : MonoBehaviour
 
     void OnDestroy()
     {
-        UpgradeManager.OnUpgradeSelected -= SelectedandSetStateToPlay;
-        AltarUIManager.OnAltarEvent -= SetStateToPlay;
+        //UpgradeManager.OnUpgradeSelected -= SelectedandSetStateToPlay;
+        UpgradeManager1.OnUpgradeSelected1 -= SelectedandSetStateToPlay; //신규
+        SkillRemoveAltarUIManager.OnAltarEvent -= SetStateToPlay;
     }
 
     // 임시 ESC 토글 일시정지
@@ -59,18 +75,6 @@ public class StageFlowManager : MonoBehaviour
                 SetStateToPlay();
             }
         }
-        // 임시 제단 단축키
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            if (CurrentState == StageState.Play)
-            {
-                SetStateToAltar();
-            }
-            else if (CurrentState == StageState.Altar)
-            {
-                SetStateToPlay();
-            }
-        }
         if (Input.GetKeyDown(KeyCode.O))
         {
             GoToLobby();
@@ -82,8 +86,34 @@ public class StageFlowManager : MonoBehaviour
         if (CurrentState == newState) return;
 
         CurrentState = newState;
+
+        // 상태별 TimeScale 자동 제어
+        switch (CurrentState)
+        {
+            case StageState.Play:
+                Time.timeScale = 1f;
+                break;
+
+            case StageState.Augment:
+            case StageState.Pause:
+                Time.timeScale = 0f;
+                break;
+
+            case StageState.Altar:
+            case StageState.End:
+                // 필요시 따로 제어 가능 (기본은 1)
+                Time.timeScale = 1f;
+                break;
+
+            default:
+                Time.timeScale = 1f;
+                break;
+        }
+
         // 전역 이벤트로 알림 (UIManager, EnemySpawner 등에서 구독 가능)
         OnStageStateChanged?.Invoke(CurrentState);
+
+        Debug.Log($"[StageFlow] State Changed → {CurrentState}, TimeScale: {Time.timeScale}");
     }
 
     // 버튼 참조용

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SkillOption7
   m_EditorClassIdentifier: 
   isSkill: 1
-  optionName: S7
+  optionName: "\uD30C\uC774\uC5B4 \uCC28\uC9C0"
   affectedStat: 0
   icon: {fileID: 21300000, guid: 06cee3acc77d4044dae3d8ccb8c885b7, type: 3}
   minUpgradeRatio: 0.05

@@ -13,8 +13,6 @@ public class InGameUIManager : MonoBehaviour
     [Header("증강 선택 관련 UI")]
     [SerializeField] private GameObject augmentPanel;
 
-    [Header("제단 UI")]
-    [SerializeField] private GameObject altarPanel;
 
     [Header("게임 종료 UI")]
     [SerializeField] private GameObject gameEndPanel;
@@ -74,14 +72,10 @@ public class InGameUIManager : MonoBehaviour
         {
             case StageFlowManager.StageState.Play:
                 pausePanel.SetActive(false);
-                augmentPanel.SetActive(false);
-                altarPanel.SetActive(false);
+                augmentPanel.SetActive(false); 
                 break;
             case StageFlowManager.StageState.Augment:
                 augmentPanel.SetActive(true);
-                break;
-            case StageFlowManager.StageState.Altar:
-                altarPanel.SetActive(true);
                 break;
             case StageFlowManager.StageState.Pause:
                 pausePanel.SetActive(true);

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Unity.VisualScripting;
 
@@ -11,7 +11,7 @@ public class CursorMove : MonoBehaviour
     [SerializeField] private float followSmooth = 0.15f; // 부드럽게 따라가는 정도
     private Vector3 velocity = Vector3.zero;
 
-
+    private Coroutine rotateToDirectionRoutine = null;
 
     [SerializeField] SpriteRenderer overRideCursorSpriteRenderer;
     [SerializeField] SpriteRenderer normalCursorRenderer;
@@ -25,7 +25,7 @@ public class CursorMove : MonoBehaviour
     private void OnDestroy()
     {
         GaugeRidingLogic.OnRidingEvent -= HandleRidingMotion;
-        GaugeOverdriveLogic.OnGetOffEvent += HandleGetOffMotion;
+        GaugeOverdriveLogic.OnGetOffEvent -= HandleGetOffMotion;
     }
 
     void Update()
@@ -83,8 +83,8 @@ public class CursorMove : MonoBehaviour
         transform.position = target;
         transform.rotation = targetRot;
         overRideCursorSpriteRenderer.enabled = true;
-        normalCursorRenderer.enabled = false;   
-        
+        normalCursorRenderer.enabled = false;
+
     }
     private void HandleGetOffMotion() // 내리기 마우스 모션 및 플레이어 회전 복구
     {
@@ -121,8 +121,52 @@ public class CursorMove : MonoBehaviour
         player.transform.rotation = targetRot;
     }
 
+    public void RotateTowardDirection(Vector2 direction, float rotateDuration = 0.1f, float restoreDuration = 0.3f)
+    {
+        // 기존 회전 중이면 중복 실행 방지
+        if(rotateToDirectionRoutine == null)
+        {
+            rotateToDirectionRoutine = StartCoroutine(RotateToDirectionRoutine(direction, rotateDuration, restoreDuration));
+        }
+    }
 
+    private IEnumerator RotateToDirectionRoutine(Vector2 direction, float rotateDuration, float restoreDuration)
+    {
+        // 현재 회전
+        Quaternion startRot = transform.rotation;
 
+        // 목표 회전 (기본 커서가 위쪽을 보므로 +90도 보정 필요)
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+        Quaternion targetRot = Quaternion.Euler(0, 0, angle);
 
+        // 빠른 회전 (슥 도는 느낌)
+        float elapsed = 0f;
+        while (elapsed < rotateDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / rotateDuration);
+            transform.rotation = Quaternion.Slerp(startRot, targetRot, t);
+            yield return null;
+        }
+
+        transform.rotation = targetRot;
+
+        // 살짝 머물기
+        yield return new WaitForSeconds(0.3f);
+
+        // 다시 되돌리기
+        Quaternion restoreRot = Quaternion.identity;
+        elapsed = 0f;
+        while (elapsed < restoreDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / restoreDuration);
+            transform.rotation = Quaternion.Slerp(targetRot, restoreRot, t);
+            yield return null;
+        }
+
+        transform.rotation = restoreRot;
+        rotateToDirectionRoutine = null;
+    }
 
 }
