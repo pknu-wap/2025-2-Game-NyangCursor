@@ -12,6 +12,8 @@ OnIncreaseDifficulty 이벤트를 통해 전달받을 예정입니다.
 
 public class EnemyManager : MonoBehaviour
 {
+    public static EnemyManager instance;
+
     // 외부 (DifficultyManager) 에서 변경될 멤버 변수
     [SerializeField] private float spawnPeriod; // 적 생성 요청 주기
     [SerializeField] private int maxEnemies;    // 최대 적 개수
@@ -25,8 +27,17 @@ public class EnemyManager : MonoBehaviour
 
     void Awake()
     {
+        // EnemyManager 인스턴스 설정
+        if (instance == null)
+            instance = this;
+        else
+        {
+            Debug.Log("Scene 에 기존의 EnemyManager instance 가 존재합니다. 하나를 파괴합니다");
+            Destroy(gameObject);
+            return;
+        }
+
         spawnPeriod = 2f;
-        maxEnemies = 50;
         currentEnemies = 0;
     }
 
@@ -111,5 +122,15 @@ public class EnemyManager : MonoBehaviour
         Vector2 adjustedPosition = closestPosition + direction * 0.2f;
 
         enemyTransform.position = adjustedPosition;
+    }
+
+    public void DecreaseCurrentEnemies()
+    {
+        currentEnemies -= 1;
+        if (currentEnemies < 0)
+            currentEnemies = 0;
+
+        // 디버그용
+        Debug.Log($"현재 적 개수: {currentEnemies}");
     }
 }
