@@ -184477,7 +184477,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 694955289}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -184832,7 +184832,8 @@ MonoBehaviour:
   - {fileID: 1146727613942615151, guid: dbe13d43ab80f134d83301055740344e, type: 3}
   - {fileID: 6948470598453267942, guid: 0f712dcd3dc23ed4a84d66113f5d8586, type: 3}
   - {fileID: 5897547034953215948, guid: f90405bd017e75f4399db0b66120d4d1, type: 3}
-  initialPoolSize: 10
+  - {fileID: 8678387319638756003, guid: ca3424c0099e4cb49aba4671f2ad5796, type: 3}
+  initialPoolSize: 50
   maxPoolSize: 100
 --- !u!1 &755937675
 GameObject:
@@ -187662,13 +187663,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1176139239}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f63046364cbd0149a9db8d743ccfeed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillType: 1
-  usedStats: 0600000007000000
   baseDamage: 10
-  baseCooldown: 5
+  baseCooldown: 1
+  baseInterval: 0.25
+  baseProjectileCount: 3
+  baseBlockCount: 3
+  usedStats: 0000000001000000040000000a00000009000000
+  maxLevel: 8
+  upgradeStep: 2
+  skillType: 0
+  playerTransform: {fileID: 1979479470}
+  projectilePrefabs:
+  - {fileID: 8678387319638756003, guid: ca3424c0099e4cb49aba4671f2ad5796, type: 3}
+  blockSpace: 15
+  projectileSpace: 3
 --- !u!1 &1183153711
 GameObject:
   m_ObjectHideFlags: 0
@@ -192573,7 +192584,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillType: 0
-  usedStats: 0700000000000000
+  usedStats: 
   baseDamage: 10
   baseCooldown: 5
 --- !u!1 &1940415952
