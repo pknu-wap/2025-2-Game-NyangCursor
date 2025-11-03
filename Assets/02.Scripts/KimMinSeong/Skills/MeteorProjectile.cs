@@ -14,6 +14,9 @@ public class MeteorProjectile : MonoBehaviour, IProjectile
     private Coroutine explosionCoroutine;
     private HashSet<GameObject> damagedEnemies = new HashSet<GameObject>(); // 중복 피해 방지
 
+    [SerializeField] private GameObject muzzleParticlePrefab; // 소환 시 이펙트
+    [SerializeField] private GameObject explosionParticlePrefab; // 폭발 이펙트
+
     public void SetDamage(float damage)
     {
         this.damage = damage;
@@ -30,6 +33,14 @@ public class MeteorProjectile : MonoBehaviour, IProjectile
 
         // 중복 피해 방지용 리스트 초기화
         damagedEnemies.Clear();
+
+        // 폭발 이펙트 생성
+        GameObject explosionVFX = Instantiate(explosionParticlePrefab, transform.position, Quaternion.identity);
+        Destroy(explosionVFX, 2f);
+
+        // 후속 이펙트 생성
+        GameObject muzzleVFX = Instantiate(muzzleParticlePrefab, transform.position, transform.rotation);
+        Destroy(muzzleVFX, 2f);
 
         // 폭발 코루틴 시작
         if (explosionCoroutine != null)

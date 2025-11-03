@@ -10,7 +10,6 @@ public class MeteorSkill : MonoBehaviour, ISkill
     [SerializeField] private float baseDamage = 10f;
     [SerializeField] private float baseCooldown = 5f;
     [SerializeField] private float baseInterval = 1f;
-    [SerializeField] private int baseProjectileCount = 3;
     [SerializeField] private int baseBlockCount = 3;
 
     [Header("스킬이 사용하는 공용 스탯 키들")]
@@ -41,6 +40,9 @@ public class MeteorSkill : MonoBehaviour, ISkill
     [SerializeField] private int blockSpace = 3;    // 블록 사이의 간격
     [SerializeField] private int projectileSpace = 3;    // 블록 내부의 투사체 사이의 간격
 
+    [Header("블록 안에 투사체 개수")]
+    [SerializeField] private int projectileCount = 3;
+
     // 프로퍼티 사용하여 멤버에 대해 외부 접근이 가능
     public List<SkillStatKey> UsedStats => usedStats;
     public SkillType SkillType => skillType;
@@ -52,8 +54,8 @@ public class MeteorSkill : MonoBehaviour, ISkill
     public float CurrentDamage => statValues[SkillStatKey.Damage];
     public float CurrentCooldown => statValues[SkillStatKey.Cooldown];
     public float CurrentInterval => statValues[SkillStatKey.Interval];
-    public int CurrentProjectileCount => (int)statValues[SkillStatKey.ProjectileCount];
     public int CurrentBlockCount => (int)statValues[SkillStatKey.BlockCount];
+
 
 
     private void Awake()
@@ -62,7 +64,6 @@ public class MeteorSkill : MonoBehaviour, ISkill
         statValues[SkillStatKey.Damage] = baseDamage;
         statValues[SkillStatKey.Cooldown] = baseCooldown;
         statValues[SkillStatKey.Interval] = baseInterval;
-        statValues[SkillStatKey.ProjectileCount] = baseProjectileCount;
         statValues[SkillStatKey.BlockCount] = baseBlockCount;
     }
 
@@ -156,10 +157,10 @@ public class MeteorSkill : MonoBehaviour, ISkill
 
     private void SpawnMeteors(Vector3 blockCenter, Vector3 right, GameObject meteor)
     {
-        for (int i = 0; i < CurrentProjectileCount; ++i)
+        for (int i = 0; i < projectileCount; ++i)
         {
             // 중앙을 기준으로 좌우 대칭적으로 투사체를 배치
-            float offset = (i - (CurrentProjectileCount - 1) / 2f) * projectileSpace;
+            float offset = (i - (projectileCount - 1) / 2f) * projectileSpace;
 
             // 생성 위치 계산
             Vector3 spawnPosition = blockCenter + right * offset;
@@ -200,8 +201,8 @@ public class MeteorSkill : MonoBehaviour, ISkill
             return;
 
         // 3. 스탯에 해당하는 값을 갱신
-        // 쿨타임 업그레이드는 쿨타임이 감소하도록 설정
-        if (data.statKey == SkillStatKey.Cooldown)
+        // 쿨타임, 메테오 낙하 시간 간격 업그레이드는 감소하도록 설정
+        if (data.statKey == SkillStatKey.Cooldown || data.statKey == SkillStatKey.Interval)
             statValues[data.statKey] *= 1f - data.upgradeRatio;
         else
             statValues[data.statKey] *= 1f + data.upgradeRatio;
@@ -220,7 +221,6 @@ public class MeteorSkill : MonoBehaviour, ISkill
         statValues[SkillStatKey.Damage] = baseDamage;
         statValues[SkillStatKey.Cooldown] = baseCooldown;
         statValues[SkillStatKey.Interval] = baseInterval;
-        statValues[SkillStatKey.ProjectileCount] = baseProjectileCount;
         statValues[SkillStatKey.BlockCount] = baseBlockCount;
 
         currentLevel = 0;
