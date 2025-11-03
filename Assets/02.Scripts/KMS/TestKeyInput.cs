@@ -14,14 +14,14 @@ public class TestKeyInput : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             // float 인자로 원하는 값 전달 (예: 10f)
-            gaugeRiding.UpRidingGauge(10f);
+          //  gaugeRiding.UpRidingGauge(10f);
         }
 
         // 키보드 숫자 2 키 감지
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             // float 인자로 원하는 값 전달 (예: 10f)
-            gaugeOverDrive.UpOverDriveGauge(10f);
+            //gaugeOverDrive.UpOverDriveGauge(10f);
         }
     }
 }
