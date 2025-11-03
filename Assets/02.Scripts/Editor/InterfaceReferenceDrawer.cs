@@ -130,19 +130,3 @@ public class InterfaceReferenceDrawer : PropertyDrawer
         }
     }
 }
-
-public struct InterfaceArgs
-{
-    public readonly Type ObjectType;
-    public readonly Type InterfaceType;
-
-    public InterfaceArgs(Type objectType, Type interfaceType)
-    {
-        // 전달받은 매개 변수가 각각 유효한 타입인지를 확인, 아니라면 에러 반환
-        Debug.Assert(typeof(Object).IsAssignableFrom(objectType), $"{nameof(objectType)} 는 {typeof(Object)} 의 타입이여야 합니다");
-        Debug.Assert(interfaceType.IsInterface, $"{nameof(interfaceType)} 는 인터페이스 타입이 아닙니다");
-
-        ObjectType = objectType;
-        InterfaceType = interfaceType;
-    }
-}
