@@ -184832,6 +184832,7 @@ MonoBehaviour:
   - {fileID: 1146727613942615151, guid: dbe13d43ab80f134d83301055740344e, type: 3}
   - {fileID: 6948470598453267942, guid: 0f712dcd3dc23ed4a84d66113f5d8586, type: 3}
   - {fileID: 5897547034953215948, guid: f90405bd017e75f4399db0b66120d4d1, type: 3}
+  - {fileID: 186734, guid: 87ef6fb9e11601146bcd5dcb522968d4, type: 3}
   initialPoolSize: 10
   maxPoolSize: 100
 --- !u!1 &755937675
@@ -186244,13 +186245,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 914756307}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
+  m_Script: {fileID: 11500000, guid: 0e41c24e42892413887046217bf26753, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillType: 1
-  usedStats: 0100000002000000
-  baseDamage: 10
+  baseDamage: 2
   baseCooldown: 5
+  baseDuration: 3
+  baseSpeed: 1
+  baseRange: 1
+  usedStats: 0000000001000000020000000300000006000000
+  fireCirclePrefabs:
+  - {fileID: 8209983944463885581, guid: 8a61fba91cd4fa541b58f5cae265e4bb, type: 3}
+  - {fileID: 3055438259362450278, guid: 7e11da6efddcdde42a8336b39a59d75f, type: 3}
+  - {fileID: 433010636056306860, guid: 52f0a0482b055294c93e51f2fee07be1, type: 3}
+  - {fileID: 4154280995557591761, guid: 329f63bb6eebd3e4b92c239b0045c1b1, type: 3}
+  playerTransform: {fileID: 1979479470}
 --- !u!1 &921878930
 GameObject:
   m_ObjectHideFlags: 0
@@ -187662,13 +187671,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 1176139239}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f63046364cbd0149a9db8d743ccfeed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skillType: 1
-  usedStats: 0600000007000000
   baseDamage: 10
   baseCooldown: 5
+  baseInterval: 1
+  baseBlockCount: 3
+  usedStats: 00000000010000000a00000009000000
+  maxLevel: 8
+  upgradeStep: 2
+  skillType: 0
+  playerTransform: {fileID: 1979479470}
+  projectilePrefabs:
+  - {fileID: 186734, guid: 87ef6fb9e11601146bcd5dcb522968d4, type: 3}
+  blockSpace: 15
+  projectileSpace: 3
+  projectileCount: 3
 --- !u!1 &1183153711
 GameObject:
   m_ObjectHideFlags: 0
@@ -190662,7 +190681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf167d2e58bbf9d41abe704ad36459ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clearMinutes: 15
+  clearMinutes: 999
 --- !u!1 &1707230991
 GameObject:
   m_ObjectHideFlags: 0
@@ -191441,6 +191460,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a3346bc83f32eb94db904c4e9bd64253, type: 2}
   - {fileID: 11400000, guid: e87e1738f38859d4c91c5ca31e0b8258, type: 2}
   - {fileID: 11400000, guid: 14566ce1a49eca64a83571d5deb821a2, type: 2}
+  - {fileID: 11400000, guid: 28c433bca16f8be4283bdc646236eb85, type: 2}
   - {fileID: 11400000, guid: 43e9bd1ac45fbae40bf837a6cbbb440f, type: 2}
   - {fileID: 11400000, guid: aaf6b7e1475f89a459f81ffc86212c21, type: 2}
   - {fileID: 11400000, guid: d417747e38c28de4ab1721e6feab8ffa, type: 2}
@@ -196870,8 +196890,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -0.0000038146973, y: 0}
-  m_SizeDelta: {x: 60.027, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 132.454, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &1684972484902975209
 CanvasRenderer:
@@ -197617,7 +197637,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -0.0000038146973, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -4, y: 0}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!1 &2461898218249028725
@@ -199574,7 +199594,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1, y: 0}
+  m_AnchoredPosition: {x: -1.0000153, y: 0}
   m_SizeDelta: {x: -2, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4175165841596223340
@@ -200099,8 +200119,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 173.28998, y: -61.21399}
-  m_SizeDelta: {x: 64.027, y: 10.657}
+  m_AnchoredPosition: {x: 351.95996, y: -61.21399}
+  m_SizeDelta: {x: 135.5, y: 10.66}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4621435000284264360
 MonoBehaviour:
@@ -202117,7 +202137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0.09343529, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -204442,7 +204462,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1, y: 0}
+  m_AnchoredPosition: {x: -1.0000153, y: 0}
   m_SizeDelta: {x: -2, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &7897638229190356985
