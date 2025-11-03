@@ -16,6 +16,6 @@ MonoBehaviour:
   optionName: "\uBA54\uD14C\uC624"
   affectedStat: 0
   icon: {fileID: 21300000, guid: 06cee3acc77d4044dae3d8ccb8c885b7, type: 3}
-  minUpgradeRatio: 0.05
-  maxUpgradeRatio: 0.15
+  minUpgradeRatio: 0.9
+  maxUpgradeRatio: 0.9
   description: 

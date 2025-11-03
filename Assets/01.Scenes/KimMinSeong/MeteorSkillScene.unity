@@ -184832,7 +184832,7 @@ MonoBehaviour:
   - {fileID: 1146727613942615151, guid: dbe13d43ab80f134d83301055740344e, type: 3}
   - {fileID: 6948470598453267942, guid: 0f712dcd3dc23ed4a84d66113f5d8586, type: 3}
   - {fileID: 5897547034953215948, guid: f90405bd017e75f4399db0b66120d4d1, type: 3}
-  - {fileID: 8678387319638756003, guid: ca3424c0099e4cb49aba4671f2ad5796, type: 3}
+  - {fileID: 186734, guid: 87ef6fb9e11601146bcd5dcb522968d4, type: 3}
   initialPoolSize: 50
   maxPoolSize: 100
 --- !u!1 &755937675
@@ -187667,19 +187667,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseDamage: 10
-  baseCooldown: 1
-  baseInterval: 0.25
-  baseProjectileCount: 3
+  baseCooldown: 5
+  baseInterval: 0.5
   baseBlockCount: 3
-  usedStats: 0000000001000000040000000a00000009000000
+  usedStats: 00000000010000000a00000009000000
   maxLevel: 8
   upgradeStep: 2
   skillType: 0
   playerTransform: {fileID: 1979479470}
   projectilePrefabs:
-  - {fileID: 8678387319638756003, guid: ca3424c0099e4cb49aba4671f2ad5796, type: 3}
+  - {fileID: 186734, guid: 87ef6fb9e11601146bcd5dcb522968d4, type: 3}
   blockSpace: 15
   projectileSpace: 3
+  projectileCount: 3
 --- !u!1 &1183153711
 GameObject:
   m_ObjectHideFlags: 0
