@@ -1,8 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI; // Image 사용
 using System;
-using UnityEditor.ShaderGraph;
 using static PlayerStateLogic;
 
 public class GaugeOverdriveLogic : MonoBehaviour

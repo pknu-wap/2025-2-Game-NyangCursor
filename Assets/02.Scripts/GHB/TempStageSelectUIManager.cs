@@ -1,6 +1,4 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 // 임시 UI ON/OFF용 스크립트, 나중에 LOBBYUI 매니저로 한번에 병합해야 함

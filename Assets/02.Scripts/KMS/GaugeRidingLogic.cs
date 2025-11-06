@@ -1,7 +1,5 @@
 ﻿using System;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.InputSystem.LowLevel;
 using static PlayerStateLogic;
 
 public class GaugeRidingLogic : MonoBehaviour
