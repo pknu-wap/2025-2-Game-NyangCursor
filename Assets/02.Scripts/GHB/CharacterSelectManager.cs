@@ -13,6 +13,23 @@ public class CharacterSelectManager : MonoBehaviour
     [SerializeField] private Transform slotParent;       // 슬롯들이 들어갈 부모
     [SerializeField] private GameObject slotPrefab;      // 슬롯 프리팹
 
+    [Header("설명창 오브젝트")]
+    [SerializeField] private Image selectedCharacterIcon;
+    [SerializeField] private TextMeshProUGUI selectedCharacterName;
+    [SerializeField] private TextMeshProUGUI selectedCharacterDescription;
+    [SerializeField] private Image selectedSkillIcon;
+    [SerializeField] private TextMeshProUGUI selectedSkillName;
+    [SerializeField] private TextMeshProUGUI selectedSkillDescription;
+    [SerializeField] private Image selectedPassiveIcon;
+    [SerializeField] private TextMeshProUGUI selectedPassiveName;
+    [SerializeField] private TextMeshProUGUI selectedPassiveDescription;
+
+    [Header("선택 버튼")]
+    [SerializeField] private Button selectButton;
+
+    [Header("스테이지 선택 UI")]
+    [SerializeField] private GameObject stageSelectUI;
+
     private void Start()
     {
         characterSelectUI.SetActive(false); // 기본은 비활성화
@@ -31,25 +48,43 @@ public class CharacterSelectManager : MonoBehaviour
         foreach (var data in characterList)
         {
             GameObject slot = Instantiate(slotPrefab, slotParent);
-
-            // 슬롯 내부 컴포넌트 찾기 (예: TMP_Text, Image)
-            var nameText = slot.transform.Find("NameText").GetComponent<TMP_Text>();
+            var button = slot.GetComponent<Button>();
             var iconImage = slot.transform.Find("Icon").GetComponent<Image>();
-            var selectButton = slot.transform.Find("SelectButton").GetComponent<Button>();
 
-            nameText.text = data.characterName;
             iconImage.sprite = data.characterImage;
 
             // 선택 버튼 클릭 시 해당 캐릭터 선택 처리
-            selectButton.onClick.AddListener(() => OnCharacterSelected(data));
+            button.onClick.AddListener(() => OnCharacterSelected(data));
+
+            // 일단 무조건 첫번째 인덱스 걸로 선택한 걸로 처리
+            OnCharacterSelected(characterList[0]);
         }
     }
+
+
 
     // 🔹 캐릭터 선택 시 호출
     private void OnCharacterSelected(CharacterDataSO selected)
     {
-        Debug.Log($"선택된 캐릭터: {selected.characterName}");
-        // TODO: 선택 정보 저장 or 다음 씬으로 전달
-        // e.g. GameManager.Instance.SetSelectedCharacter(selected);
+        selectedCharacterIcon.sprite = selected.characterImage;
+        selectedCharacterName.text = selected.characterName;
+        selectedCharacterDescription.text = selected.characterDescription;
+
+        selectedSkillIcon.sprite = selected.startingSkill.icon;
+        selectedSkillName.text = selected.startingSkill.optionName;
+        selectedSkillDescription.text = selected.startingSkill.description;
+
+        /* 추후 자료구조를 어떻게 할지에 따라 갱신 로직 바뀔 수 있음
+        selectedPassiveIcon.sprite
+
+        */
+
+        selectButton.onClick.AddListener(() => CharacterConfirm(selected));
+    }
+
+    private void CharacterConfirm(CharacterDataSO selected)
+    {
+        SelectedChararcterDataManager.instance.selectedStartData = selected.startingSkill;
+        characterSelectUI.SetActive(false);
     }
 }
