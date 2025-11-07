@@ -237,6 +237,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 453ce2b8caa343e4496632817751e5e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minScatterForce: 2
+  maxScatterForce: 4
   dropEntities:
   - dropPrefab: {fileID: 5897547034953215948, guid: f90405bd017e75f4399db0b66120d4d1, type: 3}
     dropRate: 100
