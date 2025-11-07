@@ -22,8 +22,6 @@ public class ShopManager : MonoBehaviour
 
     private void Start()
     {
-        // 임시로 돈 충전
-        PlayerPrefs.SetInt("Money", 100);
         normalMoneyColor = currentMoneyText.color;
         UpdateMoneyUI();
         InitializeShop();
@@ -70,6 +68,7 @@ public class ShopManager : MonoBehaviour
 
         Debug.Log($"{data.itemName} 구매됨, {statKey} +{data.itemStatValue}");
 
+        PlayerPrefs.Save();
         UpdateMoneyUI();
     }
 

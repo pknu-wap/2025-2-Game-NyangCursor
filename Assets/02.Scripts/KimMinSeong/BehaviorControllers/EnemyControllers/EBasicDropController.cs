@@ -29,6 +29,7 @@ public class EBasicDropController : MonoBehaviour, IDroppable
     {
         // 이 컨트롤러는 경험치만 드랍하도록 설정
         DropObject<ExpDropObject>();
+        DropObject<GoldDropObject>();
     }
 
     private void DropObject<T>() where T : DropObject
