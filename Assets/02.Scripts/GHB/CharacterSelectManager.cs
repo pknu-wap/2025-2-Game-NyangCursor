@@ -30,40 +30,58 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("스테이지 선택 UI")]
     [SerializeField] private GameObject stageSelectUI;
 
+    [Header("로비 UI")]
+    [SerializeField] private GameObject lobbyUI;
+
     private void Start()
     {
         characterSelectUI.SetActive(false); // 기본은 비활성화
     }
 
-    // 🔹 시작 버튼에서 이 함수 호출
+    // 시작 버튼에서 이 함수 호출
     public void OpenUI()
     {
         characterSelectUI.SetActive(true);
+        lobbyUI.SetActive(false);
         PopulateCharacterSlots();
     }
 
-    // 🔹 캐릭터 목록 표시
+    public void CloseUI()
+    {
+        characterSelectUI.SetActive(false);
+        lobbyUI.SetActive(true);
+    }
+
+    // 캐릭터 목록 표시
     private void PopulateCharacterSlots()
     {
+        // 이미 있던 슬롯 제거
+        foreach (Transform child in slotParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // 새 슬롯 생성
         foreach (var data in characterList)
         {
             GameObject slot = Instantiate(slotPrefab, slotParent);
-            var button = slot.GetComponent<Button>();
+            var button = slot.transform.Find("Icon").GetComponent<Button>();
             var iconImage = slot.transform.Find("Icon").GetComponent<Image>();
 
             iconImage.sprite = data.characterImage;
 
-            // 선택 버튼 클릭 시 해당 캐릭터 선택 처리
             button.onClick.AddListener(() => OnCharacterSelected(data));
-
-            // 일단 무조건 첫번째 인덱스 걸로 선택한 걸로 처리
-            OnCharacterSelected(characterList[0]);
         }
+
+        // 첫번째 캐릭터 자동 선택
+        if (characterList.Count > 0)
+            OnCharacterSelected(characterList[0]);
     }
 
 
 
-    // 🔹 캐릭터 선택 시 호출
+
+    // 캐릭터 선택 시 호출
     private void OnCharacterSelected(CharacterDataSO selected)
     {
         selectedCharacterIcon.sprite = selected.characterImage;
@@ -79,12 +97,14 @@ public class CharacterSelectManager : MonoBehaviour
 
         */
 
+        selectButton.onClick.RemoveAllListeners();
         selectButton.onClick.AddListener(() => CharacterConfirm(selected));
     }
 
     private void CharacterConfirm(CharacterDataSO selected)
     {
         SelectedChararcterDataManager.instance.selectedStartData = selected.startingSkill;
+        stageSelectUI.SetActive(true);
         characterSelectUI.SetActive(false);
     }
 }

@@ -95,7 +95,7 @@ public class ShopManager : MonoBehaviour
     {
         if (shopUI != null)
         {
-            CloseShop();
+            shopUI.SetActive(true);
             UpdateMoneyUI();
         }
     }
