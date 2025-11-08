@@ -4,6 +4,8 @@ using System;
 public class StageEndManager : MonoBehaviour
 {
     [SerializeField] TimerManager timerManager;
+    [SerializeField] GoldManager goldManager;
+
     // 현재 스테이지 번호
     [SerializeField] private int stageIndex;
     // float로 변경하여 밀리초까지 전달
@@ -25,27 +27,32 @@ public class StageEndManager : MonoBehaviour
     public void NotifyStageEnd()
     {
         Debug.Log("Stage End Triggered");
+
+        // 플레이 시간을 TimeManager 에서 가져옴
         float survivedTime = timerManager.CurrentTime;
-        int reward = CalculateReward(survivedTime);
-        SaveReward(reward);
+
+        // 이전까지 얻은 골드와 이번 게임에서 얻은 골드를 GoldManager 에서 가져옴
+        int savedGold = goldManager.SavedGold;
+        int earnedGold = goldManager.EarnedGold;
+
+        // 획득한 골드는 PlayerPrefs 에 저장
+        SaveGold(savedGold, earnedGold);
+
         if (timerManager.IsCleared)
         {
             UnlockNextStage();
         }
-        OnStageEnd?.Invoke(timerManager.IsCleared, survivedTime, reward);
+
+        OnStageEnd?.Invoke(timerManager.IsCleared, survivedTime, earnedGold);
     }
 
-    private int CalculateReward(float seconds)
+    private void SaveGold(int savedGold, int earnedGold)
     {
-        return Mathf.RoundToInt(seconds * rewardRatio);
-    }
+        // 기존에 저장된 골드에 새로 획득한 골드를 추가
+        int totalGold = savedGold + earnedGold;
 
-    private void SaveReward(int reward)
-    {
-        // 기존 돈 가져오기
-        int currentMoney = PlayerPrefs.GetInt("Money", 0);
-        currentMoney += reward;
-        PlayerPrefs.SetInt("Money", currentMoney);
+        // PlayerPrefs 에 쓰기 후 저장
+        PlayerPrefs.SetInt("Money", totalGold);
         PlayerPrefs.Save();
     }
 
