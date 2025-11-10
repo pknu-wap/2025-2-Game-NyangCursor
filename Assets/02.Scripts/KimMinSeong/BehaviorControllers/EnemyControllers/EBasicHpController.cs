@@ -82,7 +82,7 @@ public class EBasicHpController : MonoBehaviour, IDamageable
         spriteRenderer.color = originalColor;
     }
 
-    public void Die()
+    private void Die()
     {
         if (isDead)
             return;

@@ -22,8 +22,8 @@ public class Enemy : MonoBehaviour
     public ICollidable Collidable => collidable?.TargetInterface;
     public IDroppable Droppable => droppable?.TargetInterface;
 
-    // 적 사망 이벤트
-    public static event Action<float> deathEvent;
+    // 적 오브젝트와 외부 오브젝트와의 통신을 위한 이벤트
+    public static event Action<float> OnEnemyDeath;
 
     private void OnEnable()
     {
@@ -84,7 +84,7 @@ public class Enemy : MonoBehaviour
         // 드랍 처리
         Droppable?.Drop();
 
-        deathEvent?.Invoke(10f);
+        OnEnemyDeath?.Invoke(enemyData.overdriveGaugeReward);
 
         // EnemyManager 에서 현재 적 개수 감소
         EnemyManager.instance.DecreaseCurrentEnemies();

@@ -6,7 +6,6 @@ public interface IDamageable
 {
     void Initialize(Component owner);
     void TakeDamage(float damage);
-    void Die();
     void Cleanup();
     float CurrentHp { get; }
     float MaxHp { get; }

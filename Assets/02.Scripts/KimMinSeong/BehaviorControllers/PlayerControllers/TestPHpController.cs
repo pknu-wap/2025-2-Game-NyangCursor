@@ -61,7 +61,7 @@ public class PlayerHpController : MonoBehaviour, IDamageable
 
     }
 
-    public void Die()
+    private void Die()
     {
         if (isDead)
             return;
