@@ -225,18 +225,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 453ce2b8caa343e4496632817751e5e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minScatterForce: 2
+  maxScatterForce: 4
   dropEntities:
   - dropPrefab: {fileID: 5897547034953215948, guid: f90405bd017e75f4399db0b66120d4d1, type: 3}
     dropRate: 100
---- !u!114 &5946401376795925275
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1146727613942615151}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ada1737c3fdf9b64cb5d18a4918c3ecf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+
+  - dropPrefab: {fileID: 4246174279374542710, guid: 89139b8f26fc6914188dd4a9fd49d1c3, type: 3}
+    dropRate: 100
+
