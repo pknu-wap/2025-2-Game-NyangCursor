@@ -7,4 +7,5 @@ public class UpgradeEventData
     public string skillName;
     public SkillStatKey statKey;
     public float upgradeRatio;
+    public bool applyLevelUp;
 }

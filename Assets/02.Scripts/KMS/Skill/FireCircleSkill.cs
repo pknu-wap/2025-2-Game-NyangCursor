@@ -126,8 +126,8 @@ public class FireCircleSkill : MonoBehaviour, ISkill
             if (!string.Equals(data.skillName, skillName, StringComparison.OrdinalIgnoreCase))
                 return;
 
-            currentLevel++;
-            Debug.Log($"[FireCircleSkill] 레벨업! 현재 레벨: {currentLevel}");
+            if (data.applyLevelUp) // applyLevelUp가 true일 때만 레벨 증가
+                currentLevel++;
         }
 
         if (!usedStats.Contains(key))

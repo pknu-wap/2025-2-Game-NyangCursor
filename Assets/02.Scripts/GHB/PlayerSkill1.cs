@@ -163,7 +163,8 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
             if (!string.Equals(data.skillName, skillName, StringComparison.OrdinalIgnoreCase))
                 return;
 
-            currentLevel++;
+            if (data.applyLevelUp) // applyLevelUp가 true일 때만 레벨 증가
+                currentLevel++;
         }
 
         // 2. usedStats에 있는 키만 처리

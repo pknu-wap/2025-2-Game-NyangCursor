@@ -158,16 +158,22 @@ public class UpgradeManager1 : MonoBehaviour
         if (button != null)
         {
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() =>
+            if (button != null)
             {
-                foreach (var stat in chosenStats)
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(() =>
                 {
-                    var eventData = CreateUpgradeEvent(data, stat, ratio, isUnlocked);
-                    Debug.Log($"[Upgrade] 선택됨: {data.optionName} (등급: {rarity})");
-                    OnUpgradeSelected1?.Invoke(eventData);
-                }
-                OnUpgradeFinished?.Invoke();
-            });
+                    for (int i = 0; i < chosenStats.Count; i++)
+                    {
+                        bool levelUp = i == 0; // 첫 번째 이벤트만 레벨 증가
+                        var eventData = CreateUpgradeEvent(data, chosenStats[i], ratio, isUnlocked, levelUp);
+                        Debug.Log($"[Upgrade] 선택됨: {data.optionName} (등급: {rarity})");
+                        OnUpgradeSelected1?.Invoke(eventData);
+                    }
+                    OnUpgradeFinished?.Invoke();
+                });
+            }
+
         }
     }
 
@@ -199,7 +205,7 @@ public class UpgradeManager1 : MonoBehaviour
         return null;
     }
 
-    private UpgradeEventData CreateUpgradeEvent(UpgradeOptionSO data, SkillStatKey chosenStatKey, float ratio, bool isUnlocked)
+    private UpgradeEventData CreateUpgradeEvent(UpgradeOptionSO data, SkillStatKey chosenStatKey, float ratio, bool isUnlocked, bool applyLevelUp = false)
     {
         if (data.isSkill && !isUnlocked)
         {
@@ -209,7 +215,8 @@ public class UpgradeManager1 : MonoBehaviour
                 isSkillUpgrade = true,
                 skillName = data.optionName,
                 statKey = chosenStatKey,
-                upgradeRatio = 0f
+                upgradeRatio = 0f,
+                applyLevelUp = applyLevelUp
             };
         }
 
@@ -218,16 +225,33 @@ public class UpgradeManager1 : MonoBehaviour
             isSkillUpgrade = data.isSkill,
             skillName = data.isSkill ? data.optionName : null,
             statKey = chosenStatKey,
-            upgradeRatio = ratio
+            upgradeRatio = ratio,
+            applyLevelUp = applyLevelUp
         };
     }
+
 
     public void ApplySelectedStartSkill()
     {
         var selectedDataManager = SelectedChararcterDataManager.instance;
+        if (selectedDataManager == null || selectedDataManager.selectedStartData == null)
+            return;
+
         UpgradeOptionSO startData = selectedDataManager.selectedStartData;
+
+        // 스킬 Unlock
         playerSkillsManager.UnlockSkill(startData.optionName, startData.icon);
+
+        // UpgradeEventData 생성 후 이벤트 발생 (레벨업 포함)
+        var skillMgr = GetSkillManager(startData.optionName);
+        if (skillMgr != null && skillMgr.UsedStats.Count > 0)
+        {
+            var firstStat = skillMgr.UsedStats[0]; // 첫 번째 Stat만 적용
+            var eventData = CreateUpgradeEvent(startData, firstStat, 0f, true, true);
+            OnUpgradeSelected1?.Invoke(eventData);
+        }
         // 중복 방지
         selectedDataManager.selectedStartData = null;
     }
+
 }
