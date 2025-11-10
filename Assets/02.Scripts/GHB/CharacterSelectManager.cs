@@ -14,6 +14,7 @@ public class CharacterSelectManager : MonoBehaviour
     [SerializeField] private GameObject slotPrefab;      // 슬롯 프리팹
 
     [Header("설명창 오브젝트")]
+    [SerializeField] private GameObject descriptionField;
     [SerializeField] private Image selectedCharacterIcon;
     [SerializeField] private TextMeshProUGUI selectedCharacterName;
     [SerializeField] private TextMeshProUGUI selectedCharacterDescription;
@@ -72,10 +73,6 @@ public class CharacterSelectManager : MonoBehaviour
 
             button.onClick.AddListener(() => OnCharacterSelected(data));
         }
-
-        // 첫번째 캐릭터 자동 선택
-        if (characterList.Count > 0)
-            OnCharacterSelected(characterList[0]);
     }
 
 
@@ -84,6 +81,7 @@ public class CharacterSelectManager : MonoBehaviour
     // 캐릭터 선택 시 호출
     private void OnCharacterSelected(CharacterDataSO selected)
     {
+        descriptionField.SetActive(true);
         selectedCharacterIcon.sprite = selected.characterImage;
         selectedCharacterName.text = selected.characterName;
         selectedCharacterDescription.text = selected.characterDescription;

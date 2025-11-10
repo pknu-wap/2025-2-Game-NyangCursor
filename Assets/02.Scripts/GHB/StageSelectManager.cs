@@ -15,6 +15,7 @@ public class StageSelectManager : MonoBehaviour
     [SerializeField] private GameObject slotPrefab;      // 슬롯 프리팹
 
     [Header("설명창 오브젝트")]
+    [SerializeField] private GameObject descriptionField;
     [SerializeField] private Image stageIcon;
     [SerializeField] private TextMeshProUGUI stageName;
     [SerializeField] private TextMeshProUGUI bestRecord;
@@ -31,6 +32,7 @@ public class StageSelectManager : MonoBehaviour
     private void Start()
     {
         stageSelectUI.SetActive(false); // 기본은 비활성화
+        descriptionField.SetActive(false);
     }
 
     public void OpenUI()
@@ -85,10 +87,6 @@ public class StageSelectManager : MonoBehaviour
                 iconButton.interactable = false;
             }
         }
-
-        // 첫 번째 스테이지 자동 선택 (있을 경우)
-        if (stageList.Count > 0)
-            OnStageSelected(stageList[0]);
     }
 
 
@@ -96,6 +94,7 @@ public class StageSelectManager : MonoBehaviour
 
     private void OnStageSelected(StageDataSO selected)
     {
+        descriptionField.SetActive(true);
         stageIcon.sprite = selected.stageImage;
         stageName.text = selected.stageName;
 
