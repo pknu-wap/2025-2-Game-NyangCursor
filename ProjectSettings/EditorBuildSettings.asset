@@ -98,6 +98,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/01.Scenes/GangMinSeong/#Demo.unity
     guid: b4177612827f145e48fe151449015cef
+  - enabled: 1
+    path: Assets/01.Scenes/GoHyeokBin/#77/#Demo2.unity
+    guid: 749b699d7142527468124071e5e82d79
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

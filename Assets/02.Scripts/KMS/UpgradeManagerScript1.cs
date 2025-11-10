@@ -175,4 +175,42 @@ public class UpgradeManager1 : MonoBehaviour
             upgradeRatio = ratio
         };
     }
+
+    public void ApplySelectedStartSkill()
+    {
+        var selectedDataManager = SelectedChararcterDataManager.instance;
+        if (selectedDataManager == null)
+        {
+            Debug.LogWarning("[UpgradeManager1] SelectedChararcterDataManager.instance가 null입니다. 시작 스킬을 적용할 수 없습니다.");
+            return;
+        }
+
+        if (selectedDataManager.selectedStartData == null)
+        {
+            Debug.Log("[UpgradeManager1] selectedStartData가 null입니다. 로비에서 선택한 시작 스킬이 없습니다.");
+            return;
+        }
+
+        if (playerSkillsManager == null)
+        {
+            Debug.LogError("[UpgradeManager1] playerSkillsManager가 할당되지 않았습니다. 인스펙터에서 할당해주세요.");
+            return;
+        }
+
+        UpgradeOptionSO startData = selectedDataManager.selectedStartData;
+        Debug.Log($"[UpgradeManager1] 시작 스킬 적용 시도: {startData.optionName} (isSkill: {startData.isSkill})");
+
+        if (startData.isSkill)
+        {
+            playerSkillsManager.UnlockSkill(startData.optionName, startData.icon);
+            Debug.Log($"[UpgradeManager1] 시작 스킬 해금 호출 완료: {startData.optionName}");
+        }
+        else
+        {
+            Debug.Log($"[UpgradeManager1] 선택된 시작 옵션은 스킬이 아닙니다: {startData.optionName}. (현재는 스킬만 자동 해금됨)");
+        }
+
+        // 중복 방지
+        selectedDataManager.selectedStartData = null;
+    }
 }
