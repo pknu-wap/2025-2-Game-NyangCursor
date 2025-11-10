@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class StageSelectManager : MonoBehaviour
 {
-    [Header("캐릭터 데이터 리스트")]
+    [Header("맵 데이터 리스트")]
     public List<StageDataSO> stageList = new List<StageDataSO>();
 
     [Header("UI 참조")]
