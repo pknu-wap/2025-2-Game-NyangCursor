@@ -14,14 +14,12 @@ public class overDriveGaugeUI : MonoBehaviour
     {
         // 이벤트 구독
         GaugeOverdriveLogic.OnOverDriveTick += HandleUpdateOverDriveGauge;
-        GaugeOverdriveLogic.OnTierChangeEvent += HandleChangeColorGauge;
     }
 
     private void OnDisable()
     {
         // 이벤트 해제
         GaugeOverdriveLogic.OnOverDriveTick -= HandleUpdateOverDriveGauge;
-        GaugeOverdriveLogic.OnTierChangeEvent -= HandleChangeColorGauge;
     }
 
 

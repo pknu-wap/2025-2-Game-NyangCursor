@@ -1,10 +1,13 @@
 using UnityEngine;
 using static PlayerStateLogic;
 using System.Collections;
+using TMPro;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class OverDriveModController : MonoBehaviour
 {
+
+    [SerializeField] TextMeshProUGUI rbSpeedText;
 
     [Header("Move (RUNTIME VALUES) - 읽기용")]
     [SerializeField] private float currentTurnRateDeg;
@@ -88,7 +91,7 @@ public class OverDriveModController : MonoBehaviour
     private void Start()
     {
         ApplyPresetBlend();
-        speed = PlayerStatsManager.instance.GetStat(StatType.OverdriveMoveSpeedUp); //처음 속도 초기화
+        //speed = PlayerStatsManager.instance.GetStat(StatType.OverdriveMoveSpeedUp); //처음 속도 초기화
     }
 
     private void OnDestroy()
@@ -235,6 +238,8 @@ public class OverDriveModController : MonoBehaviour
 #else
         rb.velocity = forward * speed;
 #endif
+
+        rbSpeedText.text = rb.linearVelocity.magnitude.ToString();
     }
 
     private void LateUpdate()
