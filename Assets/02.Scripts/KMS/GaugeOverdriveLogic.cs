@@ -10,7 +10,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
     public OverDriveModController overDriveModController;
 
     [Header("현재 OverDrive 수치")]
-    [Range(0, 100)] public float overdrive = 0f; // 현재 OD 값
+     public float overdrive = 0f; // 현재 OD 값
 
     [Header("감소 속도 설정")]
     [SerializeField] private float baseDecreaseRate = 10f; // 기본 게이지 감소량(초당)
@@ -32,6 +32,8 @@ public class GaugeOverdriveLogic : MonoBehaviour
     public static event Action<float> OnOverDriveTick; // 게이지 변화 시 이벤트
     public static event Action OnGetOffEvent; // 게이지가 0이 되었을 때 이벤트
     public static event Action OnNormalEvent; // 노말 상태 복귀 이벤트
+
+    public static event Action OnBoostEvent; //부스터 발동 이벤트
 
     private void Awake()
     {
@@ -160,6 +162,8 @@ public class GaugeOverdriveLogic : MonoBehaviour
 
         float finalDur = (duration > 0) ? duration : boostDuration;
         float finalExtra = (extraSpeed > 0) ? extraSpeed : boostExtraSpeed;
+
+        OnBoostEvent?.Invoke();
 
         boostRoutine = StartCoroutine(BoostRoutine(finalDur, finalExtra));
     }

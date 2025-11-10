@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -36,7 +37,8 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
         if (!isMoving || target == null)
         {
             string reason = !isMoving ? "isMoving=false" : "target==null";
-            rb.linearVelocity = Vector2.zero;
+            //rb.linearVelocity = Vector2.zero;
+            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, Time.fixedDeltaTime * 5f);
             return;
         }
 
@@ -50,6 +52,20 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
 
         // 이동 방향으로 스프라이트 반전
         FlipSprite(direction.x);
+    }
+
+    public void StopForSeconds(float duration)
+    {
+        if (gameObject.activeInHierarchy)
+            StartCoroutine(StopRoutine(duration));
+    }
+
+    private IEnumerator StopRoutine(float duration)
+    {
+        isMoving = false;
+        
+        yield return new WaitForSeconds(duration);
+        isMoving = true;
     }
 
     private void FlipSprite(float directionX)
@@ -81,4 +97,6 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
     {
         Stop();
     }
+
+
 }
