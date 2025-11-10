@@ -10,15 +10,18 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private GameObject shopUI;
     [SerializeField] private TMP_Text currentMoneyText;
 
-    [Header("Setup")]
+    [Header("요소")]
     [SerializeField] private Transform contentParent;
     [SerializeField] private GameObject itemPrefab;
     [SerializeField] private List<ShopStatData> shopItems = new List<ShopStatData>();
 
-    [Header("Feedback")]
+    [Header("재화 관련")]
     private Color normalMoneyColor;
     [SerializeField] private Color insufficientMoneyColor = Color.red;
     [SerializeField] private float blinkDuration = 0.5f;
+
+    [Header("로비 UI")]
+    [SerializeField] private GameObject lobbyUI;
 
     private void Start()
     {
@@ -96,12 +99,18 @@ public class ShopManager : MonoBehaviour
         }
     }
 
+    public void CloseShop()
+    {
+        shopUI.SetActive(false);
+        lobbyUI.SetActive(true);
+    }
+
     void Update()
     {
         // 닫기
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            shopUI.SetActive(false);
+            CloseShop();
         }
 
         // 임시로 PlayerPrefs 값 출력
