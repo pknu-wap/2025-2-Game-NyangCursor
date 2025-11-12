@@ -7,6 +7,7 @@ public class ItemAltarUIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI itemNameText;
     [SerializeField] private Image itemIconImage;
     [SerializeField] private TextMeshProUGUI itemDescriptionText;
+    [SerializeField] private TextMeshProUGUI itemRarityText;
     [SerializeField] private Button useButton;
     [SerializeField] private Button BackButton;
 
@@ -16,6 +17,7 @@ public class ItemAltarUIManager : MonoBehaviour
         if (itemNameText != null) itemNameText.text = item.itemName;
         if (itemIconImage != null) itemIconImage.sprite = item.itemImage;
         if (itemDescriptionText != null) itemDescriptionText.text = item.itemDescription;
+        if (itemRarityText != null) itemRarityText.text = item.itemRarity.ToString();
 
         useButton.onClick.RemoveAllListeners();
         useButton.onClick.AddListener(() =>
