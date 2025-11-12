@@ -203465,7 +203465,7 @@ MonoBehaviour:
   gaugeFill: {fileID: 5620809594298826014}
   isUsed: 0
   ItemAltarPanel: {fileID: 1290729905}
-  item: {fileID: 11400000, guid: 53fee0a9e30a6284aaca78f626e3b5e8, type: 2}
+  item: {fileID: 11400000, guid: 6efa2bf076e60f545995c6b4fcb0dd83, type: 2}
 --- !u!114 &6166930926212568612
 MonoBehaviour:
   m_ObjectHideFlags: 0
