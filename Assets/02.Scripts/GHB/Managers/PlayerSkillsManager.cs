@@ -67,16 +67,6 @@ public class PlayerSkillsManager : MonoBehaviour
 
         unlockedSkills.Add(slot);
 
-        // 정렬 적용
-        /*unlockedSkills.Sort((a, b) =>
-        {
-            ISkill skillA = a.skillManagerObject.GetComponent<ISkill>();
-            ISkill skillB = b.skillManagerObject.GetComponent<ISkill>();
-            int typeA = skillA.SkillType == SkillType.Active ? 0 : 1;
-            int typeB = skillB.SkillType == SkillType.Active ? 0 : 1;
-            return typeA.CompareTo(typeB);
-        });*/
-
         // 아이콘 순서 적용
         SkillIconUIManager.Instance.RefreshIcons(unlockedSkills);
 
