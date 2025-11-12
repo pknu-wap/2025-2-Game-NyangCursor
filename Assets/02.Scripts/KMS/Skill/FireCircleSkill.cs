@@ -23,8 +23,7 @@ public class FireCircleSkill : MonoBehaviour, ISkill
 
     private int currentLevel = 1;
     private string skillName;
-    private bool isOnCooldown = false;
-    private Coroutine cooldownRoutine;
+    private Coroutine passiveRoutine;
 
     private Dictionary<SkillStatKey, float> statValues = new Dictionary<SkillStatKey, float>();
 
@@ -33,8 +32,6 @@ public class FireCircleSkill : MonoBehaviour, ISkill
     public float currentDuration { get; private set; }
     public float currentSpeed { get; private set; }
     public float currentRange { get; private set; }
-
-    public SkillType SkillType => SkillType.Active;
     public List<SkillStatKey> UsedStats => usedStats;
     public int CurrentLevel { get => currentLevel; set => currentLevel = value; }
 
@@ -53,11 +50,16 @@ public class FireCircleSkill : MonoBehaviour, ISkill
     private void OnEnable()
     {
         UpgradeManager.OnUpgradeSelected1 += ApplyUpgrade;
+        PlayerStateLogic.Instance.OnStateChanged += HandleStateChanged;
+
+        // 스킬이 활성화될 때, 현재 플레이어 상태 확인
+        HandleStateChanged(PlayerStateLogic.Instance.CurrentState);
     }
 
     private void OnDisable()
     {
         UpgradeManager.OnUpgradeSelected1 -= ApplyUpgrade;
+        PlayerStateLogic.Instance.OnStateChanged -= HandleStateChanged;
     }
 
     private void SyncCurrentValues()
@@ -76,45 +78,49 @@ public class FireCircleSkill : MonoBehaviour, ISkill
             Debug.Log("[FireCircleSkill] 현재 상태에서는 사용 불가");
             return;
         }
+        SkillCooldownUI cdUI = null;
+        SkillIconUIManager.Instance.TryGetCooldownUI(skillName, out cdUI);
 
-        if (isOnCooldown)
-        {
-            Debug.Log($"[FireCircleSkill] 쿨타임 중 ({currentCooldown:F1}s)");
-            return;
-        }
+        bool hasCooldownStat = usedStats.Contains(SkillStatKey.Cooldown);
 
         Debug.Log($"[FireCircleSkill] 발동! Damage:{currentDamage}, Range:{currentRange}");
-        FireCircleActive();
-        cooldownRoutine = StartCoroutine(CooldownRoutine(currentCooldown));
+        passiveRoutine = StartCoroutine(PassiveLoop(currentCooldown, cdUI, hasCooldownStat));
+    }
+
+    private IEnumerator PassiveLoop(float cd, SkillCooldownUI cdUI, bool showUI)
+    {
+        while (true)
+        {
+            FireCircleActive();
+            Debug.Log($"{skillName} (패시브 효과 발동 중...)");
+            // 쿨다운 StatKey가 있는 경우만 UI 표시
+            if (showUI)
+                cdUI?.StartCooldown(cd);
+
+            yield return new WaitForSeconds(cd);
+        }
     }
 
     private void FireCircleActive()
     {
-     if (fireCirclePrefabs.Count == 0)
-    {
-        Debug.LogWarning("[FireCircleSkill] 프리팹이 비어 있습니다.");
-        return;
-    }
+        if (fireCirclePrefabs.Count == 0)
+        {
+            Debug.LogWarning("[FireCircleSkill] 프리팹이 비어 있습니다.");
+            return;
+        }
 
-    int prefabIndex = Mathf.Clamp((currentLevel - 1) / 2, 0, fireCirclePrefabs.Count - 1);
-    GameObject prefab = fireCirclePrefabs[prefabIndex];
+        int prefabIndex = Mathf.Clamp((currentLevel - 1) / 2, 0, fireCirclePrefabs.Count - 1);
+        GameObject prefab = fireCirclePrefabs[prefabIndex];
 
-    GameObject circle = Instantiate(prefab, transform.position, Quaternion.identity);
+        GameObject circle = Instantiate(prefab, transform.position, Quaternion.identity);
 
-    if (circle.TryGetComponent<CircleSkillLogic>(out var logic))
-    {
-        // 플레이어의 Transform을 넘겨서 따라가게
-        logic.Initialize(currentDamage, currentSpeed, currentRange, transform);
-    }
+        if (circle.TryGetComponent<CircleSkillLogic>(out var logic))
+        {
+            // 플레이어의 Transform을 넘겨서 따라가게
+            logic.Initialize(currentDamage, currentSpeed, currentRange, transform);
+        }
 
-    Destroy(circle, currentDuration);
-    }
-
-    private IEnumerator CooldownRoutine(float cooldown)
-    {
-        isOnCooldown = true;
-        yield return new WaitForSeconds(cooldown);
-        isOnCooldown = false;
+        Destroy(circle, currentDuration);
     }
 
     public void ApplyUpgrade(UpgradeEventData data)
@@ -152,7 +158,6 @@ public class FireCircleSkill : MonoBehaviour, ISkill
     public void ResetSkill()
     {
         StopAllCoroutines();
-        isOnCooldown = false;
         currentLevel = 1;
 
         statValues[SkillStatKey.Damage] = baseDamage;
@@ -166,7 +171,60 @@ public class FireCircleSkill : MonoBehaviour, ISkill
 
     public void HandleStateChanged(PlayerStateLogic.PlayerState newState)
     {
-        // 필요 시 상태별 동작 추가
+        bool allowed = IsSkillAllowed();
+
+        SkillCooldownUI cdUI = null;
+        bool found = SkillIconUIManager.Instance?.TryGetCooldownUI(skillName, out cdUI) ?? false;
+
+        Debug.Log($"[Skill] {skillName} | State: {newState} | Allowed: {allowed} | Found UI: {found} | cdUI: {cdUI}");
+
+        bool hasCooldown = usedStats.Contains(SkillStatKey.Cooldown);
+
+
+        if (!allowed)
+        {
+            // 상태 불허용
+            if (passiveRoutine != null)
+            {
+                StopCoroutine(passiveRoutine);
+                passiveRoutine = null;
+                Debug.Log($"[Skill] {skillName} | PassiveRoutine stopped due to disallowed state");
+            }
+            if (cdUI != null)
+                cdUI.ForceFill();
+            return;
+        }
+        if (hasCooldown)
+        {
+            // 쿨다운 있는 패시브 루프
+            if (passiveRoutine == null)
+            {
+                passiveRoutine = StartCoroutine(PassiveLoop(currentCooldown, cdUI, hasCooldown));
+                Debug.Log($"[Skill] {skillName} | Started PassiveLoop coroutine");
+
+                if (cdUI != null)
+                {
+                    cdUI.StartCooldown(currentCooldown);
+                    Debug.Log($"[Skill] {skillName} | Started cdUI cooldown for {currentCooldown}s");
+                }
+                else
+                {
+                    Debug.LogWarning($"[Skill] {skillName} | cdUI null, cannot start cooldown UI");
+                }
+            }
+        }
+        else
+        {
+            if (cdUI != null)
+            {
+                cdUI.ForceReset();
+                Debug.Log($"[Skill] {skillName} | ForceReset (no cooldown)");
+            }
+            else
+            {
+                Debug.LogWarning($"[Skill] {skillName} | cdUI null, cannot ForceReset");
+            }
+        }
     }
 
     public bool IsSkillAllowed()

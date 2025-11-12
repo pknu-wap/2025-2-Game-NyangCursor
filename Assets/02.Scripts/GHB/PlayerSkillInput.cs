@@ -1,4 +1,4 @@
-using System.Collections.Generic; // <- 추가
+/*using System.Collections.Generic; // <- 추가
 using UnityEngine;
 
 public class PlayerSkillInput : MonoBehaviour
@@ -63,4 +63,4 @@ public class PlayerSkillInput : MonoBehaviour
         }
     }
 
-}
+}*/

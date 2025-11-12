@@ -25,10 +25,6 @@ public class MeteorSkill : MonoBehaviour, ISkill
     private int currentLevel = 0; // 현재 레벨
 
     private string skillName;   // 스킬명
-    public SkillType skillType; // 스킬 타입 (Active, Passive)
-
-    private bool isOnCooldown = false;  // 쿨타임 여부 확인용 Flag
-    private Coroutine cooldownRoutine;  // 쿨타임 제어 코루틴
 
     [Header("플레이어 위치를 사용하기 위한 변수")]
     [SerializeField] Transform playerTransform;
@@ -43,9 +39,11 @@ public class MeteorSkill : MonoBehaviour, ISkill
     [Header("블록 안에 투사체 개수")]
     [SerializeField] private int projectileCount = 3;
 
+    private Coroutine passiveRoutine;
+    private Coroutine meteorRoutine;
+
     // 프로퍼티 사용하여 멤버에 대해 외부 접근이 가능
     public List<SkillStatKey> UsedStats => usedStats;
-    public SkillType SkillType => skillType;
     public int CurrentLevel
     {
         get => currentLevel;
@@ -93,36 +91,32 @@ public class MeteorSkill : MonoBehaviour, ISkill
             return;
         }
 
-        // 쿨타임이라면 Skip
-        if (isOnCooldown)
-        {
-            Debug.Log($"{skillName} 쿨타임 중입니다!");
-            return;
-        }
-
-        Debug.Log($"{skillName} 발동!");
-
         // 쿨타임 UI 동작
         SkillCooldownUI cdUI = null;
         SkillIconUIManager.Instance.TryGetCooldownUI(skillName, out cdUI);
-        cdUI?.StartCooldown(CurrentCooldown);
 
         // 스킬 쿨타임 동작
-        cooldownRoutine = StartCoroutine(CooldownRoutine(CurrentCooldown));
+        bool hasCooldownStat = usedStats.Contains(SkillStatKey.Cooldown);
 
         // 메테오 생성 코루틴 동작
-        StartCoroutine(SpawnMeteorBlocks());
+        if (passiveRoutine == null)
+            passiveRoutine = StartCoroutine(PassiveLoop(CurrentCooldown, cdUI, hasCooldownStat));
     }
 
-    private IEnumerator CooldownRoutine(float cooldown)
+    private IEnumerator PassiveLoop(float cd, SkillCooldownUI cdUI, bool showUI)
     {
-        isOnCooldown = true;
-        Debug.Log($"{skillName} 쿨다운 시작 ({cooldown:F1}s)");
-
-        yield return new WaitForSeconds(cooldown);
-
-        isOnCooldown = false;
-        Debug.Log($"{skillName} 준비 완료!");
+        while (true)
+        {
+            Debug.Log($"{skillName} (패시브 효과 발동 중...)");
+            // 쿨다운 StatKey가 있는 경우만 UI 표시
+            if (showUI)
+                cdUI?.StartCooldown(cd);
+            if (meteorRoutine == null)
+            {
+                meteorRoutine = StartCoroutine(SpawnMeteorBlocks());
+            }
+            yield return new WaitForSeconds(cd);
+        }
     }
 
     private IEnumerator SpawnMeteorBlocks()
@@ -153,6 +147,7 @@ public class MeteorSkill : MonoBehaviour, ISkill
             if (blockIndex <= CurrentBlockCount - 2)
                 yield return new WaitForSeconds(CurrentInterval);
         }
+        meteorRoutine = null;
     }
 
     private void SpawnMeteors(Vector3 blockCenter, Vector3 right, GameObject meteor)
@@ -201,7 +196,7 @@ public class MeteorSkill : MonoBehaviour, ISkill
             if (data.applyLevelUp) // applyLevelUp가 true일 때만 레벨 증가
                 currentLevel++;
         }
-        
+
         // 2. usedStats에 있는 키만 처리
         if (!usedStats.Contains(data.statKey))
             return;
@@ -237,21 +232,60 @@ public class MeteorSkill : MonoBehaviour, ISkill
     // 플레이어 상태에 따라 스킬 사용 가능 여부를 제어하는 로직
     public void HandleStateChanged(PlayerStateLogic.PlayerState newState)
     {
-        SkillCooldownUI cdUI = null;
-        SkillIconUIManager.Instance?.TryGetCooldownUI(skillName, out cdUI);
+        bool allowed = IsSkillAllowed();
 
-        // 스킬을 사용할 수 없는 상태라면
-        // UI 에서 시전 불가능을 표시 
-        if (!IsSkillAllowed())
+        SkillCooldownUI cdUI = null;
+        bool found = SkillIconUIManager.Instance?.TryGetCooldownUI(skillName, out cdUI) ?? false;
+
+        Debug.Log($"[Skill] {skillName} | State: {newState} | Allowed: {allowed} | Found UI: {found} | cdUI: {cdUI}");
+
+        bool hasCooldown = usedStats.Contains(SkillStatKey.Cooldown);
+
+
+        if (!allowed)
         {
-            cdUI?.ForceFill();
+            // 상태 불허용
+            if (passiveRoutine != null)
+            {
+                StopCoroutine(passiveRoutine);
+                passiveRoutine = null;
+                Debug.Log($"[Skill] {skillName} | PassiveRoutine stopped due to disallowed state");
+            }
+            if (cdUI != null)
+                cdUI.ForceFill();
             return;
         }
+        if (hasCooldown)
+        {
+            // 쿨다운 있는 패시브 루프
+            if (passiveRoutine == null)
+            {
+                passiveRoutine = StartCoroutine(PassiveLoop(CurrentCooldown, cdUI, hasCooldown));
+                Debug.Log($"[Skill] {skillName} | Started PassiveLoop coroutine");
 
-        // 스킬을 사용할 수 있는 상태며, 쿨타임이 지났다면
-        // UI 에서 시전 가능함을 표시
-        if (!isOnCooldown)
-            cdUI?.ForceReset();
+                if (cdUI != null)
+                {
+                    cdUI.StartCooldown(CurrentCooldown);
+                    Debug.Log($"[Skill] {skillName} | Started cdUI cooldown for {CurrentCooldown}s");
+                }
+                else
+                {
+                    Debug.LogWarning($"[Skill] {skillName} | cdUI null, cannot start cooldown UI");
+                }
+            }
+        }
+        else
+        {
+            if (cdUI != null)
+            {
+                cdUI.ForceReset();
+                Debug.Log($"[Skill] {skillName} | ForceReset (no cooldown)");
+            }
+            else
+            {
+                Debug.LogWarning($"[Skill] {skillName} | cdUI null, cannot ForceReset");
+            }
+        }
     }
 
     public bool IsSkillAllowed()
