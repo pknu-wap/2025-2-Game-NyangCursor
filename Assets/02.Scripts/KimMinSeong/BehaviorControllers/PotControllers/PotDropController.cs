@@ -1,10 +1,14 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class EBasicDropController : MonoBehaviour, IDroppable
+public class PotDropController : MonoBehaviour, IDroppable
 {
-    private Enemy owner;
+    private Pot owner;
     private Transform dropTransform; // 드랍하고자 하는 위치
+
+    [Header("드랍 횟수")]
+    [SerializeField, Range(1, 50)] private int minDropCount = 1;
+    [SerializeField, Range(1, 50)] private int maxDropCount = 10;
 
     [Header("흩뿌리기 설정값")]
     [SerializeField, Range(1f, 10f)] private float minScatterForce = 1f;  // 흩뿌리는 힘의 최소값
@@ -15,27 +19,33 @@ public class EBasicDropController : MonoBehaviour, IDroppable
 
     public void Initialize(Component owner)
     {
-        // Enemy 타입만 허용
-        if (owner is not Enemy enemy)
+        // Pot 타입만 허용
+        if (owner is not Pot pot)
         {
-            Debug.LogError($"EBasicHpController 는 Enemy 타입만 지원합니다. 현재 타입: {owner.GetType().Name}");
+            Debug.LogError($"PotDropController 는 Pot 타입만 지원합니다. 현재 타입: {owner.GetType().Name}");
             return;
         }
 
-        this.owner = enemy;
-        dropTransform = transform;   // 드랍할 위치는 현재 스크립트가 부착된 오브젝트 기준
+        this.owner = pot;
+        dropTransform = transform;
     }
-
     public void Cleanup()
     {
     }
 
-    // 현재 리스트에서 원하는 오브젝트들을 드랍하는 함수
     public void Drop()
     {
-        // 이 컨트롤러는 경험치만 드랍하도록 설정
-        DropObject<ExpDropObject>();
-        DropObject<GoldDropObject>();
+        // 드랍 횟수를 잘못 설정했다면 Switch 
+        if (minDropCount > maxDropCount)
+            (minDropCount, maxDropCount) = (maxDropCount, minDropCount);
+
+        // 랜덤한 횟수로 드랍
+        int dropCount = Random.Range(minDropCount, maxDropCount + 1);
+        for (int i = 0; i < dropCount; ++i)
+        {
+            DropObject<ExpDropObject>();
+            DropObject<GoldDropObject>();
+        }
     }
 
     private void DropObject<T>() where T : DropObject

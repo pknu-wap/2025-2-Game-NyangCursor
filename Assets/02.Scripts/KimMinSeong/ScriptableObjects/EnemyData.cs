@@ -9,10 +9,6 @@ public class EnemyData : ScriptableObject
     [Tooltip("적 이름")]
     public string enemyName = "example";
 
-    [Space(5)]
-    [Tooltip("적 아이콘")]
-    public Sprite icon;
-
     [Header("=== 개별 데이터 ===")]
 
     [Space(5)]
@@ -30,4 +26,8 @@ public class EnemyData : ScriptableObject
     [Space(5)]
     [Tooltip("공격 쿨타임 (초 단위)")]
     public float attackRate = 0.5f;
+
+    [Space(5)]
+    [Tooltip("처치시 게이지 회복량")]
+    public float overdriveGaugeReward = 10f;
 }
