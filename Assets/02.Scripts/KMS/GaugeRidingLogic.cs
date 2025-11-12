@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using static PlayerStateLogic;
 
@@ -14,6 +14,8 @@ public class GaugeRidingLogic : MonoBehaviour
     public static event Action OnFullRidingGauge; //라이딩 게이지 100퍼센트 달성 이벤트
     public static event Action OnRidingEvent; //E키를 눌렀을때 라이딩 하는 이벤트
     public static event Action OnOverDriveEvent;//오버드라이브 진입한 이벤트
+
+    [SerializeField] private Rigidbody2D rigidPlayer;
 
 
     private void Awake()
@@ -52,6 +54,11 @@ public class GaugeRidingLogic : MonoBehaviour
                 OnRidingEvent?.Invoke(); //라이딩 이벤트 발송 To(PlayerAnimator,NormalCursorMove)
                 PlayerStateLogic.Instance.ChangeState(PlayerState.Riding); //라이딩 상태변경
                 ResetRidingGauge();
+
+                
+                rigidPlayer.bodyType = RigidbodyType2D.Kinematic; //탑승중 키네마틱(안밀림)
+
+                Invoke("ChangeSpeedZero", 0.1f);
                 Invoke("ChangeStateToOverDrive", 1); //1초뒤에 오버드라이브 상태변경
             }
         }
@@ -61,6 +68,13 @@ public class GaugeRidingLogic : MonoBehaviour
     {
         PlayerStateLogic.Instance.ChangeState(PlayerState.OverDrive);
         OnOverDriveEvent?.Invoke(); //오버드라이브 이벤트 발송 To(OverDriveModController)
+
+        rigidPlayer.bodyType = RigidbodyType2D.Dynamic; //오버드라이브 다이나믹(밀림)
+    }
+
+    public void ChangeSpeedZero()
+    {
+        rigidPlayer.linearVelocity = Vector2.zero;
     }
 
     public void UpRidingGauge(float amount)

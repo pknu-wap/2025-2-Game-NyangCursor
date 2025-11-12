@@ -1,89 +1,68 @@
 using PixelUI;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using DG.Tweening; // DOTween 추가
 
 public class overDriveGaugeUI : MonoBehaviour
 {
-    [SerializeField] ValueBar valueBar;
-    [SerializeField] Material material;
+    [SerializeField] private RectTransform gaugeRect;
+    [SerializeField] private ValueBar valueBar;
     [SerializeField] private Material gaugeMaterial;
+
     private Coroutine colorChangeRoutine;
+    private Vector2 shownPos = new Vector2(0f, 40f);
+    private Vector2 hiddenPos = new Vector2(0f, -100f);
 
     private void OnEnable()
     {
-        // 이벤트 구독
         GaugeOverdriveLogic.OnOverDriveTick += HandleUpdateOverDriveGauge;
-        GaugeOverdriveLogic.OnTierChangeEvent += HandleChangeColorGauge;
+        GaugeRidingLogic.OnOverDriveEvent += HandleShowOverDriveGauge;
+        GaugeOverdriveLogic.OnGetOffEvent += HandleHideOverDriveGauge;
     }
 
     private void OnDisable()
     {
-        // 이벤트 해제
         GaugeOverdriveLogic.OnOverDriveTick -= HandleUpdateOverDriveGauge;
-        GaugeOverdriveLogic.OnTierChangeEvent -= HandleChangeColorGauge;
+        GaugeRidingLogic.OnOverDriveEvent -= HandleShowOverDriveGauge;
+        GaugeOverdriveLogic.OnGetOffEvent -= HandleHideOverDriveGauge;
     }
 
-
-
-private void HandleChangeColorGauge(int tier)
-{
-    float targetHue = 0f;
-    float targetSat = 2f;
-    float targetBright = 1f;
-
-    switch (tier)
+    private void HandleUpdateOverDriveGauge(float value)
     {
-        case 0:
-            targetHue = 0f;   // 빨강 계열
-            targetSat = 2f;
-            targetBright = 1f;
+        // 게이지 UI 반영
+        valueBar.SetDirect(value);
 
-            // 🔸 Overlay 효과 끄기
-            if (gaugeMaterial.IsKeywordEnabled("OVERLAY_ON"))
-                gaugeMaterial.DisableKeyword("OVERLAY_ON");
-            break;
+        // 0~100 기준으로 4단계 색상 나누기
+        float targetHue = 0f;   // HSV Hue
+        float targetSat = 2f;
+        float targetBright = 1f;
 
-        case 1:
-            targetHue = 60f;  // 노랑 계열
-            targetSat = 2f;
-            targetBright = 1f;
-            break;
+        if (value < 20f)
+        {
+            targetHue = 330f; // 빨강
+        }
+        else if (value < 50f)
+        {
+            targetHue = 310f; // 노랑
+        }
+        else if (value < 75f)
+        {
+            targetHue = 265f; // 초록
+        }
+        else
+        {
+            targetHue = 265f; // 보라
+        }
 
-        case 2:
-            targetHue = 126f; // 초록 계열
-            targetSat = 2f;
-            targetBright = 1f;
-            break;
+        // 이미 실행 중이면 중단하고 새로 시작
+        if (colorChangeRoutine != null)
+            StopCoroutine(colorChangeRoutine);
 
-        case 3:
-            targetHue = 178f; // 파랑 계열
-            targetSat = 2f;
-            targetBright = 1f;
-            break;
-
-        case 4:
-            targetHue = 260f; // 보라 계열 (원하면 조정 가능)
-            targetSat = 2f;
-            targetBright = 1f;
-
-            // 🔸 Overlay 효과 켜기
-            if (!gaugeMaterial.IsKeywordEnabled("OVERLAY_ON"))
-                gaugeMaterial.EnableKeyword("OVERLAY_ON");
-            break;
+        colorChangeRoutine = StartCoroutine(LerpColorChange(targetHue, targetSat, targetBright, 0.4f));
     }
-
-    // 이미 실행 중이면 중단
-    if (colorChangeRoutine != null)
-        StopCoroutine(colorChangeRoutine);
-
-    colorChangeRoutine = StartCoroutine(LerpColorChange(targetHue, targetSat, targetBright, 0.8f));
-}
-
 
     private IEnumerator LerpColorChange(float targetHue, float targetSat, float targetBright, float duration)
     {
-        // 시작값 저장
         float startHue = gaugeMaterial.GetFloat("_HsvShift");
         float startSat = gaugeMaterial.GetFloat("_HsvSaturation");
         float startBright = gaugeMaterial.GetFloat("_HsvBright");
@@ -106,7 +85,6 @@ private void HandleChangeColorGauge(int tier)
             yield return null;
         }
 
-        // 마지막 값 보정
         gaugeMaterial.SetFloat("_HsvShift", targetHue);
         gaugeMaterial.SetFloat("_HsvSaturation", targetSat);
         gaugeMaterial.SetFloat("_HsvBright", targetBright);
@@ -114,21 +92,21 @@ private void HandleChangeColorGauge(int tier)
         colorChangeRoutine = null;
     }
 
-    private void HandleUpdateOverDriveGauge(float value)
+    // 🔹 오버드라이브 진입 시 게이지 표시
+    private void HandleShowOverDriveGauge()
     {
-        valueBar.SetDirect(value);
+        gaugeRect.DOKill();
+        gaugeRect.DOAnchorPos(shownPos, 0.6f)
+                 .SetEase(Ease.OutBack)
+                 .SetUpdate(true);
     }
 
-    
-
-    void Start()
+    // 🔹 노말 상태 복귀 시 게이지 숨김
+    private void HandleHideOverDriveGauge()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        gaugeRect.DOKill();
+        gaugeRect.DOAnchorPos(hiddenPos, 0.4f)
+                 .SetEase(Ease.InBack)
+                 .SetUpdate(true);
     }
 }
