@@ -22,7 +22,7 @@ public enum SkillStatKey
 public class PlayerSkillsManager : MonoBehaviour
 {
     [Header("업그레이드 매니저")]
-    [SerializeField] private UpgradeManager1 upgradeManager;
+    [SerializeField] private UpgradeManager upgradeManager;
 
     [Header("플레이어 자식으로 둘 9개의 스킬 매니저")]
     [SerializeField] private List<SkillSlot> skillSlots = new();

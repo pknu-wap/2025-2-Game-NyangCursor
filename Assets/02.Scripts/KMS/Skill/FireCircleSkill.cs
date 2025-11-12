@@ -52,12 +52,12 @@ public class FireCircleSkill : MonoBehaviour, ISkill
 
     private void OnEnable()
     {
-        UpgradeManager1.OnUpgradeSelected1 += ApplyUpgrade;
+        UpgradeManager.OnUpgradeSelected1 += ApplyUpgrade;
     }
 
     private void OnDisable()
     {
-        UpgradeManager1.OnUpgradeSelected1 -= ApplyUpgrade;
+        UpgradeManager.OnUpgradeSelected1 -= ApplyUpgrade;
     }
 
     private void SyncCurrentValues()

@@ -70,7 +70,7 @@ public class MeteorSkill : MonoBehaviour, ISkill
     private void OnEnable()
     {
         //UpgradeManager.OnUpgradeSelected += ApplyUpgrade;
-        UpgradeManager1.OnUpgradeSelected1 += ApplyUpgrade; // UpgradeManager 리팩토링이 안되어있는 상태라 UpgradeManager1 사용
+        UpgradeManager.OnUpgradeSelected1 += ApplyUpgrade; // UpgradeManager 리팩토링이 안되어있는 상태라 UpgradeManager1 사용
         PlayerStateLogic.Instance.OnStateChanged += HandleStateChanged;
 
         // 스킬이 활성화될 때, 현재 플레이어 상태 확인
@@ -80,7 +80,7 @@ public class MeteorSkill : MonoBehaviour, ISkill
     private void OnDisable()
     {
         //UpgradeManager.OnUpgradeSelected -= ApplyUpgrade;
-        UpgradeManager1.OnUpgradeSelected1 -= ApplyUpgrade;  // UpgradeManager 리팩토링이 안되어있는 상태라 UpgradeManager1 사용
+        UpgradeManager.OnUpgradeSelected1 -= ApplyUpgrade;  // UpgradeManager 리팩토링이 안되어있는 상태라 UpgradeManager1 사용
         PlayerStateLogic.Instance.OnStateChanged -= HandleStateChanged;
     }
 

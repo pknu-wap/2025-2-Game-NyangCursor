@@ -26,12 +26,12 @@ public class ExpManager : MonoBehaviour
     private void OnEnable()
     {
         ExpDropObject.OnExpCollected += AddExp;
-        UpgradeManager1.OnUpgradeFinished += CompleteLevelUp;
+        UpgradeManager.OnUpgradeFinished += CompleteLevelUp;
     }
     private void OnDisable()
     {
         ExpDropObject.OnExpCollected -= AddExp;
-        UpgradeManager1.OnUpgradeFinished -= CompleteLevelUp;
+        UpgradeManager.OnUpgradeFinished -= CompleteLevelUp;
     }
 
     // 경험치를 먹었을 때 실행할 콜백 함수
