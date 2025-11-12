@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
+public enum UpgradeRarity { Normal, Rare, Legendary }
+
 public class UpgradeManager1 : MonoBehaviour
 {
     [Header("업그레이드 슬롯 4개")]
@@ -14,6 +16,11 @@ public class UpgradeManager1 : MonoBehaviour
 
     [Header("플레이어 스킬 관리자")]
     [SerializeField] private PlayerSkillsManager playerSkillsManager;
+
+    [Header("등급 확률 (총합 100%)")]
+    [Range(0, 100)] public float normalRate = 70f;
+    [Range(0, 100)] public float rareRate = 25f;
+    [Range(0, 100)] public float legendaryRate = 5f;
 
     public static event Action OnUpgradeFinished;
 
@@ -60,24 +67,49 @@ public class UpgradeManager1 : MonoBehaviour
         // 버튼은 자식에서 찾기 (기존 방식 유지)
         Button button = slotUI.slotObj.GetComponentInChildren<Button>();
 
-        // 강화 수치 계산
+        // 스킬/비전서 등급 결정
+        UpgradeRarity rarity = GetRandomRarity();
+
+        // 스킬이 잠금 상태면 등급 무조건 Normal
+        var slot = playerSkillsManager.GetSkillSlot(data.optionName);
+        bool isUnlocked = slot != null && slot.isUnlocked;
+        if (data.isSkill && !isUnlocked)
+            rarity = UpgradeRarity.Normal;
+
+        // 기본 강화 비율 계산
         float ratio = UnityEngine.Random.Range(data.minUpgradeRatio, data.maxUpgradeRatio);
-        string percentText = $"{ratio * 100f:F1}%";
 
-        SkillStatKey chosenStatKey = data.affectedStat;
-        bool isUnlocked = true;
+        // 비전서라면 등급 배수 적용
+        if (!data.isSkill)
+        {
+            float multiplier = rarity == UpgradeRarity.Rare ? 2f :
+                               rarity == UpgradeRarity.Legendary ? 3f : 1f;
+            ratio *= multiplier;
+        }
 
+        // 스탯 키 선정
+        List<SkillStatKey> chosenStats = new();
         if (data.isSkill)
         {
-            var slot = playerSkillsManager.GetSkillSlot(data.optionName);
-            isUnlocked = slot != null && slot.isUnlocked;
-
             ISkill skillMgr = GetSkillManager(data.optionName);
             if (skillMgr != null && skillMgr.UsedStats.Count > 0)
             {
-                int r = UnityEngine.Random.Range(0, skillMgr.UsedStats.Count);
-                chosenStatKey = skillMgr.UsedStats[r];
+                int statCount = rarity switch
+                {
+                    UpgradeRarity.Rare => 2,
+                    UpgradeRarity.Legendary => 3,
+                    _ => 1
+                };
+                statCount = Mathf.Min(statCount, skillMgr.UsedStats.Count);
+
+                // 중복 없는 랜덤 선택
+                var shuffled = skillMgr.UsedStats.OrderBy(_ => UnityEngine.Random.value).ToList();
+                chosenStats = shuffled.Take(statCount).ToList();
             }
+        }
+        else
+        {
+            chosenStats.Add(data.affectedStat);
         }
 
         // 아이콘 설정
@@ -91,6 +123,7 @@ public class UpgradeManager1 : MonoBehaviour
         {
             string extension = data.isSkill ? ".exe" : ".dll";
             string displayName = $"[{data.optionName}{extension}]";
+            slotUI.rarityText.text = $"[{rarity}]";
             slotUI.skillnameText.text = displayName;
         }
 
@@ -118,22 +151,41 @@ public class UpgradeManager1 : MonoBehaviour
         // 스탯 텍스트 설정
         if (slotUI.statText != null)
         {
-            string statKeyText = chosenStatKey.ToString();
-            slotUI.statText.text = $"{statKeyText} +{percentText}";
+            slotUI.statText.text = string.Join("\n", chosenStats.Select(s => $"{s} +{ratio * 100f:F1}%"));
         }
 
         // 버튼 클릭 이벤트
         if (button != null)
         {
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() =>
+            if (button != null)
             {
-                var eventData = CreateUpgradeEvent(data, chosenStatKey, ratio, isUnlocked);
-                Debug.Log($"[Upgrade] 선택됨: {data.optionName}");
-                OnUpgradeSelected1?.Invoke(eventData);
-                OnUpgradeFinished?.Invoke();
-            });
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(() =>
+                {
+                    for (int i = 0; i < chosenStats.Count; i++)
+                    {
+                        bool levelUp = i == 0; // 첫 번째 이벤트만 레벨 증가
+                        var eventData = CreateUpgradeEvent(data, chosenStats[i], ratio, isUnlocked, levelUp);
+                        Debug.Log($"[Upgrade] 선택됨: {data.optionName} (등급: {rarity})");
+                        OnUpgradeSelected1?.Invoke(eventData);
+                    }
+                    OnUpgradeFinished?.Invoke();
+                });
+            }
+
         }
+    }
+
+    private UpgradeRarity GetRandomRarity()
+    {
+        float roll = UnityEngine.Random.Range(0f, 100f);
+        if (roll < normalRate)
+            return UpgradeRarity.Normal;
+        else if (roll < normalRate + rareRate)
+            return UpgradeRarity.Rare;
+        else
+            return UpgradeRarity.Legendary;
     }
 
     private ISkill GetSkillManager(string skillName)
@@ -153,7 +205,7 @@ public class UpgradeManager1 : MonoBehaviour
         return null;
     }
 
-    private UpgradeEventData CreateUpgradeEvent(UpgradeOptionSO data, SkillStatKey chosenStatKey, float ratio, bool isUnlocked)
+    private UpgradeEventData CreateUpgradeEvent(UpgradeOptionSO data, SkillStatKey chosenStatKey, float ratio, bool isUnlocked, bool applyLevelUp = false)
     {
         if (data.isSkill && !isUnlocked)
         {
@@ -163,7 +215,8 @@ public class UpgradeManager1 : MonoBehaviour
                 isSkillUpgrade = true,
                 skillName = data.optionName,
                 statKey = chosenStatKey,
-                upgradeRatio = 0f
+                upgradeRatio = 0f,
+                applyLevelUp = applyLevelUp
             };
         }
 
@@ -172,7 +225,33 @@ public class UpgradeManager1 : MonoBehaviour
             isSkillUpgrade = data.isSkill,
             skillName = data.isSkill ? data.optionName : null,
             statKey = chosenStatKey,
-            upgradeRatio = ratio
+            upgradeRatio = ratio,
+            applyLevelUp = applyLevelUp
         };
     }
+
+
+    public void ApplySelectedStartSkill()
+    {
+        var selectedDataManager = SelectedChararcterDataManager.instance;
+        if (selectedDataManager == null || selectedDataManager.selectedStartData == null)
+            return;
+
+        UpgradeOptionSO startData = selectedDataManager.selectedStartData;
+
+        // 스킬 Unlock
+        playerSkillsManager.UnlockSkill(startData.optionName, startData.icon);
+
+        // UpgradeEventData 생성 후 이벤트 발생 (레벨업 포함)
+        var skillMgr = GetSkillManager(startData.optionName);
+        if (skillMgr != null && skillMgr.UsedStats.Count > 0)
+        {
+            var firstStat = skillMgr.UsedStats[0]; // 첫 번째 Stat만 적용
+            var eventData = CreateUpgradeEvent(startData, firstStat, 0f, true, true);
+            OnUpgradeSelected1?.Invoke(eventData);
+        }
+        // 중복 방지
+        selectedDataManager.selectedStartData = null;
+    }
+
 }

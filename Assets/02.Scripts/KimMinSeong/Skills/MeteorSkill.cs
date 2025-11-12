@@ -92,7 +92,7 @@ public class MeteorSkill : MonoBehaviour, ISkill
             Debug.Log($"{skillName} 현재 상태에서 사용 불가");
             return;
         }
-        
+
         // 쿨타임이라면 Skip
         if (isOnCooldown)
         {
@@ -193,9 +193,15 @@ public class MeteorSkill : MonoBehaviour, ISkill
     public void ApplyUpgrade(UpgradeEventData data)
     {
         // 1. 유효한 스킬 이벤트인지 확인, 맞다면 레벨업
-        if (IsSkillMatch(data))
-            currentLevel++;
+        if (data.isSkillUpgrade)
+        {
+            if (!string.Equals(data.skillName, skillName, StringComparison.OrdinalIgnoreCase))
+                return;
 
+            if (data.applyLevelUp) // applyLevelUp가 true일 때만 레벨 증가
+                currentLevel++;
+        }
+        
         // 2. usedStats에 있는 키만 처리
         if (!usedStats.Contains(data.statKey))
             return;
