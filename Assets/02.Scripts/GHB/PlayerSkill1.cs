@@ -73,14 +73,14 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
     {
         //UpgradeManager.OnUpgradeSelected += ApplyUpgrade;
         PlayerStateLogic.Instance.OnStateChanged += HandleStateChanged;
-        UpgradeManager1.OnUpgradeSelected1 += ApplyUpgrade;
+        UpgradeManager.OnUpgradeSelected1 += ApplyUpgrade;
         // 시작 시 현재 상태 확인
         HandleStateChanged(PlayerStateLogic.Instance.CurrentState);
     }
 
     private void OnDisable()
     {
-        UpgradeManager1.OnUpgradeSelected1 += ApplyUpgrade;
+        UpgradeManager.OnUpgradeSelected1 += ApplyUpgrade;
         //UpgradeManager.OnUpgradeSelected -= ApplyUpgrade;
         PlayerStateLogic.Instance.OnStateChanged -= HandleStateChanged;
     }

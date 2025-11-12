@@ -6,7 +6,7 @@ using System.Linq;
 
 public enum UpgradeRarity { Normal, Rare, Legendary }
 
-public class UpgradeManager1 : MonoBehaviour
+public class UpgradeManager : MonoBehaviour
 {
     [Header("업그레이드 슬롯 4개")]
     [SerializeField] private List<UpgradeSlotUI> slotPrefabObjects = new();
