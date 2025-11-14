@@ -1,27 +1,10 @@
 using UnityEngine;
 
-public class GoldFollower : MonoBehaviour
+public class GoldFollower : BaseCollectibleFollower
 {
-    private Transform target;
-    private float speed = 10f;
-
-    // 풀에서 되돌아갈 때, target 을 초기화
-    private void OnDisable()
+    protected override void Collect()
     {
-        target = null;
-    }
-
-    public void SetTarget(Transform player, float moveSpeed)
-    {
-        target = player;
-        speed = moveSpeed;
-    }
-
-    private void Update()
-    {
-        if (target == null) return;
-
-        Vector3 dir = (target.position - transform.position).normalized;
-        transform.position += dir * speed * Time.deltaTime;
+        GoldDropObject drop = GetComponent<GoldDropObject>();
+        drop?.OnCollected(); // 골드 증가 + 풀 복귀
     }
 }

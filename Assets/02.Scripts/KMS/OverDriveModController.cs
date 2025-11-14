@@ -6,7 +6,6 @@ using TMPro;
 [RequireComponent(typeof(Rigidbody2D))]
 public class OverDriveModController : MonoBehaviour
 {
-
     [SerializeField] TextMeshProUGUI rbSpeedText;
 
     [Header("Move (RUNTIME VALUES) - 읽기용")]
@@ -18,13 +17,14 @@ public class OverDriveModController : MonoBehaviour
     [Range(1, 100)] public int presetBlend = 20;
 
     public float speed;
+    [HideInInspector] public float baseSpeed;
 
     [System.Serializable]
     public struct TurnFeelPreset
     {
-        public float turnRateDeg;   // 회전 속도
-        public float targetSmooth;  // 마우스 스무딩
-        public float deadzone;      // 데드존 반경
+        public float turnRateDeg;
+        public float targetSmooth;
+        public float deadzone;
     }
 
     [Header("Presets")]
@@ -70,109 +70,149 @@ public class OverDriveModController : MonoBehaviour
 
     [SerializeField] bool drawDeadzoneGizmos = true;
 
-     private float maxDecelSpeed = 10f; // 감속 상한 속도
-     private float decelTime = 1f;    // 감속 지속 시간
+    // 오버드라이브 종료 감속
+    private float maxDecelSpeed = 10f;
     private Coroutine decelRoutine;
+
+    // 충돌 감속 + 회복
+    private Coroutine recoverRoutine;
+    [SerializeField] private float decelDuration = 0.2f; //감속 속도
+    [SerializeField] private float recoverDuration = 3f; //회복 속도
 
 
     private void Awake()
     {
-        
-
         cam = followCam.GetComponent<Camera>();
         rb = GetComponent<Rigidbody2D>();
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
         smoothedTarget = transform.position;
         lastTarget = smoothedTarget;
         desiredAngle = rb.rotation;
-        GaugeOverdriveLogic.OnGetOffEvent += HandleResetOverDrive;
+
+        GaugeOverdriveLogic.OnGetOffEvent += HandleOverdriveExit;
     }
 
     private void Start()
     {
         ApplyPresetBlend();
-        //speed = PlayerStatsManager.instance.GetStat(StatType.OverdriveMoveSpeedUp); //처음 속도 초기화
+        baseSpeed = speed; //나중에 값 받아올때도 한번 초기화 필요!!!
     }
 
     private void OnDestroy()
     {
-        GaugeOverdriveLogic.OnGetOffEvent -= HandleResetOverDrive;
+        GaugeOverdriveLogic.OnGetOffEvent -= HandleOverdriveExit;
     }
 
-    private void HandleResetOverDrive()
+    // 오버드라이브 종료 시 떨어지는 속도 처리
+    private void HandleOverdriveExit()
     {
-        if (decelRoutine != null) StopCoroutine(decelRoutine);
+        if (recoverRoutine != null)
+        {
+            StopCoroutine(recoverRoutine);
+            recoverRoutine = null;
+        }
+
+        if (decelRoutine != null)
+            StopCoroutine(decelRoutine);
+
         decelRoutine = StartCoroutine(DecelerateToZero());
     }
 
     private IEnumerator DecelerateToZero()
     {
-        Vector2 currentVel = rb.linearVelocity;
+        Vector2 vel = rb.linearVelocity;
 
-        // 현재 속도가 상한보다 작으면 아무것도 하지 않음
-        if (currentVel.magnitude <= maxDecelSpeed)
+        if (vel.magnitude <= maxDecelSpeed)
             yield break;
 
-        // 너무 빠른 경우 → 상한값으로 즉시 보정
-        Vector2 limitedVel = currentVel.normalized * maxDecelSpeed;
-        rb.linearVelocity = limitedVel;
-
-        yield break;
+        rb.linearVelocity = vel.normalized * maxDecelSpeed;
     }
 
 
+    // 외부에서 충돌 감속 요청
+    public void ApplyCollisionSlow(float slowFactor)
+    {
+        if (PlayerStateLogic.Instance.CurrentState != PlayerState.OverDrive)
+            return;
 
-    private float smoothLockTimer = 0f;  // 남은 락 시간(초)
+        if (recoverRoutine != null)
+            StopCoroutine(recoverRoutine);
 
+        recoverRoutine = StartCoroutine(ReduceAndRecoverSpeed(slowFactor));
+    }
+
+    private IEnumerator ReduceAndRecoverSpeed(float slowFactor)
+    {
+        
+        float startSpeed = speed;
+        float reducedSpeed = baseSpeed * slowFactor;
+
+        float elapsed = 0f;
+
+
+        //감속
+        while (elapsed < decelDuration)
+        {
+            elapsed += Time.deltaTime;
+            speed = Mathf.Lerp(startSpeed, reducedSpeed, elapsed / decelDuration);
+            yield return null;
+        }
+
+
+        //회복
+        elapsed = 0f;
+        while (elapsed < recoverDuration)
+        {
+            elapsed += Time.deltaTime;
+            speed = Mathf.Lerp(reducedSpeed, baseSpeed, elapsed / recoverDuration);
+            yield return null;
+        }
+
+        speed = baseSpeed;
+        recoverRoutine = null;
+    }
+
+
+    // ------------------ 움직임 로직 ------------------
+
+    private float smoothLockTimer = 0f;
 
     private void Update()
     {
         if (PlayerStateLogic.Instance.CurrentState != PlayerState.OverDrive)
             return;
-        // --- 마우스 위치 ---
+
         Vector3 m = Input.mousePosition;
         m.z = Mathf.Abs(cam.transform.position.z);
         Vector3 target = cam.ScreenToWorldPoint(m);
 
-
-        // --- 마우스 움직임 체크 ---
         bool mouseStopped = (target - lastTarget).sqrMagnitude < 0.01f;
 
-        // --- 타이머 갱신 ---
         if (smoothLockTimer > 0f)
             smoothLockTimer -= Time.deltaTime;
 
         if (mouseStopped && smoothLockTimer <= 0f)
         {
-            // 멈췄고, 락 해제된 상태 → 딱 붙이기
             smoothedTarget = target;
-            targetVel = Vector3.zero; // 관성 제거
-            
+            targetVel = Vector3.zero;
         }
         else
         {
-            // 움직이거나(마우스 움직임), 혹은 락 타이머 중일 때 → 스무딩 유지
             smoothedTarget = Vector3.SmoothDamp(smoothedTarget, target, ref targetVel, currentTargetSmooth);
-           
 
-            // 움직임이 발생한 순간 → 락 걸기
             if (!mouseStopped)
-                smoothLockTimer = 0.1f; // 몇초에 딱 타겟보정할지?
+                smoothLockTimer = 0.1f;
         }
 
         lastTarget = target;
-
         ApplyPresetBlend();
 
-        // --- 외부 제어면 여기서 끝 ---
         if (externalControl) return;
 
-
-        // --- 방향 계산 ---
         Vector2 to = (Vector2)(smoothedTarget - (Vector3)rb.position);
         float dist = to.magnitude;
 
-        // Deadzone 체크
         float enterR = currentDeadzone;
         float exitR = currentDeadzone;
 
@@ -187,22 +227,21 @@ public class OverDriveModController : MonoBehaviour
 
         if (!prevInDeadzone && inDeadzone)
             angleVel = 0f;
+
         prevInDeadzone = inDeadzone;
 
         if (!inDeadzone)
         {
             float targetAngle = Mathf.Atan2(to.y, to.x) * Mathf.Rad2Deg - 90f;
-
             float angDiff = Mathf.Abs(Mathf.DeltaAngle(desiredAngle, targetAngle));
+
             if (angDiff > minAngleDeg)
             {
                 float smoothTime = (angDiff >= snapThreshold)
                     ? smoothTimeSnap
                     : (1f / Mathf.Max(1f, currentTurnRateDeg));
 
-                desiredAngle = Mathf.SmoothDampAngle(
-                    desiredAngle, targetAngle, ref angleVel, smoothTime
-                );
+                desiredAngle = Mathf.SmoothDampAngle(desiredAngle, targetAngle, ref angleVel, smoothTime);
             }
 
             if (deadZoneImg) deadZoneImg.SetActive(false);
@@ -211,10 +250,7 @@ public class OverDriveModController : MonoBehaviour
         {
             if (deadZoneImg) deadZoneImg.SetActive(true);
         }
-
-
     }
-
 
     private void FixedUpdate()
     {
@@ -247,23 +283,23 @@ public class OverDriveModController : MonoBehaviour
         if (PlayerStateLogic.Instance.CurrentState != PlayerState.OverDrive)
             return;
 
-        if (!followCam) return;
         Vector3 targetPos = (Vector3)rb.position + camOffset;
         followCam.position = Vector3.SmoothDamp(followCam.position, targetPos, ref camVel, camSmooth);
     }
 
+
     private void ApplyPresetBlend()
     {
-        // playerStat.turnRateDeg → 1일 때 10f, 10일 때 360f
-        float trNorm = Mathf.InverseLerp(1f, 10f, PlayerStatsManager.instance.GetStat(StatType.RotationPowerUp)); //todo 참조변경
-        trNorm = Mathf.Clamp01(trNorm); // 안전하게 0~1 범위 제한
+        float trNorm = Mathf.InverseLerp(
+            1f, 10f,
+            PlayerStatsManager.instance.GetStat(StatType.RotationPowerUp));
 
-        // --- playerStat 기반 "동적 heavyPreset" ---
+        trNorm = Mathf.Clamp01(trNorm);
+
         float boostedTurn = Mathf.Lerp(10f, 360f, trNorm);
         float boostedSmooth = Mathf.Lerp(0.3f, 0.12f, trNorm);
         float boostedDeadzone = Mathf.Lerp(0.4f, 0.25f, trNorm);
 
-        // --- presetBlend(1~100) 보간 ---
         float t = Mathf.InverseLerp(1f, 100f, presetBlend);
 
         currentTurnRateDeg = Mathf.Lerp(basePreset.turnRateDeg, boostedTurn, t);
@@ -271,7 +307,8 @@ public class OverDriveModController : MonoBehaviour
         currentDeadzone = Mathf.Lerp(basePreset.deadzone, boostedDeadzone, t);
     }
 
-    void OnDrawGizmos()
+
+    private void OnDrawGizmos()
     {
         if (!drawDeadzoneGizmos) return;
 

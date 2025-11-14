@@ -50,7 +50,7 @@ public class EBasicCollisionController : MonoBehaviour, ICollidable
         {
             damageable.TakeDamage(collisionDamage);
             lastDamageTime = Time.time;
-            Debug.Log($"{owner.name} 이(가) {target.name} 에게 {collisionDamage} 데미지를 입혔습니다.");
+            //Debug.Log($"{owner.name} 이(가) {target.name} 에게 {collisionDamage} 데미지를 입혔습니다.");
         }
     }
 

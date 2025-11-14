@@ -14,7 +14,7 @@ public class CombatZoneTrigger : MonoBehaviour
     {
         if (enemyLayer.Contains(other.gameObject))
         {
-            Debug.Log($"{other.name}이(가) 전투 영역을 벗어났습니다");
+            //Debug.Log($"{other.name}이(가) 전투 영역을 벗어났습니다");
             onEnemyExited?.Invoke(other.transform);
         }
     }

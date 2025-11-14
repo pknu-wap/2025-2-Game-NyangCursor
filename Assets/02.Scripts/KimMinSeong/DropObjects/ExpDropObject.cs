@@ -12,7 +12,6 @@ public class ExpDropObject : DropObject
     public override void OnCollected()
     {
         // 디버그용
-        Debug.Log("경험치를 먹었습니다");
 
         // 경험치량만큼 경험치 매니저에게 값을 전달
         OnExpCollected?.Invoke(expAmount);

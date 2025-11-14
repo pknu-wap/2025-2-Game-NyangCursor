@@ -6,77 +6,74 @@ public class TestPCollisionController : MonoBehaviour, ICollidable
 
     [Header("충돌 데이터")]
     [SerializeField] private float collisionDamage = 10f;
-    [SerializeField] private float damageCooltime = 0.5f;
     [SerializeField] private LayerMask enemyLayer;
 
-    private float lastAttackTime;
+    [Header("연동 컴포넌트")]
+    [SerializeField] private OverDriveModController overdriveController;
+
 
     public void Initialize(Component owner)
     {
         this.owner = owner;
-        lastAttackTime = -damageCooltime; // 시작 시 즉시 공격 가능
     }
+
 
     public void OnCollisionDetected(Collision2D collision)
     {
-        // Enemy 레이어 체크
         if (enemyLayer.Contains(collision.gameObject))
         {
-            TryAttackEnemy(collision.gameObject);
+            // 1) 충돌 데미지 전달 (쿨타임은 적이 처리함)
+            ApplyCollisionDamage(collision.gameObject);
+
+            // 3) 감속(기존 로직)
+            //overdriveController.ApplyCollisionSlow(0.5f);
         }
     }
 
+    //유체화 사용 시 (플레이어 trigger)
     public void OnTriggerDetected(Collider2D collider)
     {
-        // Enemy 레이어 체크
         if (enemyLayer.Contains(collider.gameObject))
         {
-            TryAttackEnemy(collider.gameObject);
+            // 트리거 충돌도 데미지는 줄 수 있음
+            ApplyCollisionDamage(collider.gameObject);
         }
     }
 
-    private void TryAttackEnemy(GameObject target)
+    // ============================
+    //  충돌 데미지 및 넉백 적용
+    // ============================
+    private void ApplyCollisionDamage(GameObject target)
     {
+        // 플레이어가 오버드라이브 상태가 아닐 경우 충돌 데미지 없음
         if (PlayerStateLogic.Instance.CurrentState != PlayerStateLogic.PlayerState.OverDrive)
             return;
 
-        // 공격 쿨타임 체크
-        if (Time.time - lastAttackTime < damageCooltime)
-            return;
-
-        // IDamageable 인터페이스를 구현한 컴포넌트 찾기
-        IDamageable damageable = target.GetComponent<IDamageable>();
-        if (damageable != null && !damageable.IsDead)
+        // ===== 데미지 처리 =====
+        IDamageable dmg = target.GetComponent<IDamageable>();
+        if (dmg != null)
         {
-            damageable.TakeDamage(collisionDamage);
-            lastAttackTime = Time.time;
-            Debug.Log($"{owner.name} 이(가) {target.name} 에게 {collisionDamage} 데미지를 입혔습니다.");
+            dmg.TakeCollisionDamage(collisionDamage);
+        }
+
+        // ===== 넉백 처리 =====
+        IKnockbackable knock = target.GetComponent<IKnockbackable>();
+        if (knock != null)
+        {
+            knock.ApplyKnockback(
+                transform.position,        // 충돌 주체(플레이어) 위치
+                0,            // speed에 값을 넣으면 power필요없음
+                overdriveController.speed   // 플레이어 현재 속도 기반 보정도 가능
+            );
         }
     }
 
-    public void Cleanup()
-    {
-        // 필요한 정리 작업
-    }
+    // Unity 이벤트 전달
+    private void OnCollisionEnter2D(Collision2D collision) => OnCollisionDetected(collision);
+    private void OnCollisionStay2D(Collision2D collision) => OnCollisionDetected(collision);
 
-    // Unity의 충돌 이벤트를 ICollidable로 전달
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        OnCollisionDetected(collision);
-    }
+    private void OnTriggerEnter2D(Collider2D collider) => OnTriggerDetected(collider);
+    private void OnTriggerStay2D(Collider2D collider) => OnTriggerDetected(collider);
 
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        OnCollisionDetected(collision);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collider)
-    {
-        OnTriggerDetected(collider);
-    }
-
-    private void OnTriggerStay2D(Collider2D collider)
-    {
-        OnTriggerDetected(collider);
-    }
+    public void Cleanup() { }
 }

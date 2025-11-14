@@ -75,6 +75,9 @@ public class NormalModController : MonoBehaviour
         if (PlayerStateLogic.Instance.CurrentState != PlayerState.Normal)
             return;
 
+        if (rb.bodyType != RigidbodyType2D.Kinematic)
+            return;
+
         if (hasClickTarget)
         {
             Vector2 pos = rb.position;
@@ -90,8 +93,10 @@ public class NormalModController : MonoBehaviour
             }
             else
             {
-                Vector2 step = dir.normalized * speed;
-                rb.MovePosition(pos + step * Time.fixedDeltaTime);
+                // ✔ velocity 기반 이동
+                Vector2 vel = dir.normalized * speed;
+                rb.linearVelocity = vel;
+
                 isMove = true;
                 OnWalk?.Invoke(true);
             }
@@ -101,6 +106,11 @@ public class NormalModController : MonoBehaviour
                 transform.localScale = new Vector3(-1, 1, 1);
             else if (dir.x < -0.05f)
                 transform.localScale = new Vector3(1, 1, 1);
+        }
+        else
+        {
+            // 클릭 타겟 없으면 멈춤
+            rb.linearVelocity = Vector2.zero;
         }
     }
 
