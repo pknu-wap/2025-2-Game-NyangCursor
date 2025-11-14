@@ -40,10 +40,6 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
 
     private Coroutine passiveRoutine;
 
-    //[Header("개별 스킬 설정")]
-    //[Header("레벨별 스킬 프리팹")]
-    /*[SerializeField] private List<GameObject> projectilePrefabs = new List<GameObject>();*/
-
 
     #region 스킬 스크립트 기본 구조
 
