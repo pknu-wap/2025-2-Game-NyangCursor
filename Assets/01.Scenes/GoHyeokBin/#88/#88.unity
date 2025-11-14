@@ -185643,6 +185643,9 @@ MonoBehaviour:
   - {fileID: 6238145512408227742, guid: f22d00e9451683840a804747912167cb, type: 3}
   - {fileID: 4529325749885727633, guid: 9078764b39bae3b4186fa63755b7b475, type: 3}
   - {fileID: 675161360108791972, guid: ba947b99e22213048aaa410240a39a17, type: 3}
+  - {fileID: 3332435683413182661, guid: 26591d435f09e5c479658d44532623a5, type: 3}
+  - {fileID: 7227173571350965952, guid: b8da9ca20198f6b45b6adac1ad6457c1, type: 3}
+  - {fileID: 9109479573694736181, guid: 66fd356ae5ec79347978c89fb3993b11, type: 3}
   initialPoolSize: 10
   maxPoolSize: 100
 --- !u!1 &755937675
@@ -186819,21 +186822,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 941772716}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a06c08fa1a249d49b3ad8454846e03f, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b94655d95d78bb41a625e8421fb9a30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightningEffectPrefab: {fileID: 0}
-  hitEffectPrefab: {fileID: 0}
-  playerRb: {fileID: 1979479478}
+  projectilePrefab: {fileID: 7227173571350965952, guid: b8da9ca20198f6b45b6adac1ad6457c1, type: 3}
   enemyMask:
     serializedVersion: 2
     m_Bits: 128
-  usedStats: 00000000010000000200000004000000
-  baseDamage: 2
-  baseCooldown: 5
-  baseRange: 3
+  usedStats: 000000000100000002000000040000000b000000
+  baseDamage: 10
+  baseCooldown: 1
+  baseRange: 7
+  baseProjectileSizeLevel: 1
   baseProjectileCount: 1
-  baseDepth: 1
+  baseEffectZoneDuration: 5
 --- !u!21 &941970264
 Material:
   serializedVersion: 8
@@ -671426,6 +671428,63 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1001 &2848603107418084523
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5719506856147455035, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
+      propertyPath: m_Name
+      value: StormRing
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256067277680725430, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256067277680725430, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256067277680725430, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256067277680725430, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256067277680725430, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256067277680725430, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256067277680725430, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256067277680725430, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256067277680725430, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6256067277680725430, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
 --- !u!222 &2879534609658663961
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -680221,3 +680280,4 @@ SceneRoots:
   - {fileID: 19305280}
   - {fileID: 2063596317}
   - {fileID: 1252780843}
+  - {fileID: 2848603107418084523}

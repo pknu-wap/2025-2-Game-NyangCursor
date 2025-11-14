@@ -27,6 +27,8 @@ public class MagicProjectile : MonoBehaviour, IProjectile
         this.damage = damage;
     }
 
+    public void SetSize(float size) {}
+
     public void SetDuration(float duration)
     {
         // 기존 Destroy 대신 코루틴 사용

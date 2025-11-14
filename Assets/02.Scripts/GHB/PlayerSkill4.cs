@@ -4,15 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PlayerSkill3 : MonoBehaviour, ISkill
+public class PlayerSkill4 : MonoBehaviour, ISkill
 {
-
-    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private GameObject stormPrefab;
 
     private int currentLevel = 0;
     private string skillName;
-
-    [SerializeField] private LayerMask enemyMask;
 
     [Header("이 스킬이 사용하는 공용 스탯 키들")]
     [SerializeField] private List<SkillStatKey> usedStats = new List<SkillStatKey>();
@@ -22,7 +19,8 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
     [SerializeField] private float baseCooldown = 5f;
     [SerializeField] private float baseRange = 3f;
     [SerializeField] private float baseProjectileSizeLevel = 1f;
-    [SerializeField] private float baseProjectileCount = 1f;
+
+    // 발사체 수가 아니라 소환체 수 같은걸로 따로 변수를 파야할듯
     [SerializeField] private float baseEffectZoneDuration = 1f;
 
 
@@ -34,7 +32,6 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
     public float currentCooldown { get; private set; }
     public float currentRange { get; private set; }
     public float currentProjectileSizeLevel { get; private set; }
-    public float currentProjectileCount { get; private set; }
     public float currentEffectZoneDuration { get; private set; }
     private Coroutine passiveRoutine;
 
@@ -52,7 +49,6 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
         statValues[SkillStatKey.Damage] = baseDamage;
         statValues[SkillStatKey.Cooldown] = baseCooldown;
         statValues[SkillStatKey.Range] = baseRange;
-        statValues[SkillStatKey.ProjectileCount] = baseProjectileCount;
         statValues[SkillStatKey.EffectZoneDuration] = baseEffectZoneDuration;
         statValues[SkillStatKey.ProjectileSize] = baseProjectileSizeLevel;
 
@@ -60,7 +56,6 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
         currentRange = baseRange;
-        currentProjectileCount = baseProjectileCount;
         currentEffectZoneDuration = baseEffectZoneDuration;
         currentProjectileSizeLevel = baseProjectileSizeLevel;
     }
@@ -101,7 +96,7 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
     {
         while (true)
         {
-            FireProjectiles();
+            SpawnStormAtRandomPosition();
             Debug.Log($"{skillName} (패시브 효과 발동 중...)");
             if (showUI)
                 cdUI?.StartCooldown(cd);
@@ -150,9 +145,6 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
             case SkillStatKey.Range:
                 currentRange = statValues[key];
                 break;
-            case SkillStatKey.ProjectileCount:
-                currentProjectileCount = statValues[key];
-                break;
             case SkillStatKey.EffectZoneDuration:
                 baseEffectZoneDuration = statValues[key];
                 break;
@@ -172,7 +164,6 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
                 // 스킬에서 사용하는 스탯에 따라 커스터마이징 하면 됩니다.
                 SkillStatKey.Damage => baseDamage,
                 SkillStatKey.Cooldown => baseCooldown,
-                SkillStatKey.ProjectileCount => baseProjectileCount,
                 SkillStatKey.Range => baseRange,
                 SkillStatKey.EffectZoneDuration => baseEffectZoneDuration,
                 SkillStatKey.ProjectileSize => baseProjectileSizeLevel,
@@ -182,7 +173,6 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
         currentLevel = 1;
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
-        currentProjectileCount = baseProjectileCount;
         currentRange = baseRange;
         currentEffectZoneDuration = baseEffectZoneDuration;
         currentProjectileSizeLevel = baseProjectileSizeLevel;
@@ -276,57 +266,29 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
 
     #endregion
 
-    private void FireProjectiles()
+
+    private void SpawnStormAtRandomPosition()
     {
-        // 1) 범위 안 적 검색
-        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, currentRange, enemyMask);
-        if (enemies.Length == 0)
-            return; // 주변 적이 없으면 발사 안 함
+        Vector2 spawnPos = GetRandomPositionOutsideInnerRadius(transform.position, currentRange, 1f);
 
-        // 2) 발사할 투사체 수
-        int projectileCount = Mathf.Max(1, Mathf.RoundToInt(currentProjectileCount));
+        GameObject stormObj = PoolManager.instance.Spawn(stormPrefab, spawnPos);
 
-        for (int i = 0; i < projectileCount; i++)
+        Storm storm = stormObj.GetComponent<Storm>();
+        if (storm != null)
         {
-            // PoolManager에서 투사체 가져오기
-            GameObject projObj = PoolManager.instance.Spawn(projectilePrefab, transform.position);
-
-            // IProjectile 세팅
-            if (projObj.TryGetComponent<ElectricProjectile>(out var projectile))
-            {
-                projectile.SetDamage(currentDamage);
-                projectile.SetDuration(currentEffectZoneDuration); // 투사체 지속 시간
-                projectile.SetSize(currentProjectileSizeLevel);
-                projectile.effectZoneDuration = currentEffectZoneDuration;
-            }
-
-            // Rigidbody2D로 발사 방향 세팅: 현재 가장 가까운 적 방향
-            Transform target = FindClosestEnemy(transform.position, enemies);
-            if (projObj.TryGetComponent<Rigidbody2D>(out var rb))
-            {
-                Vector2 dir = target != null ? (target.position - transform.position).normalized : Vector2.right;
-                rb.linearVelocity = dir * 4f; // 발사체 속도는 고정
-            }
+            storm.Init(currentDamage, currentEffectZoneDuration, currentProjectileSizeLevel);
         }
     }
 
-    // 가장 가까운 적 찾기
-    private Transform FindClosestEnemy(Vector3 from, Collider2D[] enemies)
+    private Vector2 GetRandomPositionOutsideInnerRadius(Vector2 center, float baseRange, float innerRadius)
     {
-        Transform closest = null;
-        float minDist = Mathf.Infinity;
-
-        foreach (var e in enemies)
+        Vector2 pos;
+        do
         {
-            float dist = Vector2.Distance(from, e.transform.position);
-            if (dist < minDist)
-            {
-                minDist = dist;
-                closest = e.transform;
-            }
-        }
-
-        return closest;
+            float angle = UnityEngine.Random.Range(0f, 360f) * Mathf.Deg2Rad;
+            float radius = UnityEngine.Random.Range(innerRadius, baseRange);
+            pos = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+        } while (Vector2.Distance(center, pos) < innerRadius);
+        return pos;
     }
-
 }
