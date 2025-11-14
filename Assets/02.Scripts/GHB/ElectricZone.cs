@@ -13,6 +13,7 @@ public class ElectricZone : MonoBehaviour
     private ParticleSystem ps;
     private CircleCollider2D circleCollider;
     [SerializeField] private LayerMask targetLayer;
+    [SerializeField] private GameObject hitEffectPrefab;
 
     private readonly List<IDamageable> targetsInZone = new List<IDamageable>();
 
@@ -68,18 +69,26 @@ public class ElectricZone : MonoBehaviour
 
     private void DealTickDamage()
     {
-        // 리스트 기반 반복 → OverlapCircleAll보다 훨씬 가벼움
-        for (int i = targetsInZone.Count - 1; i >= 0; i--)
+        // 리스트 복사본 생성
+        var snapshot = new List<IDamageable>(targetsInZone);
+
+        foreach (var dmg in snapshot)
         {
-            if (targetsInZone[i] == null || targetsInZone[i].IsDead)
+            if (dmg == null || dmg.IsDead)
             {
-                targetsInZone.RemoveAt(i);
+                targetsInZone.Remove(dmg);
                 continue;
             }
 
-            targetsInZone[i].TakeDamage(damagePerTick);
+            dmg.TakeDamage(damagePerTick);
+
+            if (dmg is Component comp)
+            {
+                PoolManager.instance.Spawn(hitEffectPrefab, comp.transform.position);
+            }
         }
     }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

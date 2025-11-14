@@ -360,9 +360,7 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
             /// 타격 효과 생성 (PoolManager 사용)
             if (hitEffectPrefab != null)
             {
-                GameObject effect = PoolManager.instance.Spawn(hitEffectPrefab, enemy.position);
-                // 일정 시간 후 다시 Pool로 반환
-                StartCoroutine(DespawnAfter(effect, 0.5f));
+                PoolManager.instance.Spawn(hitEffectPrefab, enemy.position);
             }
         }
 

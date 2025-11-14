@@ -5,6 +5,7 @@ using UnityEngine;
 public class ElectricProjectile : MonoBehaviour, IProjectile
 {
     [SerializeField] private GameObject explosionPrefab;
+    [SerializeField] private GameObject hitEffectPrefab;
     [SerializeField] private GameObject electricZone;
     [SerializeField] private LayerMask targetLayer;
 
@@ -71,16 +72,16 @@ public class ElectricProjectile : MonoBehaviour, IProjectile
     }
     private void Explode()
     {
-        // 폭발 prefab 생성 (실제 인스턴스)
         PoolManager.instance.Spawn(explosionPrefab, transform.position);
         Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, size * 4f, targetLayer);
         foreach (var enemy in enemies)
         {
-            IDamageable dmg = enemy.GetComponent<IDamageable>();
+            var dmg = enemy.GetComponent<IDamageable>();
             if (dmg != null && !dmg.IsDead)
             {
                 Debug.Log("범위공격으로 데미지");
                 dmg.TakeDamage(damage);
+                PoolManager.instance.Spawn(hitEffectPrefab, enemy.transform.position);
             }
         }
         GameObject zoneObj = PoolManager.instance.Spawn(electricZone, transform.position);

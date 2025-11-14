@@ -185641,6 +185641,7 @@ MonoBehaviour:
   - {fileID: 3332435683413182661, guid: 26591d435f09e5c479658d44532623a5, type: 3}
   - {fileID: 7227173571350965952, guid: b8da9ca20198f6b45b6adac1ad6457c1, type: 3}
   - {fileID: 9109479573694736181, guid: 66fd356ae5ec79347978c89fb3993b11, type: 3}
+  - {fileID: 4529325749885727633, guid: 337b3f7c786ec8c4ca952738754c9e2a, type: 3}
   - {fileID: 5719506856147455035, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
   initialPoolSize: 10
   maxPoolSize: 100
@@ -187887,7 +187888,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lightningEffectPrefab: {fileID: 675161360108791972, guid: ba947b99e22213048aaa410240a39a17, type: 3}
-  hitEffectPrefab: {fileID: 4529325749885727633, guid: 9078764b39bae3b4186fa63755b7b475, type: 3}
+  hitEffectPrefab: {fileID: 4529325749885727633, guid: 337b3f7c786ec8c4ca952738754c9e2a, type: 3}
   playerRb: {fileID: 1979479478}
   enemyMask:
     serializedVersion: 2
