@@ -11,8 +11,6 @@ public class GoldDropObject : DropObject
     // 이 오브젝트를 먹었을 때 동작을 정의
     public override void OnCollected()
     {
-        // 디버그용
-        Debug.Log("골드를 먹었습니다!");
 
         // 재화량을 담은 이벤트 발행
         OnGoldCollected?.Invoke(goldAmount);

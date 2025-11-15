@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: -3658654941346624756}
   - component: {fileID: -526574365230502210}
   - component: {fileID: 3458799293738972735}
+  - component: {fileID: 2167280641245540360}
   m_Layer: 7
   m_Name: ExampleEnemy0
   m_TagString: Untagged
@@ -196,6 +197,7 @@ MonoBehaviour:
   spriteRenderer: {fileID: 3720159621628614232}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   hitFlashDuration: 0.15
+  collisionDamageInterval: 0.3
 --- !u!114 &-3658654941346624756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -244,3 +246,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ada1737c3fdf9b64cb5d18a4918c3ecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2167280641245540360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146727613942615151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a7c40cb873fc9418736c898a5d24f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 0}
+  stopDuration: 0.4

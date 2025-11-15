@@ -1,100 +1,76 @@
 using UnityEngine;
 
-[RequireComponent(typeof(LineRenderer))]
 public class PushBlast : MonoBehaviour
 {
     [Header("Push Settings")]
     [SerializeField] private float radius = 3f;
     [SerializeField] private float pushPower = 15f;
     [SerializeField] private LayerMask enemyLayer;
-    [Header("Visual Settings")]
-    [SerializeField] private Color circleColor = new Color(1f, 0.5f, 0f, 0.4f);
-    [SerializeField] private int circleSegments = 64;
-    [SerializeField] private float showDuration = 0.3f;
 
-    private LineRenderer lineRenderer;
-    private float lastTriggerTime = -999f;
+    [Header("Cooldown Settings")]
     [SerializeField] private float triggerCooldown = 0.5f;
-
-    private void Awake()
-    {
-        lineRenderer = GetComponent<LineRenderer>();
-        lineRenderer.positionCount = circleSegments + 1;
-        lineRenderer.useWorldSpace = false;
-        lineRenderer.loop = true;
-        lineRenderer.startWidth = 0.05f;
-        lineRenderer.endWidth = 0.05f;
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
-        lineRenderer.startColor = circleColor;
-        lineRenderer.endColor = circleColor;
-        lineRenderer.enabled = false; // 기본적으로 숨김
-    }
+    private float lastTriggerTime = -999f;
 
     private void OnEnable()
     {
         GaugeOverdriveLogic.OnBoostEvent += Trigger;
+        GaugeOverdriveLogic.OnNormalEvent += Trigger;
     }
 
     private void OnDisable()
     {
         GaugeOverdriveLogic.OnBoostEvent -= Trigger;
+        GaugeOverdriveLogic.OnNormalEvent -= Trigger;
     }
 
-
-    void Update()
-    {
-        // 🔹 수동 테스트용: S키 누르면 폭발 트리거 실행
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            Trigger();
-        }
-    }
-
-
+    // ------------------------------------------------------
+    // Main blast trigger
+    // ------------------------------------------------------
     public void Trigger()
     {
         if (Time.time - lastTriggerTime < triggerCooldown)
             return;
+
         lastTriggerTime = Time.time;
 
-        ShowRadiusCircle();
+        float power = GetPowerByPlayerState();
 
         Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, radius, enemyLayer);
-        Debug.Log($"Detected enemies: {enemies.Length}");
 
         foreach (var col in enemies)
         {
-            Rigidbody2D rb = col.attachedRigidbody;
-            if (rb != null)
+            var knockback = col.GetComponent<IKnockbackable>();
+            if (knockback != null)
             {
-                Vector2 dir = (col.transform.position - transform.position).normalized;
-                rb.AddForce(dir * pushPower, ForceMode2D.Impulse);
-
-                var mover = col.GetComponent<EBasicMoveController2>();
-                if (mover != null)
-                    mover.StopForSeconds(0.6f);
+                knockback.ApplyKnockback(transform.position, power);
             }
         }
     }
 
-    private void ShowRadiusCircle()
+    // ------------------------------------------------------
+    //  Player mode → pushPower 적용 방식
+    // ------------------------------------------------------
+    private float GetPowerByPlayerState()
     {
-        // 원형 라인 세팅
-        for (int i = 0; i <= circleSegments; i++)
+        switch (PlayerStateLogic.Instance.CurrentState)
         {
-            float angle = (float)i / circleSegments * Mathf.PI * 2f;
-            Vector3 pos = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * radius;
-            lineRenderer.SetPosition(i, pos);
-        }
+            case PlayerStateLogic.PlayerState.Normal:
+                return pushPower * 0.3f;
 
-        // 원 표시
-        lineRenderer.enabled = true;
-        CancelInvoke(nameof(HideCircle));
-        Invoke(nameof(HideCircle), showDuration);
+            case PlayerStateLogic.PlayerState.OverDrive:
+                return pushPower;
+
+            default:
+                return pushPower;
+        }
     }
 
-    private void HideCircle()
+    // ------------------------------------------------------
+    // Scene View에서만 반경 표시 (Game View에서는 안 보임)
+    // ------------------------------------------------------
+    private void OnDrawGizmos()
     {
-        lineRenderer.enabled = false;
+        Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f); // 주황 반투명
+        Gizmos.DrawWireSphere(transform.position, radius);
     }
 }

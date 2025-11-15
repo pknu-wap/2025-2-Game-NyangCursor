@@ -1,7 +1,7 @@
 using PixelUI;
 using System.Collections;
 using UnityEngine;
-using DG.Tweening; // DOTween 추가
+using DG.Tweening;
 
 public class overDriveGaugeUI : MonoBehaviour
 {
@@ -13,11 +13,19 @@ public class overDriveGaugeUI : MonoBehaviour
     private Vector2 shownPos = new Vector2(0f, 40f);
     private Vector2 hiddenPos = new Vector2(0f, -100f);
 
+    // 🔥 Glow 설정
+    [Header("Glow Effect")]
+    [SerializeField] private float glowPeak = 4f;        // 즉시 올라갈 값
+    [SerializeField] private float glowFadeTime = 0.25f; // 다시 내려오는 시간
+
+    private int GlowID = Shader.PropertyToID("_Glow");
+
     private void OnEnable()
     {
         GaugeOverdriveLogic.OnOverDriveTick += HandleUpdateOverDriveGauge;
         GaugeRidingLogic.OnOverDriveEvent += HandleShowOverDriveGauge;
         GaugeOverdriveLogic.OnGetOffEvent += HandleHideOverDriveGauge;
+        GaugeOverdriveLogic.OnUpOverDriveGauge += HandleGlowGauge;
     }
 
     private void OnDisable()
@@ -25,36 +33,26 @@ public class overDriveGaugeUI : MonoBehaviour
         GaugeOverdriveLogic.OnOverDriveTick -= HandleUpdateOverDriveGauge;
         GaugeRidingLogic.OnOverDriveEvent -= HandleShowOverDriveGauge;
         GaugeOverdriveLogic.OnGetOffEvent -= HandleHideOverDriveGauge;
+        GaugeOverdriveLogic.OnUpOverDriveGauge -= HandleGlowGauge;
     }
 
     private void HandleUpdateOverDriveGauge(float value)
     {
-        // 게이지 UI 반영
         valueBar.SetDirect(value);
 
-        // 0~100 기준으로 4단계 색상 나누기
-        float targetHue = 0f;   // HSV Hue
+        float targetHue = 0f;
         float targetSat = 2f;
         float targetBright = 1f;
 
         if (value < 20f)
-        {
-            targetHue = 330f; // 빨강
-        }
+            targetHue = 330f;
         else if (value < 50f)
-        {
-            targetHue = 310f; // 노랑
-        }
+            targetHue = 310f;
         else if (value < 75f)
-        {
-            targetHue = 265f; // 초록
-        }
+            targetHue = 265f;
         else
-        {
-            targetHue = 265f; // 보라
-        }
+            targetHue = 265f;
 
-        // 이미 실행 중이면 중단하고 새로 시작
         if (colorChangeRoutine != null)
             StopCoroutine(colorChangeRoutine);
 
@@ -74,13 +72,9 @@ public class overDriveGaugeUI : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
 
-            float newHue = Mathf.Lerp(startHue, targetHue, t);
-            float newSat = Mathf.Lerp(startSat, targetSat, t);
-            float newBright = Mathf.Lerp(startBright, targetBright, t);
-
-            gaugeMaterial.SetFloat("_HsvShift", newHue);
-            gaugeMaterial.SetFloat("_HsvSaturation", newSat);
-            gaugeMaterial.SetFloat("_HsvBright", newBright);
+            gaugeMaterial.SetFloat("_HsvShift", Mathf.Lerp(startHue, targetHue, t));
+            gaugeMaterial.SetFloat("_HsvSaturation", Mathf.Lerp(startSat, targetSat, t));
+            gaugeMaterial.SetFloat("_HsvBright", Mathf.Lerp(startBright, targetBright, t));
 
             yield return null;
         }
@@ -92,7 +86,26 @@ public class overDriveGaugeUI : MonoBehaviour
         colorChangeRoutine = null;
     }
 
-    // 🔹 오버드라이브 진입 시 게이지 표시
+    // =====================================================================
+    //    ⭐ Glow 효과 추가 부분 (UpOverDriveGauge 이벤트에서 실행)
+    // =====================================================================
+    private void HandleGlowGauge()
+    {
+        if (gaugeMaterial == null)
+            return;
+
+        gaugeMaterial.DOKill();
+
+        // 즉시 강한 Glow 설정
+        gaugeMaterial.SetFloat(GlowID, glowPeak);
+
+        // 0으로 감소
+        gaugeMaterial
+            .DOFloat(2f, GlowID, glowFadeTime)
+            .SetEase(Ease.OutQuad)
+            .SetUpdate(true);
+    }
+
     private void HandleShowOverDriveGauge()
     {
         gaugeRect.DOKill();
@@ -101,7 +114,6 @@ public class overDriveGaugeUI : MonoBehaviour
                  .SetUpdate(true);
     }
 
-    // 🔹 노말 상태 복귀 시 게이지 숨김
     private void HandleHideOverDriveGauge()
     {
         gaugeRect.DOKill();

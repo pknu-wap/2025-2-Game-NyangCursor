@@ -24,18 +24,23 @@ public class EBasicHpController : MonoBehaviour, IDamageable
     public event Action<float, float> OnInitializeHp;
     public event Action<float, float> OnTakeDamage;
 
+    public static event Action OnTakeCollisionDamage;
+
+    // ------------------------
+    // 몸박 전용 추가 변수
+    // ------------------------
+    [Header("충돌 데미지 설정")]
+    [SerializeField] private float collisionDamageInterval = 0.5f; // 몸박 무적시간
+    private float lastCollisionDamageTime = -999f;
+
 
     private void OnEnable()
     {
-        // 풀에서 꺼낼 때 색 초기화
         if (spriteRenderer != null)
             spriteRenderer.color = originalColor;
     }
 
-    public void Cleanup()
-    {
-        // 필요시 수정
-    }
+    public void Cleanup() { }
 
     public void Initialize(Component owner)
     {
@@ -52,9 +57,11 @@ public class EBasicHpController : MonoBehaviour, IDamageable
 
         if (spriteRenderer == null)
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-
     }
 
+    // ----------------------------------
+    // 스킬/총알 데미지 = 즉시 반영
+    // ----------------------------------
     public void TakeDamage(float damage)
     {
         if (isDead)
@@ -63,16 +70,20 @@ public class EBasicHpController : MonoBehaviour, IDamageable
         currentHp -= damage;
         currentHp = Mathf.Max(0, currentHp);
 
-        // 깜빡임 시작
+        TriggerHitFlash();
+
+        if (currentHp <= 0)
+            Die();
+    }
+
+    private void TriggerHitFlash()
+    {
         if (spriteRenderer != null)
         {
             if (flashRoutine != null)
                 StopCoroutine(flashRoutine);
             flashRoutine = StartCoroutine(FlashHitEffect());
         }
-
-        if (currentHp <= 0)
-            Die();
     }
 
     private System.Collections.IEnumerator FlashHitEffect()
@@ -89,5 +100,31 @@ public class EBasicHpController : MonoBehaviour, IDamageable
 
         isDead = true;
         OnDeath?.Invoke();
+    }
+
+
+    // -----------------------------------------
+    // 몸박 데미지 = 간격(쿨타임) 있는 데미지
+    // -----------------------------------------
+    public void TakeCollisionDamage(float amount)
+    {
+        if (isDead)
+            return;
+
+        // 몸박 무적시간 적용
+        if (Time.time - lastCollisionDamageTime < collisionDamageInterval)
+            return;
+
+        lastCollisionDamageTime = Time.time;
+
+        currentHp -= amount;
+        currentHp = Mathf.Max(0, currentHp);
+
+        TriggerHitFlash();
+
+        OnTakeCollisionDamage?.Invoke();//카메라 흔들림 이벤트
+
+        if (currentHp <= 0)
+            Die();
     }
 }
