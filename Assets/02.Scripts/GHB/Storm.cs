@@ -112,8 +112,13 @@ public class Storm : MonoBehaviour
                 Vector3 dir = (transform.position - targetTransform.position).normalized;
 
                 // 이동 거리 = 속도 * tickInterval
-                float pullSpeed = 3f; // 원하는 끌어오는 속도
-                targetTransform.position += dir * pullSpeed * tickInterval;
+                float pullPower = 5f; // 원하는 끌어오는 속도
+                var pullable = comp.GetComponent<IKnockbackable>();
+                if (pullable != null)
+                {
+                    pullable.ApplyPull(transform.position, pullPower);
+                }
+
 
                 Debug.Log($"TickEffect: {comp.name} pulled towards Storm!");
             }

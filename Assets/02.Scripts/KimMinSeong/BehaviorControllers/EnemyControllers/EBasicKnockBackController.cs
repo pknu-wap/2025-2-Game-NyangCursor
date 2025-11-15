@@ -41,4 +41,30 @@ public class EBasicKnockBackController : MonoBehaviour, IKnockbackable
         var mover = GetComponent<IMoveable>();
         mover?.PauseMovementForSeconds(stopDuration);
     }
+
+    public void ApplyPull(Vector2 targetPosition, float power, float playerSpeed = 0f)
+    {
+        // 끌림 쿨타임 (넉백과 같은 쿨타임 사용)
+        if (Time.time - lastKnockbackTime < knockbackCooldown)
+            return;
+
+        lastKnockbackTime = Time.time;
+
+        if (rb == null)
+            return;
+
+        // 끌림 방향 = 현재 위치 → targetPosition 방향
+        Vector2 dir = (targetPosition - rb.position).normalized;
+
+        // power 결정 로직 동일
+        float finalPower = (playerSpeed > 0f) ? playerSpeed : power;
+
+        // 물리 적용 (중심으로 빨려 들어감)
+        rb.AddForce(dir * finalPower, ForceMode2D.Impulse);
+
+        // Moveable 인터페이스 가져오기 
+        var mover = GetComponent<IMoveable>();
+        mover?.PauseMovementForSeconds(stopDuration);
+    }
+
 }
