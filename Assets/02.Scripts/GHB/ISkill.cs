@@ -1,17 +1,9 @@
 using System.Collections.Generic;
 
-public enum SkillType
-{
-    Active, // 액티브형
-    Passive // 패시브형
-}
-
 public interface ISkill
 {
     // 스킬들의 현재 레벨
     int CurrentLevel { get; set; }
-    // 스킬 타입 읽기 전용 속성
-    SkillType SkillType { get; }
     // 스킬이 사용하는 스탯들
     List<SkillStatKey> UsedStats { get; }
     // 스킬 발동 함수
