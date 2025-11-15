@@ -666837,7 +666837,7 @@ MonoBehaviour:
   itemRarityText: {fileID: 1301823358}
   useButton: {fileID: 1289195550}
   BackButton: {fileID: 1786338673}
-  itemHandler: {fileID: 0}
+  itemHandler: {fileID: 1979479493}
 --- !u!114 &1922721996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -667676,6 +667676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9830261933e03bf4ea5d7017838b1554, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentAltar: {fileID: 0}
 --- !u!114 &1979479488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -667868,6 +667869,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goldManager: {fileID: 1811362122}
+  gaugeOverdriveLogic: {fileID: 1554678219}
   itemBonusGuageValue: 10
   goldGainBonus: 0.1
 --- !u!1 &1983897940
@@ -675969,7 +675971,7 @@ MonoBehaviour:
   gaugeFill: {fileID: 2797641250031078878}
   isUsed: 0
   ItemAltarPanel: {fileID: 1922721994}
-  item: {fileID: 11400000, guid: eb53818ae899b48449bb1b4c91bd5266, type: 2}
+  item: {fileID: 11400000, guid: fe4e109510ff2094593e025e1138dbd8, type: 2}
 --- !u!114 &5006970680540568758
 MonoBehaviour:
   m_ObjectHideFlags: 0

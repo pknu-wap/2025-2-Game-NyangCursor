@@ -5,7 +5,6 @@ using static PlayerStateLogic;
 
 public class GaugeOverdriveLogic : MonoBehaviour
 {
-    public static GaugeOverdriveLogic Instance { get; private set; }
     [Header("References")]
     [Tooltip("오버드라이브 이동 제어 스크립트")]
     public OverDriveModController overDriveModController;
@@ -44,16 +43,6 @@ public class GaugeOverdriveLogic : MonoBehaviour
 
     private void Awake()
     {
-        // --------------------
-        // 씬 싱글톤 초기화
-        // --------------------
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject); // 중복 제거
-            return;
-        }
-        Instance = this;
-
         OnOverDriveTick?.Invoke(overdrive);
 
         if (boostObject)
@@ -70,10 +59,6 @@ public class GaugeOverdriveLogic : MonoBehaviour
 
     private void OnDestroy()
     {
-        // 이벤트 해제
-        if (Instance == this)
-            Instance = null;
-
         GaugeRidingLogic.OnOverDriveEvent -= HandleInitialOverDrive;
         Enemy.OnEnemyDeath -= UpOverDriveGauge;
     }

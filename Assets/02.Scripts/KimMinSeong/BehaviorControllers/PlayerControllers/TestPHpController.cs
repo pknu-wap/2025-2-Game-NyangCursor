@@ -71,7 +71,10 @@ public class PlayerHpController : MonoBehaviour, IDamageable
             // 데미지 들어오면 잠시 Kinematic으로 변경 (밀림 방지)
             rb.linearVelocity = Vector2.zero;
             rb.bodyType = RigidbodyType2D.Static;
-            
+
+            var altar = GetComponent<PlayerAltarInteractor>()?.currentAltar;
+            altar?.IgnoreExitTemporarily(0.5f); // 0.5초 동안 Exit 무시
+
             // 0.5초 뒤에 다시 Dynamic 복귀
             StartCoroutine(RestoreDynamicBody(0.4f));
 

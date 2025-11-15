@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c631b551dc461e41bac87a02b2ebae6, type: 3}
+  m_Name: ItemSO
+  m_EditorClassIdentifier: 
+  itemName: "\uBD80\uC2A4\uD130 \uC544\uC774\uD15C"
+  itemImage: {fileID: 0}
+  itemRarity: 2
+  itemDescription: "\uC801 \uCC98\uCE58\uC2DC \uBD80\uC2A4\uD130 \uAC8C\uC774\uC9C0
+    +10"
+  itemType: 1

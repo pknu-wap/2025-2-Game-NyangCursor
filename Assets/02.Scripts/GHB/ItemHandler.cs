@@ -4,6 +4,7 @@ public class ItemHandler : MonoBehaviour
 {
 
     [SerializeField] private GoldManager goldManager;
+    [SerializeField] private GaugeOverdriveLogic gaugeOverdriveLogic;
 
     [SerializeField] private float itemBonusGuageValue;
     [SerializeField][Range(0f, 1f)] private float goldGainBonus = 0f;
@@ -13,35 +14,34 @@ public class ItemHandler : MonoBehaviour
         switch (item.itemType)
         {
             case ItemType.GoldBonus:
-                GoldBonusAction(item.value);
+                GoldBonusAction();
                 break;
 
-            case ItemType.SpeedBoost:
-                SpeedBoostAction(player);
+            case ItemType.BoostBonus:
+                BoostBonusAction(player);
                 break;
 
             case ItemType.ShotGun:
-                ShotGunAction(item.value, player);
+                ShotGunAction();
                 break;
 
             default:
-                Debug.LogWarning($"Unknown item type: {item.itemName}");
+                Debug.LogWarning($"아이템타입 결정 안됨: {item.itemName}");
                 break;
         }
     }
 
-    private void GoldBonusAction(float bonus)
+    private void GoldBonusAction()
     {
-        goldManager.SetBonus(bonus);
+        goldManager.SetBonus(goldGainBonus);
     }
 
-    private void SpeedBoostAction(Transform player)
+    private void BoostBonusAction(Transform player)
     {
-        GaugeOverdriveLogic logic = player.GetComponent<GaugeOverdriveLogic>();
-        logic.itemBonusGuage = itemBonusGuageValue;
+        gaugeOverdriveLogic.itemBonusGuage = itemBonusGuageValue;
     }
 
-    private void ShotGunAction(float healAmount, Transform player)
+    private void ShotGunAction()
     {
         UpgradeEventData data1 = new UpgradeEventData()
         {

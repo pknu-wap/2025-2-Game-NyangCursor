@@ -10,7 +10,7 @@ public enum ItemRarity
 public enum ItemType
 {
     GoldBonus,
-    SpeedBoost,
+    BoostBonus,
     ShotGun
     // 나중에 추가 가능
 }
@@ -25,5 +25,4 @@ public class ItemSO : ScriptableObject
     [TextArea(2, 5)] public string itemDescription;
 
     public ItemType itemType;
-    public float value; // 예: 골드 보너스 %, 스피드 배율 등
 }
