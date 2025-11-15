@@ -55,10 +55,9 @@ public class GaugeRidingLogic : MonoBehaviour
                 PlayerStateLogic.Instance.ChangeState(PlayerState.Riding); //라이딩 상태변경
                 ResetRidingGauge();
 
-                
                 rigidPlayer.bodyType = RigidbodyType2D.Kinematic; //탑승중 키네마틱(안밀림)
+                rigidPlayer.linearVelocity = Vector2.zero;
 
-                Invoke("ChangeSpeedZero", 0.1f);
                 Invoke("ChangeStateToOverDrive", 1); //1초뒤에 오버드라이브 상태변경
             }
         }
@@ -69,12 +68,6 @@ public class GaugeRidingLogic : MonoBehaviour
         PlayerStateLogic.Instance.ChangeState(PlayerState.OverDrive);
         OnOverDriveEvent?.Invoke(); //오버드라이브 이벤트 발송 To(OverDriveModController)
 
-        rigidPlayer.bodyType = RigidbodyType2D.Dynamic; //오버드라이브 다이나믹(밀림)
-    }
-
-    public void ChangeSpeedZero()
-    {
-        rigidPlayer.linearVelocity = Vector2.zero;
     }
 
     public void UpRidingGauge(float amount)

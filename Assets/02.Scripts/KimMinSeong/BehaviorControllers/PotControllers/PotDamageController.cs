@@ -51,4 +51,9 @@ public class PotDamageController : MonoBehaviour, IDamageable
 
         OnDeath?.Invoke();
     }
+
+    public void TakeCollisionDamage(float amount)
+    {
+        //todo 오버드라이브 충돌 시 반응
+    }
 }

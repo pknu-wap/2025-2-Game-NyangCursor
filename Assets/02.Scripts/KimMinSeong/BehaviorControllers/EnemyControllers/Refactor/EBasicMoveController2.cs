@@ -4,20 +4,30 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class EBasicMoveController2 : MonoBehaviour, IMoveable
 {
-    private Transform target;
-    private Enemy owner;
-    private Rigidbody2D rb;
-    private float moveSpeed;
-    private bool isMoving = true;
+    private Transform target;     // 추적 대상(보통 플레이어)
+    private Enemy owner;          // Enemy 루트 객체
+    private Rigidbody2D rb;       // 적 이동 물리 처리
+    private float moveSpeed;      // EnemyData 에서 받아오는 기본 이동 속도
+
+    // ===========================================================
+    // 이동 일시정지(스턴/빙결/넉백 등)를 총괄하는 pauseCount 시스템
+    // - pauseCount > 0   → 이동 정지
+    // - pauseCount <= 0  → 이동 가능
+    // 복수 효과가 동시에 걸려도 정상 동작!
+    // ===========================================================
+    private int pauseCount = 0;
+    private bool IsPaused => pauseCount > 0;
 
     public void Initialize(Component owner)
     {
-        // Enemy 타입만 허용
         if (owner is not Enemy enemy)
         {
-            Debug.LogError($"[EBasicMoveController2]  Enemy 타입만 지원합니다. 현재 타입: {owner.GetType().Name}");
+            Debug.LogError($"[EBasicMoveController2] Enemy 타입만 지원합니다. 현재 타입: {owner.GetType().Name}");
             return;
         }
+
+        // 풀에서 꺼낼 때도 초기화
+        pauseCount = 0;
 
         this.owner = enemy;
         rb = GetComponent<Rigidbody2D>();
@@ -33,70 +43,95 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
 
     public void UpdateMovement(float fixedDeltaTime)
     {
-        // 정지 상태 or 타겟 없음 → 바로 종료
-        if (!isMoving || target == null)
+        if (IsPaused || target == null)
         {
-            string reason = !isMoving ? "isMoving=false" : "target==null";
-            //rb.linearVelocity = Vector2.zero;
-            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, Time.fixedDeltaTime * 5f);
+            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, fixedDeltaTime * 5f);
             return;
         }
 
-        // 타겟 방향 계산
         Vector2 direction = (target.position - transform.position).normalized;
-        float speedMagnitude = moveSpeed;
-        Vector2 velocity = direction * speedMagnitude;
+        Vector2 velocity = direction * moveSpeed;
 
-        // 실제 속도 적용
         rb.linearVelocity = velocity;
 
-        // 이동 방향으로 스프라이트 반전
         FlipSprite(direction.x);
     }
 
-    public void StopForSeconds(float duration)
+    private void FlipSprite(float dirX)
     {
-        if (gameObject.activeInHierarchy)
-            StartCoroutine(StopRoutine(duration));
-    }
-
-    private IEnumerator StopRoutine(float duration)
-    {
-        isMoving = false;
-        
-        yield return new WaitForSeconds(duration);
-        isMoving = true;
-    }
-
-    private void FlipSprite(float directionX)
-    {
-        if (directionX != 0)
+        if (dirX != 0)
         {
             transform.localScale = new Vector3(
-                Mathf.Sign(directionX) * Mathf.Abs(transform.localScale.x),
+                Mathf.Sign(dirX) * Mathf.Abs(transform.localScale.x),
                 transform.localScale.y,
                 transform.localScale.z
             );
         }
     }
 
+    // ============================================
+    // 타겟 지정
+    // ============================================
     public void SetTarget(Transform target)
     {
         this.target = target;
-        isMoving = true;
-       
     }
 
+    // ============================================
+    // 이동 일시정지 시스템
+    // ============================================
+
+    // 이동 정지 요청 (넉백/스턴/빙결 등)
+    public void PauseMovement()
+    {
+        pauseCount++;
+    }
+
+    // 이동 정지 해제
+    public void ResumeMovement()
+    {
+        pauseCount = Mathf.Max(0, pauseCount - 1);
+    }
+
+    // -----------------------------
+    // 일정 시간 멈추기 (코루틴 안전 추가!)
+    // -----------------------------
+    public void PauseMovementForSeconds(float seconds)
+    {
+        // ❗ 코루틴 시작하기 전에 비활성화 체크
+        if (!gameObject.activeInHierarchy)
+            return;
+
+        StartCoroutine(PauseRoutine(seconds));
+    }
+
+    private IEnumerator PauseRoutine(float seconds)
+    {
+        PauseMovement();
+
+        float t = seconds;
+        while (t > 0f)
+        {
+            // ❗ 도중에 비활성화되면 즉시 종료 (코루틴 중단)
+            if (!gameObject.activeInHierarchy)
+                yield break;
+
+            t -= Time.deltaTime;
+            yield return null;
+        }
+
+        ResumeMovement();
+    }
+
+    // 즉시 정지
     public void Stop()
     {
-        //isMoving = false;
         rb.linearVelocity = Vector2.zero;
     }
 
     public void Cleanup()
     {
+        pauseCount = 0;
         Stop();
     }
-
-
 }

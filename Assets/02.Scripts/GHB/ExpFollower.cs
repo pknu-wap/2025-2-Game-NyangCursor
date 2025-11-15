@@ -1,31 +1,20 @@
 using UnityEngine;
 
-public class ExpFollower : MonoBehaviour
+public class ExpFollower : BaseCollectibleFollower
 {
-    private Transform target;
-    private float speed = 10f;
     void OnEnable()
     {
         ExpAltar.expAltarEvent += SetTarget;
     }
-
-    void OnDisable()
+    protected override void OnDisable()
     {
-        target = null;
+        base.OnDisable();  // 부모 로직 먼저 실행
         ExpAltar.expAltarEvent -= SetTarget;
     }
 
-    public void SetTarget(Transform player, float moveSpeed)
+    protected override void Collect()
     {
-        target = player;
-        speed = moveSpeed;
-    }
-
-    private void Update()
-    {
-        if (target == null) return;
-
-        Vector3 dir = (target.position - transform.position).normalized;
-        transform.position += dir * speed * Time.deltaTime;
+        ExpDropObject drop = GetComponent<ExpDropObject>();
+        drop?.OnCollected(); // 경험치 증가 + 풀 복귀
     }
 }

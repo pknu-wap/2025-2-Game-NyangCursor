@@ -30,6 +30,9 @@ public class GaugeOverdriveLogic : MonoBehaviour
 
     // 이벤트
     public static event Action<float> OnOverDriveTick; // 게이지 변화 시 이벤트
+
+    public static event Action OnUpOverDriveGauge; //게이지 차거나 감소했을때 이벤트(ui깜빡임위함)
+
     public static event Action OnGetOffEvent; // 게이지가 0이 되었을 때 이벤트
     public static event Action OnNormalEvent; // 노말 상태 복귀 이벤트
 
@@ -91,12 +94,14 @@ public class GaugeOverdriveLogic : MonoBehaviour
 
         overdrive += amount;
         OnOverDriveTick?.Invoke(overdrive);
+        OnUpOverDriveGauge?.Invoke();
     }
 
     private void HandleInitialOverDrive()
     {
         overdrive = 100f;
         OnOverDriveTick?.Invoke(overdrive);
+        OnUpOverDriveGauge?.Invoke();
         ApplyPresetBlend(60); // 기본값 중간 정도로 설정
 
         TriggerBooster();
@@ -106,7 +111,8 @@ public class GaugeOverdriveLogic : MonoBehaviour
     private void ChangeStateToNormal()
     {
         PlayerStateLogic.Instance.ChangeState(PlayerState.Normal);
-        OnNormalEvent?.Invoke();
+        OnNormalEvent?.Invoke();//pushBlast에서 착지 후 넉백
+
     }
 
     private void ClampGauge()
