@@ -32,7 +32,7 @@ public class ElectricZone : MonoBehaviour
         ApplySize(size);
         SetupParticleSystem(duration);
 
-        // 초기 리스트 정리
+        // 초기 대상 리스트 정리
         targetsInZone.Clear();
 
         StartCoroutine(ZoneRoutine());
@@ -42,12 +42,20 @@ public class ElectricZone : MonoBehaviour
     {
         Vector3 prefabScale = Vector3.one * 0.5f; // prefab 원래 크기
         transform.localScale = prefabScale * size;
-    }
 
+        if (ps != null)
+        {
+            var shape = ps.shape;
+            shape.radius = size * 0.5f; // shape 모듈도 맞춰줌
+        }
+    }
 
     private void SetupParticleSystem(float duration)
     {
         if (ps == null) return;
+
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+
         var main = ps.main;
         main.duration = duration;
         ps.Play();
@@ -82,7 +90,7 @@ public class ElectricZone : MonoBehaviour
 
             dmg.TakeDamage(damagePerTick);
 
-            if (dmg is Component comp)
+            if (dmg is Component comp && hitEffectPrefab != null)
             {
                 PoolManager.instance.Spawn(hitEffectPrefab, comp.transform.position);
             }
@@ -109,8 +117,7 @@ public class ElectricZone : MonoBehaviour
             return;
         if (collision.TryGetComponent(out IDamageable dmg))
         {
-            if (targetsInZone.Contains(dmg))
-                targetsInZone.Remove(dmg);
+            targetsInZone.Remove(dmg);
         }
     }
 
