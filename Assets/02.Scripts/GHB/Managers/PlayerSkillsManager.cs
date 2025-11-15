@@ -16,6 +16,7 @@ public enum SkillStatKey
     ProjectileSize, // 발사체 크기
     Interval,       // 순차형 스킬일 때, 각 단계 사이의 시간 간격
     BlockCount,     // 블록 단위 스킬일 때, 총 블록의 개수
+    EffectZoneDuration // 장판류 스킬의 유지 시간
     // 필요하면 여기에 추가
 }
 

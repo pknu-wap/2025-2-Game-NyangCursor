@@ -27,10 +27,20 @@ public class MagicProjectile : MonoBehaviour, IProjectile
         this.damage = damage;
     }
 
+    public void SetSize(float size) {}
+
     public void SetDuration(float duration)
     {
-        this.duration = duration;
-        Destroy(gameObject, duration);
+        // 기존 Destroy 대신 코루틴 사용
+        StartCoroutine(DespawnAfter(duration));
+    }
+
+    private IEnumerator DespawnAfter(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // PoolManager를 통해 장판 반납
+        PoolManager.instance.Despawn(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

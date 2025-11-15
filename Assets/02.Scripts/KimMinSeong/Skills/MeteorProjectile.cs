@@ -26,6 +26,10 @@ public class MeteorProjectile : MonoBehaviour, IProjectile
     {
     }
 
+    public void SetSize(float size)
+    {
+    }
+
     public void Initialize(float damage, Vector3 targetPos)
     {
         // 데미지 설정
