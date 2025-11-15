@@ -5,12 +5,13 @@ using static PlayerStateLogic;
 
 public class GaugeOverdriveLogic : MonoBehaviour
 {
+    public static GaugeOverdriveLogic Instance { get; private set; }
     [Header("References")]
     [Tooltip("오버드라이브 이동 제어 스크립트")]
     public OverDriveModController overDriveModController;
 
     [Header("현재 OverDrive 수치")]
-     public float overdrive = 0f; // 현재 OD 값
+    public float overdrive = 0f; // 현재 OD 값
 
     [Header("감소 속도 설정")]
     [SerializeField] private float baseDecreaseRate = 10f; // 기본 게이지 감소량(초당)
@@ -24,6 +25,9 @@ public class GaugeOverdriveLogic : MonoBehaviour
 
     [Tooltip("부스터 시 켜질 비주얼 오브젝트")]
     public GameObject boostObject;
+
+    [HideInInspector]
+    public float itemBonusGuage = 0f;
 
     private Coroutine boostRoutine;
     private Coroutine presetRoutine;
@@ -40,6 +44,16 @@ public class GaugeOverdriveLogic : MonoBehaviour
 
     private void Awake()
     {
+        // --------------------
+        // 씬 싱글톤 초기화
+        // --------------------
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject); // 중복 제거
+            return;
+        }
+        Instance = this;
+
         OnOverDriveTick?.Invoke(overdrive);
 
         if (boostObject)
@@ -56,6 +70,10 @@ public class GaugeOverdriveLogic : MonoBehaviour
 
     private void OnDestroy()
     {
+        // 이벤트 해제
+        if (Instance == this)
+            Instance = null;
+
         GaugeRidingLogic.OnOverDriveEvent -= HandleInitialOverDrive;
         Enemy.OnEnemyDeath -= UpOverDriveGauge;
     }
@@ -92,7 +110,7 @@ public class GaugeOverdriveLogic : MonoBehaviour
         if (PlayerStateLogic.Instance.CurrentState != PlayerState.OverDrive)
             return;
 
-        overdrive += amount;
+        overdrive += amount + itemBonusGuage;
         OnOverDriveTick?.Invoke(overdrive);
         OnUpOverDriveGauge?.Invoke();
     }
