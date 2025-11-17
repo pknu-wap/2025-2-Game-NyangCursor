@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using static PlayerStateLogic;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class EBasicMoveController2 : MonoBehaviour, IMoveable
@@ -9,6 +11,8 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
     private Rigidbody2D rb;       // 적 이동 물리 처리
     private float moveSpeed;      // EnemyData 에서 받아오는 기본 이동 속도
 
+    private float baseMoveSpeed; // 
+
     // ===========================================================
     // 이동 일시정지(스턴/빙결/넉백 등)를 총괄하는 pauseCount 시스템
     // - pauseCount > 0   → 이동 정지
@@ -17,6 +21,36 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
     // ===========================================================
     private int pauseCount = 0;
     private bool IsPaused => pauseCount > 0;
+
+    private void OnEnable()
+    {
+        GaugeOverdriveLogic.OnGetOffEvent += ChangeSpeed;
+        GaugeRidingLogic.OnOverDriveEvent += ChangeSpeed;
+    }
+
+    private void OnDisable()
+    {
+        GaugeOverdriveLogic.OnGetOffEvent -= ChangeSpeed;
+        GaugeRidingLogic.OnOverDriveEvent -= ChangeSpeed;
+    }
+
+    private void ChangeSpeed()
+    {
+        var state = PlayerStateLogic.Instance.CurrentState;
+
+        if (state == PlayerState.GetOff)
+        {
+            moveSpeed = baseMoveSpeed;
+        }
+        else if (state == PlayerState.Normal)
+        {
+            moveSpeed = baseMoveSpeed;
+        }
+        else if (state == PlayerState.OverDrive)
+        {
+            moveSpeed = baseMoveSpeed * 3f;
+        }
+    }
 
     public void Initialize(Component owner)
     {
@@ -33,13 +67,20 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
         rb = GetComponent<Rigidbody2D>();
         moveSpeed = enemy.Data.moveSpeed;
 
+        baseMoveSpeed = enemy.Data.moveSpeed; // 원래 속도 캐싱
+
         // Rigidbody 설정
         rb.gravityScale = 0f;
         rb.linearDamping = 0f;
         rb.angularDamping = 0f;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate; //달달거림 해결
+
+        ChangeSpeed();
     }
+
 
     public void UpdateMovement(float fixedDeltaTime)
     {
@@ -98,7 +139,7 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
     // -----------------------------
     public void PauseMovementForSeconds(float seconds)
     {
-        // ❗ 코루틴 시작하기 전에 비활성화 체크
+        // 코루틴 시작하기 전에 비활성화 체크
         if (!gameObject.activeInHierarchy)
             return;
 
