@@ -17,4 +17,4 @@ MonoBehaviour:
   moveSpeed: 2
   attackDamage: 0
   attackRate: 0.5
-  overdriveGaugeReward: 1
+  overdriveGaugeReward: 10
