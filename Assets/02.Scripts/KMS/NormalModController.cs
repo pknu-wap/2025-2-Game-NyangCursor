@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using static PlayerStateLogic;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
@@ -8,11 +9,16 @@ public class NormalModController : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera cam;
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private Tilemap groundTilemap;
 
     [Header("Settings")]
     [SerializeField] private float speed = 5f;
 
-    // 내부 상태
+    [Header("Ground Check by Tile")]
+    [SerializeField] private float checkAheadDistance = 0.45f; // 진행방향 검사 거리
+    [SerializeField] private float checkDownOffset = 0.2f; // 발바닥 보정
+    [SerializeField] private float checkGizmoSize = 0.07f; // 시각화용 구 크기
+
     private Vector2 clickTarget;
     private bool hasClickTarget;
     private bool isMove;
@@ -46,72 +52,69 @@ public class NormalModController : MonoBehaviour
 
         speed = PlayerStatsManager.instance.GetStat(StatType.MoveSpeedUp);
 
-        // ✅ 1) 클릭한 지점으로 이동 (기존 로직)
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) || Input.GetMouseButton(1))
         {
             UpdateClickTarget();
             hasClickTarget = true;
-        }
-
-        // ✅ 2) 마우스를 꾹 누르고 있을 때 현재 위치로 실시간 이동
-        if (Input.GetMouseButton(1))
-        {
-            // 단, 기존 클릭 이동 도중에도 자연스럽게 반응하도록 함
-            UpdateClickTarget();
-            hasClickTarget = true;
-        }
-
-        // ✅ 3) 마우스 떼면 기존 클릭 이동만 유지 (지속 추적은 멈춤)
-        if (Input.GetMouseButtonUp(1))
-        {
-            // 버튼을 떼도 클릭한 지점으로 이동 중이면 유지
-            // 따라서 hasClickTarget = true 유지 (멈추지 않음)
-            // 단, 마우스 누르고 있던 이동만 멈춘 상태로 전환
         }
     }
 
     private void FixedUpdate()
     {
         if (PlayerStateLogic.Instance.CurrentState != PlayerState.Normal)
-            return;
+            return; // Normal 상태가 아니면 이동 차단 역할도 안 함
 
-        if (rb.bodyType != RigidbodyType2D.Kinematic)
-            return;
-
-        if (hasClickTarget)
+        if (!hasClickTarget)
         {
-            Vector2 pos = rb.position;
-            Vector2 dir = (clickTarget - pos);
-            float dist = dir.magnitude;
-
-            if (dist < 0.05f)
-            {
-                rb.linearVelocity = Vector2.zero;
-                hasClickTarget = false;
-                isMove = false;
-                OnWalk?.Invoke(false);
-            }
-            else
-            {
-                // ✔ velocity 기반 이동
-                Vector2 vel = dir.normalized * speed;
-                rb.linearVelocity = vel;
-
-                isMove = true;
-                OnWalk?.Invoke(true);
-            }
-
-            // 좌우 반전 처리
-            if (dir.x > 0.05f)
-                transform.localScale = new Vector3(-1, 1, 1);
-            else if (dir.x < -0.05f)
-                transform.localScale = new Vector3(1, 1, 1);
+            if (isMove) rb.linearVelocity = Vector2.zero; // 정상 멈춤 처리만
+            return;
         }
-        else
+
+        Vector2 pos = rb.position;
+        Vector2 dir = (clickTarget - pos);
+        float dist = dir.magnitude;
+
+        if (dist < 0.05f)
         {
-            // 클릭 타겟 없으면 멈춤
-            rb.linearVelocity = Vector2.zero;
+            StopMove();
+            return;
         }
+
+        Vector2 dirNormalized = dir.normalized;
+
+        // 이동 방향 앞 검사 위치 (한 칸 앞)
+        Vector2 aheadPos = pos + dirNormalized * checkAheadDistance;
+        aheadPos += Vector2.down * checkDownOffset;
+
+        // 타일 검사
+        Vector3Int cell = groundTilemap.WorldToCell(aheadPos);
+        TileBase tileAhead = groundTilemap.GetTile(cell);
+
+        if (tileAhead == null)
+        {
+            StopMove();
+            Debug.Log("앞이 낭떠러지라 이동을 멈췄습니다.");
+            return;
+        }
+
+        // 이동 적용
+        rb.linearVelocity = dirNormalized * speed;
+        isMove = true;
+        OnWalk?.Invoke(true);
+
+        // 좌우 반전 처리
+        if (dir.x > 0.05f)
+            transform.localScale = new Vector3(-1, 1, 1);
+        else if (dir.x < -0.05f)
+            transform.localScale = new Vector3(1, 1, 1);
+    }
+
+    private void StopMove()
+    {
+        rb.linearVelocity = Vector2.zero;
+        isMove = false;
+        hasClickTarget = false;
+        OnWalk?.Invoke(false);
     }
 
     private void LateUpdate()
@@ -132,10 +135,25 @@ public class NormalModController : MonoBehaviour
 
     public void HandleResetNormal()
     {
-        hasClickTarget = false;
-        isMove = false;
+        StopMove();
         clickTarget = Vector2.zero;
-        rb.linearVelocity = Vector2.zero;
-        OnWalk?.Invoke(false);
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying || !hasClickTarget)
+            return;
+
+        Vector2 pos = transform.position;
+        Vector2 dir = ((Vector2)clickTarget - pos).normalized;
+
+        Vector2 aheadPos = pos + dir * checkAheadDistance;
+        aheadPos += Vector2.down * checkDownOffset;
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(aheadPos, checkGizmoSize);
+    }
+#endif
 }
+
