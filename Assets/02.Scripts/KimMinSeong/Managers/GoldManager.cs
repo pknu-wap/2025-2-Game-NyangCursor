@@ -58,4 +58,9 @@ public class GoldManager : MonoBehaviour
         earnedGold += goldAmount + Mathf.RoundToInt(goldAmount * goldGainBonus);   // 현재 골드량을 획득한 골드량 + 보너스 증가량만큼 증가시킴
         goldUIManager.UpdateGoldUI(savedGold, earnedGold);    // UI 업데이트
     }
+
+    public void SetBonus(float bonus)
+    {
+        goldGainBonus = bonus;
+    }
 }

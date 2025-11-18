@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 [RequireComponent(typeof(Collider2D))]
 public abstract class AltarBase : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] private float requiredHoldTime = 2f;
-    [SerializeField] private Canvas gaugeCanvas; // 제단 자식, 게이지 UI
+    [SerializeField] private Canvas gaugeCanvas; 
     [SerializeField] private Image gaugeFill;
 
     public float RequiredHoldTime => requiredHoldTime;
@@ -14,49 +15,47 @@ public abstract class AltarBase : MonoBehaviour
     public Transform PlayerInside { get; private set; } = null;
     public bool isUsed = false;
 
+
     private void Awake()
     {
         if (gaugeCanvas != null)
-            gaugeCanvas.enabled = false; // 초기에는 끔
+            gaugeCanvas.enabled = false; 
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            IsPlayerInside = true;
-            PlayerInside = other.transform;
+        if (!other.CompareTag("Player"))
+            return;
 
-            // 플레이어에게 자기 자신 할당 (UI 켜기는 키 입력에서)
-            other.GetComponent<PlayerAltarInteractor>()?.SetCurrentAltar(this);
-            Debug.Log($"{gameObject.name}  {other.name} 할당됨");
-        }
+        // 이미 안에 있어도 Enter 들어오면 ignoreNextExit 초기화
+        // ignoreNextExit = false;
+
+        // if (IsPlayerInside)
+        //     return;
+
+        IsPlayerInside = true;
+        PlayerInside = other.transform;
+
+        other.GetComponent<PlayerAltarInteractor>()?.SetCurrentAltar(this);
+        Debug.Log($"{gameObject.name}  {other.name} 할당됨 (Enter 처리)");
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
-        {
-            IsPlayerInside = false;
-            PlayerInside = null;
+        if (!other.CompareTag("Player"))
+            return;
 
-            // UI 끄고 초기화
-            HideGauge();
-
-            // 플레이어 해제
-            other.GetComponent<PlayerAltarInteractor>()?.ClearCurrentAltar(this);
-            Debug.Log($"{gameObject.name}  {other.name} 비할당");
-        }
+        HideGauge();
+        other.GetComponent<PlayerAltarInteractor>()?.ClearCurrentAltar(this);
+        Debug.Log($"{gameObject.name}  {other.name} 비할당 (Exit 처리)");
     }
 
-    // 키 누를 때 UI 켜기
     public void ShowGauge()
     {
         if (gaugeCanvas != null)
             gaugeCanvas.enabled = true;
     }
 
-    // 키 뗄 때 UI와 게이지 모두 초기화
     public void HideGauge()
     {
         if (gaugeCanvas != null)
@@ -71,6 +70,5 @@ public abstract class AltarBase : MonoBehaviour
             gaugeFill.fillAmount = progress;
     }
 
-    // 제단별 기능 구현
     public abstract void Execute(Transform player);
 }

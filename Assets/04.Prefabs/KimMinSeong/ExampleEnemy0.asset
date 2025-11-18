@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: ExampleEnemy0
   m_EditorClassIdentifier: 
   enemyName: ExampleEnemy0
-  icon: {fileID: 0}
-  exp: 1
   maxHP: 20
   moveSpeed: 2
   attackDamage: 0
   attackRate: 0.5
+  overdriveGaugeReward: 0

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerAltarInteractor : MonoBehaviour
 {
-    private AltarBase currentAltar;
+    public AltarBase currentAltar;
     private float holdTimer = 0f;
     private bool isCharging = false;
 

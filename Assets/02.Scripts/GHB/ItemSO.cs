@@ -7,8 +7,16 @@ public enum ItemRarity
     Legendery
 }
 
-// 아이템 SO 추상 클래스
-public abstract class ItemSO : ScriptableObject
+public enum ItemType
+{
+    GoldBonus,
+    BoostBonus,
+    ShotGun
+    // 나중에 추가 가능
+}
+
+[CreateAssetMenu(fileName = "ItemSO", menuName = "Scriptable Objects/ItemSO")]
+public class ItemSO : ScriptableObject
 {
     [Header("공통 데이터")]
     public string itemName;
@@ -16,5 +24,5 @@ public abstract class ItemSO : ScriptableObject
     public ItemRarity itemRarity;
     [TextArea(2, 5)] public string itemDescription;
 
-    public abstract void Execute(Transform player);
+    public ItemType itemType;
 }

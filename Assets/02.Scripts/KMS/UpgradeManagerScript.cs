@@ -254,4 +254,9 @@ public class UpgradeManager : MonoBehaviour
         selectedDataManager.selectedStartData = null;
     }
 
+    public static void RaiseUpgrade(UpgradeEventData data)
+    {
+        OnUpgradeSelected1?.Invoke(data);
+    }
+
 }
