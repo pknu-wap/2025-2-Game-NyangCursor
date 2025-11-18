@@ -10,6 +10,7 @@ public class ItemAltarUIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI itemRarityText;
     [SerializeField] private Button useButton;
     [SerializeField] private Button BackButton;
+    [SerializeField] private ItemHandler itemHandler;
 
 
     public void Setup(ItemSO item, Transform playerTransform)
@@ -22,7 +23,7 @@ public class ItemAltarUIManager : MonoBehaviour
         useButton.onClick.RemoveAllListeners();
         useButton.onClick.AddListener(() =>
         {
-            item.Execute(playerTransform); // 실행
+            itemHandler.ExecuteItem(item,playerTransform); // 실행
             // 플레이어에서 ITEMMANAGER GETCOMPONENT 해서 LIST에 추가해두는 등 작업 가능
             ClosUI();
 

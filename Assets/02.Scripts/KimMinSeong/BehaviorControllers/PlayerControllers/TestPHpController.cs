@@ -72,10 +72,11 @@ public class PlayerHpController : MonoBehaviour, IDamageable
             currentHp -= damage;
             currentHp = Mathf.Max(0, currentHp);
             OnTakeDamage?.Invoke(currentHp, maxHp);
-
+        
             rb.linearVelocity = Vector2.zero;
-            rb.bodyType = RigidbodyType2D.Static;
-            StartCoroutine(RestoreDynamicBody(0.4f));
+             rb.constraints = RigidbodyConstraints2D.FreezePosition;
+
+            StartCoroutine(RestoreMovement(0.4f));
 
             if (currentHp <= 0)
                 Die();
@@ -87,12 +88,14 @@ public class PlayerHpController : MonoBehaviour, IDamageable
         }
     }
 
-    private IEnumerator RestoreDynamicBody(float delay)
+    private IEnumerator RestoreMovement(float delay)
     {
         yield return new WaitForSeconds(delay);
 
         if (rb != null && gameObject.activeInHierarchy)
-            rb.bodyType = RigidbodyType2D.Kinematic;
+        {
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
     }
 
     public void Die()
