@@ -68,15 +68,11 @@ public class PlayerHpController : MonoBehaviour, IDamageable
             currentHp -= damage;
             currentHp = Mathf.Max(0, currentHp);
             OnTakeDamage?.Invoke(currentHp, maxHp);
-            // 데미지 들어오면 잠시 Kinematic으로 변경 (밀림 방지)
+        
             rb.linearVelocity = Vector2.zero;
-            rb.bodyType = RigidbodyType2D.Static;
+             rb.constraints = RigidbodyConstraints2D.FreezePosition;
 
-            var altar = GetComponent<PlayerAltarInteractor>()?.currentAltar;
-            altar?.IgnoreExitTemporarily(0.5f); // 0.5초 동안 Exit 무시
-
-            // 0.5초 뒤에 다시 Dynamic 복귀
-            StartCoroutine(RestoreDynamicBody(0.4f));
+            StartCoroutine(RestoreMovement(0.4f));
 
             if (currentHp <= 0)
                 Die();
@@ -88,14 +84,14 @@ public class PlayerHpController : MonoBehaviour, IDamageable
         }
     }
 
-    private IEnumerator RestoreDynamicBody(float delay)
+    private IEnumerator RestoreMovement(float delay)
     {
         yield return new WaitForSeconds(delay);
 
         // 혹시 이미 죽었거나 사라졌으면 복구 안 함
         if (rb != null && gameObject.activeInHierarchy)
         {
-            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
     }
 

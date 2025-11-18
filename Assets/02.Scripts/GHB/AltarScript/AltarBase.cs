@@ -15,7 +15,6 @@ public abstract class AltarBase : MonoBehaviour
     public Transform PlayerInside { get; private set; } = null;
     public bool isUsed = false;
 
-    private bool ignoreNextExit = false; // 피격 때문에 Exit 이벤트 무시
 
     private void Awake()
     {
@@ -29,10 +28,10 @@ public abstract class AltarBase : MonoBehaviour
             return;
 
         // 이미 안에 있어도 Enter 들어오면 ignoreNextExit 초기화
-        ignoreNextExit = false;
+        // ignoreNextExit = false;
 
-        if (IsPlayerInside)
-            return;
+        // if (IsPlayerInside)
+        //     return;
 
         IsPlayerInside = true;
         PlayerInside = other.transform;
@@ -46,40 +45,9 @@ public abstract class AltarBase : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        if (ignoreNextExit)
-        {
-            // 피격 때문에 Exit 무시
-            Debug.Log($"{gameObject.name} {other.name} EXIT 무시됨 (피격 보정)");
-            StartCoroutine(ResetIgnoreExit());
-            return;
-        }
-
-        // 실제 Exit 처리
-        IsPlayerInside = false;
-        PlayerInside = null;
-
         HideGauge();
         other.GetComponent<PlayerAltarInteractor>()?.ClearCurrentAltar(this);
         Debug.Log($"{gameObject.name}  {other.name} 비할당 (Exit 처리)");
-    }
-
-    // 플레이어가 피격 시 호출
-    public void IgnoreExitTemporarily(float duration)
-    {
-        ignoreNextExit = true;
-        StartCoroutine(ResetIgnoreExitAfter(duration));
-    }
-
-    private IEnumerator ResetIgnoreExitAfter(float duration)
-    {
-        yield return new WaitForSeconds(duration);
-        ignoreNextExit = false;
-    }
-
-    private IEnumerator ResetIgnoreExit()
-    {
-        yield return null; // 한 프레임 기다리기만 해도 꼬임 방지
-        ignoreNextExit = false;
     }
 
     public void ShowGauge()
