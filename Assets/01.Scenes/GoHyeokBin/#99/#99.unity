@@ -659515,8 +659515,8 @@ MonoBehaviour:
   usedStats: 00000000010000000200000008000000
   baseDamage: 5
   baseCooldown: 5
-  baseRange: 4
-  baseProjectileSize: 1
+  baseRange: 40
+  baseProjectileSize: 40
   baseChargeTime: 1
 --- !u!1 &1728949959
 GameObject:
