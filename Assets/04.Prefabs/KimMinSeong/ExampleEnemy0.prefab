@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 3458799293738972735}
   - component: {fileID: 2167280641245540360}
   - component: {fileID: 4390802247312192559}
+  - component: {fileID: 7319995449336459782}
   m_Layer: 7
   m_Name: ExampleEnemy0
   m_TagString: Untagged
@@ -281,6 +282,30 @@ MonoBehaviour:
   popScale: 2
   popDuration: 0.5
   fadeDuration: 0.35
+--- !u!114 &7319995449336459782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146727613942615151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2847991e365fc594ab3dd210249c8955, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hpController: {fileID: -5930888789870194388}
+  damageTextPrefab: {fileID: 4983988962634479493, guid: 22b4a30d03f44074f878b047aa0fb5e7, type: 3}
+  colorRules:
+  - minDamage: 0
+    maxDamage: 10
+    color: {r: 1, g: 1, b: 1, a: 0}
+  - minDamage: 10
+    maxDamage: 20
+    color: {r: 1, g: 0.9128059, b: 0, a: 0}
+  - minDamage: 20
+    maxDamage: 30
+    color: {r: 1, g: 0, b: 0, a: 0}
 --- !u!1 &5547204937911262797
 GameObject:
   m_ObjectHideFlags: 0

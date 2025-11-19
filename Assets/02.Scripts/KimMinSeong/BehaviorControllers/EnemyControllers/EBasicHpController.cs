@@ -69,7 +69,7 @@ public class EBasicHpController : MonoBehaviour, IDamageable
 
         currentHp -= damage;
         currentHp = Mathf.Max(0, currentHp);
-
+        OnTakeDamage?.Invoke(currentHp, damage);
         TriggerHitFlash();
 
         if (currentHp <= 0)
