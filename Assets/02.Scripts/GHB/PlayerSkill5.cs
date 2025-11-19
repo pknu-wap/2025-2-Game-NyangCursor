@@ -4,9 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PlayerSkill4 : MonoBehaviour, ISkill
+public class PlayerSkill5 : MonoBehaviour, ISkill
 {
-    [SerializeField] private GameObject stormPrefab;
+    [Header("프리팹")]
+    [SerializeField] private GameObject auraPrefab;         // 플레이어를 도는 오오라
+    [SerializeField] private GameObject waterBeamPrefab;    // 적에게 발사하는 물대포
+
+    [Header("적 레이어")]
+    [SerializeField] private LayerMask enemyLayer;
 
     private int currentLevel = 0;
     private string skillName;
@@ -15,24 +20,24 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
     [SerializeField] private List<SkillStatKey> usedStats = new List<SkillStatKey>();
 
     [Header("기본값")]
-    [SerializeField] private float baseDamage = 2f;
+    [SerializeField] private float baseDamage = 5f;
     [SerializeField] private float baseCooldown = 5f;
-    [SerializeField] private float baseRange = 3f;
-    [SerializeField] private float baseProjectileSizeLevel = 1f;
+    [SerializeField] private float baseRange = 4f;
+    [SerializeField] private float baseProjectileSize = 1f;
 
-    // 발사체 수가 아니라 소환체 수 같은걸로 따로 변수를 파야할듯
-    [SerializeField] private float baseEffectZoneDuration = 1f;
+    // 차징 시간은 레벨에 비례해서 감소하도록 설정
+    [SerializeField] private float baseChargeTime = 1f;
 
 
     // 각 STATKEY별 현재 값
     private Dictionary<SkillStatKey, float> statValues = new Dictionary<SkillStatKey, float>();
 
     // 현재값 변수
-    public float currentDamage { get; private set; }
     public float currentCooldown { get; private set; }
+    public float currentDamage { get; private set; }
     public float currentRange { get; private set; }
-    public float currentProjectileSizeLevel { get; private set; }
-    public float currentEffectZoneDuration { get; private set; }
+    public float currentProjectileSize { get; private set; }
+    public float currentChargeTime { get; private set; }
     private Coroutine passiveRoutine;
 
 
@@ -46,18 +51,16 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
         }
 
         // 각 스킬 스크립트에서 쓰이는 변수는 따로 초기화
-        statValues[SkillStatKey.Damage] = baseDamage;
+        statValues[SkillStatKey.Damage] = baseCooldown;
         statValues[SkillStatKey.Cooldown] = baseCooldown;
         statValues[SkillStatKey.Range] = baseRange;
-        statValues[SkillStatKey.EffectZoneDuration] = baseEffectZoneDuration;
-        statValues[SkillStatKey.ProjectileSize] = baseProjectileSizeLevel;
+        statValues[SkillStatKey.ProjectileSize] = baseProjectileSize;
 
-        // 현재값 변수도 초기화
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
         currentRange = baseRange;
-        currentEffectZoneDuration = baseEffectZoneDuration;
-        currentProjectileSizeLevel = baseProjectileSizeLevel;
+        currentProjectileSize = baseProjectileSize;
+        currentChargeTime = baseChargeTime;
     }
 
 
@@ -96,14 +99,56 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
     {
         while (true)
         {
-            SpawnStormAtRandomPosition();
             Debug.Log($"{skillName} (패시브 효과 발동 중...)");
             if (showUI)
                 cdUI?.StartCooldown(cd);
+            float chargeTime = currentChargeTime;      // 장전 시간
+            float cooldown = currentCooldown;          // 전체 쿨타임
+            float restTime = Mathf.Max(0f, cooldown - chargeTime); // 발사 후 대기시간
 
-            yield return new WaitForSeconds(cd);
+            // ==========================
+            // 1) 장전 구간 (오오라 생성)
+            // ==========================
+
+            GameObject auraObj = null;
+
+            if (auraPrefab != null)
+                auraObj = PoolManager.instance.Spawn(auraPrefab, transform.position);
+
+            float timer = 0f;
+            while (timer < chargeTime)
+            {
+                timer += Time.deltaTime;
+
+                // 오오라가 플레이어 주변을 돌도록
+                if (auraObj != null)
+                {
+                    auraObj.transform.position = transform.position;
+                    auraObj.transform.Rotate(Vector3.forward * 180f * Time.deltaTime);
+                }
+
+                yield return null;
+            }
+
+            // 장전 완료 → 오오라 제거
+            if (auraObj != null)
+                PoolManager.instance.Despawn(auraObj);
+
+
+            // ==========================
+            // 2) 발사!
+            // ==========================
+            FireWaterBeam();
+
+
+            // ==========================
+            // 3) 나머지 시간 대기
+            // ==========================
+            if (restTime > 0f)
+                yield return new WaitForSeconds(restTime);
         }
     }
+
 
     public void ApplyUpgrade(UpgradeEventData data)
     {
@@ -117,6 +162,8 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
             if (data.applyLevelUp)
             {
                 currentLevel++;
+                currentChargeTime -= 0.15f;
+                MathF.Max(0.1f, currentChargeTime);
             }
 
         }
@@ -145,11 +192,8 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
             case SkillStatKey.Range:
                 currentRange = statValues[key];
                 break;
-            case SkillStatKey.EffectZoneDuration:
-                currentEffectZoneDuration = statValues[key];
-                break;
             case SkillStatKey.ProjectileSize:
-                currentProjectileSizeLevel = statValues[key];
+                currentProjectileSize = statValues[key];
                 break;
         }
     }
@@ -165,8 +209,7 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
                 SkillStatKey.Damage => baseDamage,
                 SkillStatKey.Cooldown => baseCooldown,
                 SkillStatKey.Range => baseRange,
-                SkillStatKey.EffectZoneDuration => baseEffectZoneDuration,
-                SkillStatKey.ProjectileSize => baseProjectileSizeLevel,
+                SkillStatKey.ProjectileSize => baseProjectileSize,
                 _ => 0f
             };
         }
@@ -174,8 +217,8 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
         currentRange = baseRange;
-        currentEffectZoneDuration = baseEffectZoneDuration;
-        currentProjectileSizeLevel = baseProjectileSizeLevel;
+        currentProjectileSize = baseProjectileSize;
+        currentChargeTime = baseChargeTime;
 
 
         StopAllCoroutines();
@@ -267,28 +310,97 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
     #endregion
 
 
-    private void SpawnStormAtRandomPosition()
+    private void FireWaterBeam()
     {
-        Vector2 spawnPos = GetRandomPositionOutsideInnerRadius(transform.position, currentRange, 1f);
+        // 1) 범위 내 적 탐색
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, currentRange, enemyLayer);
+        Transform target = FindClosestEnemy(transform.position, enemies);
+        if (target == null) return;
 
-        GameObject stormObj = PoolManager.instance.Spawn(stormPrefab, spawnPos);
+        Vector2 dir = (target.position - transform.position).normalized;
 
-        Storm storm = stormObj.GetComponent<Storm>();
-        if (storm != null)
+        // 2) 물대포(LineRenderer) 생성
+        GameObject beam = PoolManager.instance.Spawn(waterBeamPrefab, transform.position);
+
+        LineRenderer beamline = beam.GetComponent<LineRenderer>();
+        beamline.positionCount = 2;
+
+        // 3) 두께 설정
+        float width = currentProjectileSize;
+        beamline.startWidth = width;
+        beamline.endWidth = width;
+
+        // 4) 길이 설정
+        float beamLength = currentRange * 1.3f;
+        Vector3 startPos = transform.position;
+        Vector3 endPos = startPos + (Vector3)dir * beamLength;
+
+        beamline.SetPosition(0, startPos);
+        beamline.SetPosition(1, endPos);
+
+        // 5) BoxCast 충돌 처리
+        BeamHitCheck(startPos, dir, beamLength, width);
+
+        // 6) 사라지기
+        StartCoroutine(DespawnBeam(beam, 0.5f));
+    }
+
+    private void BeamHitCheck(Vector2 origin, Vector2 dir, float length, float width)
+    {
+        // BoxCast 중심 계산
+        Vector2 boxCenter = origin + dir * (length * 0.5f);
+
+        // Raycast 박스 크기 (길이 x 너비)
+        Vector2 boxSize = new Vector2(length, width);
+
+        // 방향 → 각도 변환
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+
+        // BoxCastAll 실행
+        RaycastHit2D[] hits = Physics2D.BoxCastAll(
+            boxCenter,
+            boxSize,
+            angle,
+            Vector2.zero,
+            0,
+            enemyLayer
+        );
+
+        // 충돌 처리
+        foreach (var hit in hits)
         {
-            storm.Init(currentDamage, currentEffectZoneDuration, currentProjectileSizeLevel);
+            if (hit.collider == null) continue;
+
+            EBasicHpController hp = hit.collider.GetComponent<EBasicHpController>();
+            if (hp != null)
+            {
+                hp.TakeDamage(currentDamage); // 데미지 주기
+            }
         }
     }
 
-    private Vector2 GetRandomPositionOutsideInnerRadius(Vector2 center, float baseRange, float innerRadius)
+    private IEnumerator DespawnBeam(GameObject beam, float time)
     {
-        Vector2 pos;
-        do
+        yield return new WaitForSeconds(time);
+        PoolManager.instance.Despawn(beam);
+    }
+
+
+    private Transform FindClosestEnemy(Vector3 from, Collider2D[] enemies)
+    {
+        Transform closest = null;
+        float minDist = Mathf.Infinity;
+
+        foreach (var e in enemies)
         {
-            float angle = UnityEngine.Random.Range(0f, 360f) * Mathf.Deg2Rad;
-            float radius = UnityEngine.Random.Range(innerRadius, baseRange);
-            pos = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
-        } while (Vector2.Distance(center, pos) < innerRadius);
-        return pos;
+            float dist = Vector2.Distance(from, e.transform.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closest = e.transform;
+            }
+        }
+
+        return closest;
     }
 }
