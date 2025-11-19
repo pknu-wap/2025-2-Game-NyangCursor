@@ -5,18 +5,28 @@ public class BulletColliderManager : MonoBehaviour
 {
     [Header("총알 데미지 설정")]
     [SerializeField] private float damage = 10f;
+
     [Header("총알 유지시간")]
-    [SerializeField] private float lifeTime = 3f; // 일정 시간 후 자동 제거
+    [SerializeField] private float lifeTime = 3f;
+
     [Header("적 레이어 지정")]
-    [SerializeField] private LayerMask targetLayer; // 적 Layer 지정
+    [SerializeField] private LayerMask targetLayer;
+
     [Header("총알을 맞췄을 때 게이지 증가량")]
     [SerializeField] private float gaugeIncreaseAmount = 10f;
 
+    [Header("충돌 이펙트 (Pool 등록 )")]
+    public GameObject impactParticle;  // 풀 프리팹
+
+    private Rigidbody2D rb;
 
     public static event Action<float> OnBulletHit;
+
     private void OnEnable()
     {
-        // 총알이 활성화될 때 수명 타이머 시작
+        rb = GetComponent<Rigidbody2D>();
+
+        // 총알 수명 타이머
         CancelInvoke();
         Invoke(nameof(DespawnSelf), lifeTime);
     }
@@ -28,42 +38,60 @@ public class BulletColliderManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // 대상 레이어가 맞지 않으면 무시
         if (!targetLayer.Contains(collision.gameObject))
             return;
 
-        // IDamageable 인터페이스 찾기
-        IDamageable damageable = collision.GetComponent<IDamageable>();
+        HitTarget(collision.gameObject, collision.ClosestPoint(transform.position));
+    }
+
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (!targetLayer.Contains(collision.gameObject))
+            return;
+
+        HitTarget(collision.gameObject, collision.contacts[0].point);
+    }
+
+    private void HitTarget(GameObject hitObj, Vector2 hitPoint)
+    {
+        IDamageable damageable = hitObj.GetComponent<IDamageable>();
         if (damageable != null && !damageable.IsDead)
         {
             damageable.TakeDamage(damage);
             OnBulletHit?.Invoke(gaugeIncreaseAmount);
-            Debug.Log($"{collision.name} 에게 {damage} 데미지를 줌, trigger");
         }
 
-        // 맞추면 풀로 반환
+        PlayImpactEffect(hitPoint);
         DespawnSelf();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    //피격이펙트
+    private void PlayImpactEffect(Vector2 pos)
     {
-        // 혹시 Trigger가 아닌 Collider로 충돌했을 때도 처리
-        if (!targetLayer.Contains(collision.gameObject))
-            return;
+        if (impactParticle == null) return;
 
-        IDamageable damageable = collision.gameObject.GetComponent<IDamageable>();
-        if (damageable != null && !damageable.IsDead)
-        {
-            damageable.TakeDamage(damage);
-            OnBulletHit?.Invoke(gaugeIncreaseAmount); // 이벤트 호출
-            Debug.Log($"{collision.gameObject.name} 에게 {damage} 데미지를 줌, collider");
-        }
+        // impactParticle을 PoolManager에서 꺼낸다
+        GameObject fx = PoolManager.instance.Spawn(impactParticle, pos);
 
-        DespawnSelf();
+        // 2초 뒤 풀로 반환
+        PoolManager.instance.Despawn(fx,2f);
     }
 
     private void DespawnSelf()
     {
         PoolManager.instance.Despawn(gameObject);
+    }
+
+    //총알 발사방향 업데이트
+    void FixedUpdate()
+    {
+        if (rb == null) return;
+
+        if (rb.linearVelocity.sqrMagnitude > 0.01f)
+        {
+            float angle = Mathf.Atan2(rb.linearVelocity.y, rb.linearVelocity.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        }
     }
 }

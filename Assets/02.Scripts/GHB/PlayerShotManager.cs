@@ -7,6 +7,9 @@ public class PlayerShotManager : MonoBehaviour
 {
     [Header("Bullet Settings")]
     [SerializeField] private GameObject bulletPrefab;
+
+    [SerializeField]private GameObject MuzzleFlashEffect; //총구이펙트
+
     [SerializeField] private GameObject firePoint; // 총알 발사 위치
     private CursorMove cursorMove;
     [SerializeField] private float bulletSpeed = 10f;
@@ -75,6 +78,10 @@ public class PlayerShotManager : MonoBehaviour
             Debug.LogWarning("⚠️ Bullet Prefab 또는 Fire Point가 지정되지 않았습니다.");
             return;
         }
+
+        //총구이펙트
+        MuzzleFlashEffect.SetActive(false);
+        MuzzleFlashEffect.SetActive(true);
 
         // PoolManager에서 가져오기
         GameObject bullet = PoolManager.instance.Spawn(bulletPrefab, firePoint.transform.position);
