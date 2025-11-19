@@ -8,6 +8,9 @@ public class BulletColliderManager : MonoBehaviour
 
     [Header("총알 유지시간")]
     [SerializeField] private float lifeTime = 3f;
+    
+    [Header("넉백 파워")]
+    [SerializeField] private float knockbackPower = 5f;
 
     [Header("적 레이어 지정")]
     [SerializeField] private LayerMask targetLayer;
@@ -17,6 +20,8 @@ public class BulletColliderManager : MonoBehaviour
 
     [Header("충돌 이펙트 (Pool 등록 )")]
     public GameObject impactParticle;  // 풀 프리팹
+
+
 
     private Rigidbody2D rb;
 
@@ -61,6 +66,20 @@ public class BulletColliderManager : MonoBehaviour
             damageable.TakeDamage(damage);
             OnBulletHit?.Invoke(gaugeIncreaseAmount);
         }
+        
+        //넉백
+        var knockback = hitObj.GetComponent<IKnockbackable>();
+        if (knockback != null)
+        {
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            Vector2 bulletDir = rb.linearVelocity.normalized;
+
+            // fakeSource는 "총알의 뒤쪽"
+            Vector2 fakeSource = (Vector2)transform.position - bulletDir * 999f;
+
+            knockback.ApplyKnockback(fakeSource, knockbackPower);
+        }
+
 
         PlayImpactEffect(hitPoint);
         DespawnSelf();

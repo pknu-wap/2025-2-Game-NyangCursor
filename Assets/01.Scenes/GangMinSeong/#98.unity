@@ -184364,11 +184364,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.7
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.7
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
       propertyPath: m_LocalPosition.x
@@ -661914,6 +661914,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 6948470598453267942, guid: 0f712dcd3dc23ed4a84d66113f5d8586, type: 3}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
   MuzzleFlashEffect: {fileID: 503474232}
   firePoint: {fileID: 2055263780}
   bulletSpeed: 30

@@ -8,6 +8,8 @@ public class PlayerShotManager : MonoBehaviour
     [Header("Bullet Settings")]
     [SerializeField] private GameObject bulletPrefab;
 
+    [SerializeField] private LayerMask enemyLayer; //넉백당할 적 레이어
+
     [SerializeField]private GameObject MuzzleFlashEffect; //총구이펙트
 
     [SerializeField] private GameObject firePoint; // 총알 발사 위치
@@ -83,6 +85,9 @@ public class PlayerShotManager : MonoBehaviour
         MuzzleFlashEffect.SetActive(false);
         MuzzleFlashEffect.SetActive(true);
 
+        //플레이어 주변 넉백
+        KnockBack();
+
         // PoolManager에서 가져오기
         GameObject bullet = PoolManager.instance.Spawn(bulletPrefab, firePoint.transform.position);
 
@@ -98,6 +103,20 @@ public class PlayerShotManager : MonoBehaviour
             rb.linearVelocity = direction * bulletSpeed;
         
         cursorMove.RotateTowardDirection(direction);
+    }
+
+    void KnockBack()
+    {
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, 2, enemyLayer);
+
+        foreach (var col in enemies)
+        {
+            var knockback = col.GetComponent<IKnockbackable>();
+            if (knockback != null)
+            {
+                knockback.ApplyKnockback(firePoint.transform.position, 20);
+            }
+        }
     }
 
 
