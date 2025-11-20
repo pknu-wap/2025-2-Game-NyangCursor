@@ -186259,9 +186259,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 883535677}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
+  m_Script: {fileID: 11500000, guid: e9e4237dbf818b646886ade5bce5efc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fireThrowerPrefab: {fileID: 100002, guid: 826119355d6864150ba333b5f3bfd332, type: 3}
+  usedStats: 0000000001000000020000000800000003000000
+  baseDamage: 5
+  baseCooldown: 5
+  baseRange: 1
+  baseProjectileSize: 1
+  baseDuration: 3
 --- !u!1 &884380906
 GameObject:
   m_ObjectHideFlags: 0
