@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class PlayerShotManager : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class PlayerShotManager : MonoBehaviour
     private bool canShoot = true;
     private bool isReloading = false;
 
+    public static Action OnshotEvent;
     private void Start()
     {
         // 캐싱
@@ -56,55 +58,52 @@ public class PlayerShotManager : MonoBehaviour
 
     private void TryShoot()
     {
-        if (!canShoot || currentAmmo <= 0)
-            return;
+        if (!canShoot || currentAmmo <= 0) return;
 
-        Shoot();
-        currentAmmo--;
-        UpdateAmmoUI();
-
-        // 쿨타임
-        StartCoroutine(FireCooldownRoutine());
-
-        // 총알 다 썼으면 자동 재장전 시작
-        if (currentAmmo <= 0)
+        // 1) 커서 반동 이동 시작 → 도착 시점에 ShootProcess 실행
+        cursorMove.StartShotRecoil(() =>
         {
-            StartCoroutine(ReloadRoutine());
-        }
+            StartCoroutine(ShootProcess());
+        });
     }
 
-    private void Shoot()
+    private IEnumerator ShootProcess()
     {
-        if (bulletPrefab == null || firePoint == null)
-        {
-            Debug.LogWarning("⚠️ Bullet Prefab 또는 Fire Point가 지정되지 않았습니다.");
-            return;
-        }
-
-        //총구이펙트
+        // 2) 총구 이펙트
         MuzzleFlashEffect.SetActive(false);
         MuzzleFlashEffect.SetActive(true);
 
-        //플레이어 주변 넉백
-        KnockBack();
-
-        // PoolManager에서 가져오기
+        // 3) 총알 생성
         GameObject bullet = PoolManager.instance.Spawn(bulletPrefab, firePoint.transform.position);
 
+        // 4) 마우스 방향 계산
         Vector3 mousePos = Input.mousePosition;
-        mousePos.z = Mathf.Abs(Camera.main.transform.position.z); // 카메라에서 월드로의 거리 지정
+        mousePos.z = Mathf.Abs(Camera.main.transform.position.z);
         Vector3 worldMousePos = Camera.main.ScreenToWorldPoint(mousePos);
 
         Vector2 direction = (worldMousePos - firePoint.transform.position).normalized;
 
-
+        // 5) 총알 속도 적용
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         if (rb != null)
             rb.linearVelocity = direction * bulletSpeed;
-        
-        cursorMove.RotateTowardDirection(direction);
-    }
 
+        // 6) 커서 방향 연출
+        cursorMove.RotateTowardDirection(direction);
+
+        // 7) 탄약 감소
+        currentAmmo--;
+        UpdateAmmoUI();
+
+        // 8) 쿨타임
+        StartCoroutine(FireCooldownRoutine());
+
+        // 9) 재장전 체크
+        if (currentAmmo <= 0)
+            StartCoroutine(ReloadRoutine());
+
+        yield break;
+    }
     void KnockBack()
     {
         Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, 2, enemyLayer);

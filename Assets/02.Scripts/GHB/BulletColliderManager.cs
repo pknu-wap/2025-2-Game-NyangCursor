@@ -66,22 +66,46 @@ public class BulletColliderManager : MonoBehaviour
             damageable.TakeDamage(damage);
             OnBulletHit?.Invoke(gaugeIncreaseAmount);
         }
-        
-        //넉백
-        var knockback = hitObj.GetComponent<IKnockbackable>();
-        if (knockback != null)
+
+        // ==========================
+        // 🔥 전방 사각형 넉백
+        // ==========================
+        float boxWidth = 6f;     // 좌우 폭
+        float boxHeight = 3f;    // 앞쪽 범위
+        LayerMask enemyLayer = LayerMask.GetMask("Enemy");
+
+        // 총알 방향
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        Vector2 bulletDir = rb.linearVelocity.normalized;
+
+        // 박스 중심 = 맞은 적 위치 + 총알 방향 * (boxHeight / 2)
+        Vector2 boxCenter = hitPoint + bulletDir * (boxHeight * 0.5f);
+
+        // 회전값: 박스가 총알 방향을 따라가도록 회전
+        float angle = Mathf.Atan2(bulletDir.y, bulletDir.x) * Mathf.Rad2Deg;
+
+        // 사각형 영역 내 적들 찾기
+        Collider2D[] hits = Physics2D.OverlapBoxAll(
+            boxCenter,
+            new Vector2(boxWidth, boxHeight),
+            angle,
+            enemyLayer
+        );
+
+        // fakeSource는 여전히 총알 뒤쪽
+        Vector2 fakeSource = (Vector2)transform.position - bulletDir * 999f;
+
+        // 감지된 적들에게 넉백
+        foreach (var col in hits)
         {
-            Rigidbody2D rb = GetComponent<Rigidbody2D>();
-            Vector2 bulletDir = rb.linearVelocity.normalized;
+            var enemyKnock = col.GetComponent<IKnockbackable>();
+            if (enemyKnock != null)
+                enemyKnock.ApplyKnockbackWithScatter(fakeSource, knockbackPower, 0.4f,0);
 
-            // fakeSource는 "총알의 뒤쪽"
-            Vector2 fakeSource = (Vector2)transform.position - bulletDir * 999f;
 
-            knockback.ApplyKnockback(fakeSource, knockbackPower);
+            PlayImpactEffect(hitPoint);
+           
         }
-
-
-        PlayImpactEffect(hitPoint);
         DespawnSelf();
     }
 
