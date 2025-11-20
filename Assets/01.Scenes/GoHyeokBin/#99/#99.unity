@@ -181117,6 +181117,7 @@ MonoBehaviour:
   - {fileID: 5719506856147455035, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
   - {fileID: 4983988962634479493, guid: 22b4a30d03f44074f878b047aa0fb5e7, type: 3}
   - {fileID: 116648, guid: 93aef4ce9c3759648a90a96087d66231, type: 3}
+  - {fileID: 133684, guid: f7633201aa376de439a9eaf91d652771, type: 3}
   initialPoolSize: 10
   maxPoolSize: 100
 --- !u!1001 &199734795
@@ -187121,7 +187122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd88c1f6346d77e4388dddd62feac0b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPeriod: 0.5
+  spawnPeriod: 0.3
   maxEnemies: 100
   playerTransform: {fileID: 1979479470}
   enemyPrefabsToSpawn:
@@ -659507,16 +659508,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b7c3da77ef35ea4c94e087d253e6c00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  auraPrefab: {fileID: 0}
+  auraPrefab: {fileID: 132702, guid: 8313e6243b3ba464b8e61f1b4e2b8d13, type: 3}
   waterBeamPrefab: {fileID: 116648, guid: 93aef4ce9c3759648a90a96087d66231, type: 3}
+  beamStartEnd: {fileID: 133684, guid: f7633201aa376de439a9eaf91d652771, type: 3}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
   usedStats: 00000000010000000200000008000000
   baseDamage: 5
   baseCooldown: 5
-  baseRange: 40
-  baseProjectileSize: 40
+  baseRange: 15
+  baseProjectileSize: 15
   baseChargeTime: 1
 --- !u!1 &1728949959
 GameObject:

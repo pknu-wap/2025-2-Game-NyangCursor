@@ -9,6 +9,8 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
     [Header("프리팹")]
     [SerializeField] private GameObject auraPrefab;         // 플레이어를 도는 오오라
     [SerializeField] private GameObject waterBeamPrefab;    // 적에게 발사하는 물대포
+    [SerializeField] private GameObject beamStartEnd;
+    private ParticleSystem auraPS;
 
     [Header("적 레이어")]
     [SerializeField] private LayerMask enemyLayer;
@@ -61,6 +63,13 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
         currentRange = baseRange;
         currentProjectileSize = baseProjectileSize;
         currentChargeTime = baseChargeTime;
+
+        if (auraPrefab != null)
+        {
+            GameObject obj = Instantiate(auraPrefab, transform.position, Quaternion.identity);
+            auraPS = obj.GetComponent<ParticleSystem>();
+            obj.SetActive(false);
+        }
     }
 
 
@@ -102,52 +111,59 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
             Debug.Log($"{skillName} (패시브 효과 발동 중...)");
             if (showUI)
                 cdUI?.StartCooldown(cd);
+
             float chargeTime = currentChargeTime;      // 장전 시간
             float cooldown = currentCooldown;          // 전체 쿨타임
             float restTime = Mathf.Max(0f, cooldown - chargeTime); // 발사 후 대기시간
 
-            // ==========================
-            // 1) 장전 구간 (오오라 생성)
-            // ==========================
-
-            GameObject auraObj = null;
-
-            if (auraPrefab != null)
-                auraObj = PoolManager.instance.Spawn(auraPrefab, transform.position);
-
-            float timer = 0f;
-            while (timer < chargeTime)
+            // 1) 오오라 활성 + 페이드인
+            if (auraPS != null)
             {
-                timer += Time.deltaTime;
+                auraPS.gameObject.SetActive(true);
 
-                // 오오라가 플레이어 주변을 돌도록
-                if (auraObj != null)
+                // 현재 색상 가져오기
+                ParticleSystem.MainModule main = auraPS.main;
+                Color startColor = main.startColor.color;
+                Color targetColor = new Color(startColor.r, startColor.g, startColor.b, 1f);
+
+                // 알파 0으로 초기화
+                main.startColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
+
+                float timer = 0f;
+                while (timer < chargeTime)
                 {
-                    auraObj.transform.position = transform.position;
-                    auraObj.transform.Rotate(Vector3.forward * 180f * Time.deltaTime);
+                    timer += Time.deltaTime;
+                    float alpha = Mathf.Clamp01(timer / chargeTime);
+                    main.startColor = new Color(startColor.r, startColor.g, startColor.b, alpha);
+
+                    // 플레이어 주변 회전
+                    auraPS.transform.position = transform.position;
+                    auraPS.transform.Rotate(Vector3.forward * 180f * Time.deltaTime);
+
+                    yield return null;
                 }
 
-                yield return null;
+                main.startColor = targetColor;
             }
 
-            // 장전 완료 → 오오라 제거
-            if (auraObj != null)
-                PoolManager.instance.Despawn(auraObj);
-
-
-            // ==========================
-            // 2) 발사!
-            // ==========================
+            // 발사
             FireWaterBeam();
 
+            // 오오라 알파 0 후 비활성화
+            if (auraPS != null)
+            {
+                ParticleSystem.MainModule main = auraPS.main;
+                Color startColor = main.startColor.color;
+                main.startColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
+                auraPS.gameObject.SetActive(false);
+            }
 
-            // ==========================
-            // 3) 나머지 시간 대기
-            // ==========================
+            // 나머지 시간 대기
             if (restTime > 0f)
                 yield return new WaitForSeconds(restTime);
         }
     }
+
 
 
     public void ApplyUpgrade(UpgradeEventData data)
@@ -338,11 +354,26 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
         beamline.SetPosition(0, startPos);
         beamline.SetPosition(1, endPos);
 
+        if (beamStartEnd != null)
+        {
+            // 시작점
+            GameObject startObj = PoolManager.instance.Spawn(beamStartEnd, startPos);
+            startObj.transform.localScale = Vector3.one * width * 0.3f;
+
+            // 끝점
+            GameObject endObj = PoolManager.instance.Spawn(beamStartEnd, endPos);
+            endObj.transform.localScale = Vector3.one * width * 0.3f;
+
+            // Beam 사라질 때 같이 despawn
+            StartCoroutine(Despawn(startObj, 0.5f));
+            StartCoroutine(Despawn(endObj, 0.5f));
+        }
+
         // 5) BoxCast 충돌 처리
         BeamHitCheck(startPos, dir, beamLength, width);
 
         // 6) 사라지기
-        StartCoroutine(DespawnBeam(beam, 0.5f));
+        StartCoroutine(Despawn(beam, 0.5f));
     }
 
     private void BeamHitCheck(Vector2 origin, Vector2 dir, float length, float width)
@@ -351,7 +382,7 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
         Vector2 boxCenter = origin + dir * (length * 0.5f);
 
         // Raycast 박스 크기 (길이 x 너비)
-        Vector2 boxSize = new Vector2(length, width);
+        Vector2 boxSize = new Vector2(length, width * 0.5f);
 
         // 방향 → 각도 변환
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -379,10 +410,11 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
         }
     }
 
-    private IEnumerator DespawnBeam(GameObject beam, float time)
+
+    private IEnumerator Despawn(GameObject obj, float time)
     {
         yield return new WaitForSeconds(time);
-        PoolManager.instance.Despawn(beam);
+        PoolManager.instance.Despawn(obj);
     }
 
 
