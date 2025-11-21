@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -411,11 +412,98 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
     }
 
 
-    private IEnumerator Despawn(GameObject obj, float time)
+    private IEnumerator Despawn(GameObject obj, float waitTime)
     {
-        yield return new WaitForSeconds(time);
-        PoolManager.instance.Despawn(obj);
+        yield return new WaitForSeconds(waitTime);
+
+        float fadeTime = 0.3f;
+
+        // -------------------------------
+        // LINE RENDERER
+        // -------------------------------
+        LineRenderer lr = obj.GetComponent<LineRenderer>();
+        if (lr != null)
+        {
+            // 원래 색 저장
+            Color originalColor = lr.material.color;
+
+            // 복사용 material
+            Material fadeMat = lr.material = new Material(lr.material);
+            fadeMat.DOFade(0f, fadeTime);
+
+            yield return new WaitForSeconds(fadeTime);
+
+            // 원래 상태 복구
+            lr.material = new Material(lr.material);   // 새 복사 재질 유지
+            lr.material.color = originalColor;
+
+            PoolManager.instance.Despawn(obj);
+            yield break;
+        }
+
+        // -------------------------------
+        // PARTICLE SYSTEM
+        // -------------------------------
+        ParticleSystem ps = obj.GetComponent<ParticleSystem>();
+        if (ps != null)
+        {
+            // 원래 startColor 저장
+            var main = ps.main;
+            Color originalStartColor = main.startColor.color;
+
+            // PS 방출 정지
+            ps.Stop();
+
+            // Renderer 재질 페이드
+            ParticleSystemRenderer psr = ps.GetComponent<ParticleSystemRenderer>();
+            Material fadeMat = null;
+
+            if (psr != null)
+            {
+                fadeMat = psr.material = new Material(psr.material);
+                if (fadeMat.HasProperty("_Color"))
+                    fadeMat.DOFade(0f, fadeTime);
+            }
+
+            // startColor 페이드 (이미 존재하는 파티클도 대상)
+            StartCoroutine(FadeParticleAlpha(ps, originalStartColor, fadeTime));
+
+            yield return new WaitForSeconds(fadeTime);
+
+            // --- 원상복구 ---
+            // startColor 복구
+            var mainRecover = ps.main;
+            mainRecover.startColor = originalStartColor;
+
+            // 재질 복구
+            if (psr != null && fadeMat != null)
+            {
+                psr.material = new Material(psr.material); // 복사 재질로 덮기
+                psr.material.color = originalStartColor;
+            }
+
+            PoolManager.instance.Despawn(obj);
+            yield break;
+        }
     }
+
+
+    private IEnumerator FadeParticleAlpha(ParticleSystem ps, Color startColor, float duration)
+    {
+        float t = 0;
+        var main = ps.main;
+
+        while (t < duration)
+        {
+            float a = Mathf.Lerp(1f, 0f, t / duration);
+
+            main.startColor = new Color(startColor.r, startColor.g, startColor.b, a);
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+    }
+
 
 
     private Transform FindClosestEnemy(Vector3 from, Collider2D[] enemies)
