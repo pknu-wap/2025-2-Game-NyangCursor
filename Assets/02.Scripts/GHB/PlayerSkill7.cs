@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PlayerSkill3 : MonoBehaviour, ISkill
+public class PlayerSkill7 : MonoBehaviour, ISkill
 {
 
     [SerializeField] private GameObject projectilePrefab;
@@ -23,7 +23,7 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
     [SerializeField] private float baseRange = 3f;
     [SerializeField] private float baseProjectileSizeLevel = 1f;
     [SerializeField] private float baseProjectileCount = 1f;
-    [SerializeField] private float baseEffectZoneDuration = 1f;
+    [SerializeField] private float baseDuration = 1f;
 
 
     // 각 STATKEY별 현재 값
@@ -35,7 +35,7 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
     public float currentRange { get; private set; }
     public float currentProjectileSizeLevel { get; private set; }
     public float currentProjectileCount { get; private set; }
-    public float currentEffectZoneDuration { get; private set; }
+    public float currentDuration { get; private set; }
     private Coroutine passiveRoutine;
 
 
@@ -53,7 +53,7 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
         statValues[SkillStatKey.Cooldown] = baseCooldown;
         statValues[SkillStatKey.Range] = baseRange;
         statValues[SkillStatKey.ProjectileCount] = baseProjectileCount;
-        statValues[SkillStatKey.EffectZoneDuration] = baseEffectZoneDuration;
+        statValues[SkillStatKey.Duration] = baseDuration;
         statValues[SkillStatKey.ProjectileSize] = baseProjectileSizeLevel;
 
         // 현재값 변수도 초기화
@@ -61,7 +61,7 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
         currentCooldown = baseCooldown;
         currentRange = baseRange;
         currentProjectileCount = baseProjectileCount;
-        currentEffectZoneDuration = baseEffectZoneDuration;
+        currentDuration = baseDuration;
         currentProjectileSizeLevel = baseProjectileSizeLevel;
     }
 
@@ -153,8 +153,8 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
             case SkillStatKey.ProjectileCount:
                 currentProjectileCount = statValues[key];
                 break;
-            case SkillStatKey.EffectZoneDuration:
-                currentEffectZoneDuration = statValues[key];
+            case SkillStatKey.Duration:
+                currentDuration = statValues[key];
                 break;
             case SkillStatKey.ProjectileSize:
                 currentProjectileSizeLevel = statValues[key];
@@ -174,7 +174,7 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
                 SkillStatKey.Cooldown => baseCooldown,
                 SkillStatKey.ProjectileCount => baseProjectileCount,
                 SkillStatKey.Range => baseRange,
-                SkillStatKey.EffectZoneDuration => baseEffectZoneDuration,
+                SkillStatKey.Duration => baseDuration,
                 SkillStatKey.ProjectileSize => baseProjectileSizeLevel,
                 _ => 0f
             };
@@ -184,7 +184,7 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
         currentCooldown = baseCooldown;
         currentProjectileCount = baseProjectileCount;
         currentRange = baseRange;
-        currentEffectZoneDuration = baseEffectZoneDuration;
+        currentDuration = baseDuration;
         currentProjectileSizeLevel = baseProjectileSizeLevel;
 
 
@@ -292,12 +292,11 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
             GameObject projObj = PoolManager.instance.Spawn(projectilePrefab, transform.position);
 
             // IProjectile 세팅
-            if (projObj.TryGetComponent<ElectricProjectile3>(out var projectile))
+            if (projObj.TryGetComponent<ElectricProjectile9>(out var projectile))
             {
                 projectile.SetDamage(currentDamage);
-                projectile.SetDuration(currentEffectZoneDuration); // 투사체 지속 시간
+                projectile.SetDuration(currentDuration); // 투사체 지속 시간
                 projectile.SetSize(currentProjectileSizeLevel);
-                projectile.effectZoneDuration = currentEffectZoneDuration;
             }
 
             // Rigidbody2D로 발사 방향 세팅: 현재 가장 가까운 적 방향

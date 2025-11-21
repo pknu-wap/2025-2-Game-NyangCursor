@@ -181118,6 +181118,9 @@ MonoBehaviour:
   - {fileID: 4983988962634479493, guid: 22b4a30d03f44074f878b047aa0fb5e7, type: 3}
   - {fileID: 116648, guid: 93aef4ce9c3759648a90a96087d66231, type: 3}
   - {fileID: 133684, guid: f7633201aa376de439a9eaf91d652771, type: 3}
+  - {fileID: 3332435683413182661, guid: 0a3de9597fbcb79429a2e70dd1cc003b, type: 3}
+  - {fileID: 675161360108791972, guid: 3491f7d74330b0e4f821d22fe2ce20ef, type: 3}
+  - {fileID: 7227173571350965952, guid: 7bee4a9e06df9e84b8da6c1a990c8758, type: 3}
   initialPoolSize: 10
   maxPoolSize: 100
 --- !u!1001 &199734795
@@ -661190,9 +661193,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1929863664}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 57e7e856cff90ed4cb3b8b36dd69d2a9, type: 3}
+  m_Script: {fileID: 11500000, guid: a13b1aa7e2cbbdd46adff067a039c058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 7227173571350965952, guid: 7bee4a9e06df9e84b8da6c1a990c8758, type: 3}
+  enemyMask:
+    serializedVersion: 2
+    m_Bits: 128
+  usedStats: 0000000001000000020000000800000003000000
+  baseDamage: 8
+  baseCooldown: 3
+  baseRange: 7
+  baseProjectileSizeLevel: 1
+  baseProjectileCount: 1
+  baseDuration: 3
 --- !u!1 &1940415952
 GameObject:
   m_ObjectHideFlags: 0

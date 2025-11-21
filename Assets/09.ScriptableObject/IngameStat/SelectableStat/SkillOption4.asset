@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SkillOption4
   m_EditorClassIdentifier: 
   isSkill: 1
-  optionName: "\uC804\uAE30 \uAD6C\uCCB4"
+  optionName: "\uC804\uAE30 \uAD6C\uCCB4(\uC5ED\uC7A5)"
   affectedStat: 0
   icon: {fileID: -2650771296557143352, guid: 84a5aaf0cc9dd4348ba87caed4bebb69, type: 3}
   minUpgradeRatio: 0.05
