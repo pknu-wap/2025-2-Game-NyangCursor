@@ -33,15 +33,19 @@ public class CameraShakeController : MonoBehaviour
     private void OnEnable()
     {
         PlayerHpController.OnTakeDamage += HandleTakeDamageShake;
-        EBasicHpController.OnTakeCollisionDamage += HandleTakeReduceGaugeShake;
         GaugeOverdriveLogic.OnBoostEvent += HandleBoostShake;
+
+        // 글로벌 이벤트 버스 사용
+        GameEvents.Subscribe(GameEventType.OnPlayerTakeDamage, HandleTakeReduceGaugeShake);
     }
 
     private void OnDisable()
     {
         PlayerHpController.OnTakeDamage -= HandleTakeDamageShake;
-        EBasicHpController.OnTakeCollisionDamage -= HandleTakeReduceGaugeShake;
         GaugeOverdriveLogic.OnBoostEvent -= HandleBoostShake;
+
+        // 글로벌 이벤트 버스 사용
+        GameEvents.Unsubscribe(GameEventType.OnPlayerTakeDamage, HandleTakeReduceGaugeShake);
     }
 
 

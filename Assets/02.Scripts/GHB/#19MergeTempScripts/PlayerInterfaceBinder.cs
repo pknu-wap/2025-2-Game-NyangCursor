@@ -14,4 +14,10 @@ public class PlayerInterfaceBinder : MonoBehaviour
         Damageable.Initialize(this);
         Collidable.Initialize(this);
     }
+
+    private void OnDestroy()
+    {
+        Damageable.Cleanup();
+        Collidable.Cleanup();
+    }
 }

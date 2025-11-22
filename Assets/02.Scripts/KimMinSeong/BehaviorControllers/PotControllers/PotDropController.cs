@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PotDropController : MonoBehaviour, IDroppable
 {
-    private Pot owner;
+    private FieldObject owner;
     private Transform dropTransform; // 드랍하고자 하는 위치
 
     [Header("드랍 횟수")]
@@ -19,18 +19,21 @@ public class PotDropController : MonoBehaviour, IDroppable
 
     public void Initialize(Component owner)
     {
-        // Pot 타입만 허용
-        if (owner is not Pot pot)
+        // FieldObject 타입만 허용
+        if (owner is not FieldObject pot)
         {
-            Debug.LogError($"PotDropController 는 Pot 타입만 지원합니다. 현재 타입: {owner.GetType().Name}");
+            Debug.LogError($"PotDropController 는 FieldObject 타입만 지원합니다. 현재 타입: {owner.GetType().Name}");
             return;
         }
 
         this.owner = pot;
         dropTransform = transform;
+
+        this.owner.EventBus.Subscribe(FieldObjectEventType.OnBreak, Drop);
     }
     public void Cleanup()
     {
+        owner.EventBus.Unsubscribe(FieldObjectEventType.OnBreak, Drop);
     }
 
     public void Drop()

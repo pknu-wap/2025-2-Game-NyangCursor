@@ -1,11 +1,16 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
+// 이 스크립트는 1:N 충돌을 지원함
 public class TestPCollisionController : MonoBehaviour, ICollidable
 {
     private Component owner;
 
-    [Header("충돌 데이터")]
+    [Header("충돌 관련")]
+    private Dictionary<GameObject, Coroutine> collisionCooldowns = new Dictionary<GameObject, Coroutine>();     // 충돌 쿨타임 관리용 Dictionary
     [SerializeField] private float collisionDamage = 10f;
+    [SerializeField] private float collisionCooldown = 0.5f; // 충돌 쿨타임
     [SerializeField] private LayerMask enemyLayer;
 
     [Header("연동 컴포넌트")]
@@ -17,63 +22,66 @@ public class TestPCollisionController : MonoBehaviour, ICollidable
         this.owner = owner;
     }
 
-
-    public void OnCollisionDetected(Collision2D collision)
+    public void Cleanup() 
     {
-        if (enemyLayer.Contains(collision.gameObject))
+        // 모든 코루틴 정리
+        foreach (var coroutine in collisionCooldowns.Values)
         {
-            // 1) 충돌 데미지 전달 (쿨타임은 적이 처리함)
-            ApplyCollisionDamage(collision.gameObject);
-
-            // 3) 감속(기존 로직)
-            //overdriveController.ApplyCollisionSlow(0.5f);
+            if (coroutine != null)
+                StopCoroutine(coroutine);
         }
+        collisionCooldowns.Clear();
     }
 
-    //유체화 사용 시 (플레이어 trigger)
-    public void OnTriggerDetected(Collider2D collider)
-    {
-        if (enemyLayer.Contains(collider.gameObject))
-        {
-            // 트리거 충돌도 데미지는 줄 수 있음
-            ApplyCollisionDamage(collider.gameObject);
-        }
-    }
+    // Unity 이벤트 사용
+    private void OnCollisionEnter2D(Collision2D collision) => ApplyCollision(collision.gameObject);
+    private void OnCollisionStay2D(Collision2D collision) => ApplyCollision(collision.gameObject);
+    //private void OnTriggerEnter2D(Collider2D collider) => ApplyCollision(collider.gameObject);
+    //private void OnTriggerStay2D(Collider2D collider) => ApplyCollision(collider.gameObject);
 
-    // ============================
-    //  충돌 데미지 및 넉백 적용
-    // ============================
-    private void ApplyCollisionDamage(GameObject target)
+    private void ApplyCollision(GameObject target)
     {
-        // 플레이어가 오버드라이브 상태가 아닐 경우 충돌 데미지 없음
+        // 1. 레이어 체크
+        if (!enemyLayer.Contains(target)) 
+            return;
+
+        // 2. 오버드라이브 상태 체크
         if (PlayerStateLogic.Instance.CurrentState != PlayerStateLogic.PlayerState.OverDrive)
             return;
 
-        // ===== 데미지 처리 =====
-        IDamageable dmg = target.GetComponent<IDamageable>();
-        if (dmg != null)
-        {
-            dmg.TakeCollisionDamage(collisionDamage);
-        }
-
-        // ===== 넉백 처리 =====
+        // 3. 넉백 처리
+        // 넉백은 데미지와 상관없이 항상 적용
         IKnockbackable knock = target.GetComponent<IKnockbackable>();
         if (knock != null)
         {
             knock.ApplyKnockback(
-                transform.position,        // 충돌 주체(플레이어) 위치
-                0,            // speed에 값을 넣으면 power필요없음
+                transform.position, // 충돌 주체 위치 (플레이어)
+                0,  // speed 에 값을 넣으면 power 필요없음
                 overdriveController.speed   // 플레이어 현재 속도 기반 보정도 가능
             );
         }
+
+        // 4. 쿨타임 체크 
+        // 해당 적의 쿨타임이 아직 안끝났으면 스킵
+        if (collisionCooldowns.ContainsKey(target))
+            return;
+
+        // 5. 데미지 처리
+        IDamageable damageable = target.GetComponent<IDamageable>();
+        if (damageable != null)
+            damageable.TakeDamage(collisionDamage);
+
+        // 6. 쿨타임 시작
+        Coroutine cooldownCoroutine = StartCoroutine(CollisionCooldownCoroutine(target));
+        collisionCooldowns.Add(target, cooldownCoroutine);
     }
 
-    // Unity 이벤트 전달
-    private void OnCollisionEnter2D(Collision2D collision) => OnCollisionDetected(collision);
-    private void OnCollisionStay2D(Collision2D collision) => OnCollisionDetected(collision);
+    private IEnumerator CollisionCooldownCoroutine(GameObject target)
+    {
+        yield return new WaitForSeconds(collisionCooldown);
 
-    private void OnTriggerEnter2D(Collider2D collider) => OnTriggerDetected(collider);
-    private void OnTriggerStay2D(Collider2D collider) => OnTriggerDetected(collider);
-
-    public void Cleanup() { }
+        // 쿨타임 종료 후 Dictionary에서 제거
+        if (collisionCooldowns.ContainsKey(target))
+            collisionCooldowns.Remove(target);
+    }
 }

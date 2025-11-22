@@ -24,10 +24,13 @@ public class EBasicDropController : MonoBehaviour, IDroppable
 
         this.owner = enemy;
         dropTransform = transform;   // 드랍할 위치는 현재 스크립트가 부착된 오브젝트 기준
+
+        this.owner.EventBus.Subscribe(EnemyEventType.OnDeath, Drop);
     }
 
     public void Cleanup()
     {
+        owner.EventBus.Unsubscribe(EnemyEventType.OnDeath, Drop);
     }
 
     // 현재 리스트에서 원하는 오브젝트들을 드랍하는 함수

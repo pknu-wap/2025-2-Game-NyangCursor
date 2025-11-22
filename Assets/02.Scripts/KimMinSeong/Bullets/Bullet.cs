@@ -1,0 +1,64 @@
+using UnityEngine;
+
+// 탄막 추상 클래스
+public abstract class Bullet : MonoBehaviour
+{
+    [Header("기본 설정")]
+    [SerializeField] protected float lifetime = 5f;
+    [SerializeField] protected LayerMask targetLayer;
+
+    protected Rigidbody2D rb;
+    protected float damage;
+    protected float speed;
+    protected float spawnTime;
+
+    protected virtual void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+
+        rb.gravityScale = 0f;           // 중력 제거
+        rb.linearDamping = 0f;          // 선형 저항 제거
+        //rb.angularDamping = 0f;         // 각 저항 제거
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;  // 회전 고정
+    }
+
+    public virtual void Initialize(Vector3 direction, float speed, float damage)
+    {
+        this.damage = damage;
+        this.speed = speed;
+        this.spawnTime = Time.time;
+
+        rb.linearVelocity = direction * speed;
+    }
+
+    public virtual void Cleanup()
+    {
+        damage = 0f;
+        speed = 0f;
+        spawnTime = 0f;
+
+        rb.linearVelocity = Vector2.zero;
+    }
+
+    protected virtual void Update()
+    {
+        // 수명이 다 되었다면 풀로 복귀
+        if (Time.time - spawnTime >= lifetime)
+        {
+            Cleanup();
+            PoolManager.instance.Despawn(gameObject);
+        }
+    }
+
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
+    {
+        // 레이어 체크 → LayerMaskHelper 확장 메서드 사용
+        if (!targetLayer.Contains(collision.gameObject))
+            return;
+
+        // 충돌 처리
+        Hit(collision.gameObject);
+    }
+
+    protected abstract void Hit(GameObject target);
+}

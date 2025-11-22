@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PotDamageController : MonoBehaviour, IDamageable
 {
-    private Pot owner;
+    private FieldObject owner;
     private float currentHp;
     private float maxHp;
     private bool isDead;
@@ -12,14 +12,12 @@ public class PotDamageController : MonoBehaviour, IDamageable
     public float MaxHp => maxHp;
     public bool IsDead => isDead;
 
-    public event Action OnDeath;
-
     public void Initialize(Component owner)
     {
         // Pot 타입만 허용
-        if (owner is not Pot pot)
+        if (owner is not FieldObject pot)
         {
-            Debug.LogError($"PotDamageController 는 Pot 타입만 지원합니다. 현재 타입: {owner.GetType().Name}");
+            Debug.LogError($"PotDamageController 는 FieldObject 타입만 지원합니다. 현재 타입: {owner.GetType().Name}");
             return;
         }
 
@@ -45,11 +43,12 @@ public class PotDamageController : MonoBehaviour, IDamageable
     private void Die()
     {
         isDead = true;
+
         /*
          * 추후에 추가적인 작업들을 여기에 구현 (ex. 이펙트, 사운드...)
         */
 
-        OnDeath?.Invoke();
+        owner.EventBus.Publish(FieldObjectEventType.OnBreak);
     }
 
     public void TakeCollisionDamage(float amount)
