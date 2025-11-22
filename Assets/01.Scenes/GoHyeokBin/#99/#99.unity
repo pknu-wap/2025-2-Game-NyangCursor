@@ -189188,7 +189188,6 @@ Transform:
   - {fileID: 883535678}
   - {fileID: 1176139240}
   - {fileID: 1929863665}
-  - {fileID: 1438872781}
   m_Father: {fileID: 1979479470}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1282767500
@@ -657927,61 +657926,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1438574593}
   m_CullTransparentMesh: 1
---- !u!1 &1438872779
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1438872781}
-  - component: {fileID: 1438872780}
-  m_Layer: 6
-  m_Name: Skill10
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1438872780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1438872779}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a13b1aa7e2cbbdd46adff067a039c058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 7227173571350965952, guid: 7bee4a9e06df9e84b8da6c1a990c8758, type: 3}
-  enemyMask:
-    serializedVersion: 2
-    m_Bits: 128
-  usedStats: 0000000001000000020000000800000003000000
-  baseDamage: 8
-  baseCooldown: 3
-  baseRange: 7
-  baseProjectileSizeLevel: 1
-  baseProjectileCount: 1
-  baseDuration: 3
---- !u!4 &1438872781
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1438872779}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1272015440}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1447529176
 GameObject:
   m_ObjectHideFlags: 0
@@ -661898,11 +661842,6 @@ MonoBehaviour:
   - linkedUpgradeSO: {fileID: 11400000, guid: 858674d5422bb634a8db8db09e739f54, type: 2}
     skillName: 
     skillManagerObject: {fileID: 1929863664}
-    isUnlocked: 0
-    icon: {fileID: 0}
-  - linkedUpgradeSO: {fileID: 11400000, guid: c119e7eb00145034eaf50fe2dc24af89, type: 2}
-    skillName: 
-    skillManagerObject: {fileID: 1438872779}
     isUnlocked: 0
     icon: {fileID: 0}
 --- !u!114 &1979479487
