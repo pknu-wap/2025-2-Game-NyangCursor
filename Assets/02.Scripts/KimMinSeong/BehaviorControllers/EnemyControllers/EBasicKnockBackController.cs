@@ -42,6 +42,37 @@ public class EBasicKnockBackController : MonoBehaviour, IKnockbackable
         mover?.PauseMovementForSeconds(stopDuration);
     }
 
+    public void ApplyKnockbackWithScatter(Vector2 sourcePosition, float power, float scatterAmount = 0.3f, float playerSpeed = 0f)
+    {
+        if (Time.time - lastKnockbackTime < knockbackCooldown)
+            return;
+
+        lastKnockbackTime = Time.time;
+
+        if (rb == null)
+            return;
+
+        // 기본 넉백 방향 (총알 → 적 기준)
+        Vector2 dir = (rb.position - sourcePosition).normalized;
+
+        // ============================
+        //  🔥 방향에 '흩뿌림(Scatter)' 추가
+        // ============================
+        // scatterAmount 예) 0.3 => 최대 ±30도 흔들기
+        float randomAngle = Random.Range(-scatterAmount, scatterAmount) * 90f;
+        dir = Quaternion.Euler(0, 0, randomAngle) * dir;
+
+        // ============================
+        //  힘 계산
+        // ============================
+        float finalPower = (playerSpeed > 0f) ? playerSpeed : power;
+
+        rb.AddForce(dir * finalPower, ForceMode2D.Impulse);
+
+        GetComponent<IMoveable>()?.PauseMovementForSeconds(stopDuration);
+    }
+
+
     public void ApplyPull(Vector2 targetPosition, float power, float playerSpeed = 0f)
     {
         // 끌림 쿨타임 (넉백과 같은 쿨타임 사용)
