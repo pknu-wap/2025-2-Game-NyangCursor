@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 8171447296579110503}
   - component: {fileID: 257074358928203158}
   - component: {fileID: -5930888789870194388}
+  - component: {fileID: 2333108899310800939}
   - component: {fileID: -3658654941346624756}
   - component: {fileID: -526574365230502210}
-  - component: {fileID: 3458799293738972735}
   - component: {fileID: 2167280641245540360}
   - component: {fileID: 4390802247312192559}
   m_Layer: 7
@@ -178,7 +178,7 @@ MonoBehaviour:
   damageable:
     referenceObj: {fileID: -5930888789870194388}
   moveable:
-    referenceObj: {fileID: 3458799293738972735}
+    referenceObj: {fileID: 2333108899310800939}
   collidable:
     referenceObj: {fileID: -3658654941346624756}
   droppable:
@@ -200,6 +200,18 @@ MonoBehaviour:
   spriteRenderer: {fileID: 3720159621628614232}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   hitFlashDuration: 0.15
+--- !u!114 &2333108899310800939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146727613942615151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ada1737c3fdf9b64cb5d18a4918c3ecf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &-3658654941346624756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -236,18 +248,6 @@ MonoBehaviour:
     dropRate: 100
   - dropPrefab: {fileID: 4246174279374542710, guid: 89139b8f26fc6914188dd4a9fd49d1c3, type: 3}
     dropRate: 100
---- !u!114 &3458799293738972735
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1146727613942615151}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ada1737c3fdf9b64cb5d18a4918c3ecf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2167280641245540360
 MonoBehaviour:
   m_ObjectHideFlags: 0

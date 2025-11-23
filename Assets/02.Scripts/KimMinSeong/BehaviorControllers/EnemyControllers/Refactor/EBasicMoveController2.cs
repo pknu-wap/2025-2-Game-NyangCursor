@@ -22,31 +22,6 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
     private int pauseCount = 0;
     private bool IsPaused => pauseCount > 0;
 
-    //private void OnEnable()
-    //{
-    //    //GaugeOverdriveLogic.OnGetOffEvent += ChangeSpeed;
-    //    //GaugeRidingLogic.OnOverDriveEvent += ChangeSpeed;
-
-    //    // 글로벌 이벤트 버스 관련 (= 적과 외부 오브젝트 간의 통신)
-    //    GameEvents.Subscribe(GameEventType.OnPlayerStartOverdrive, ChangeSpeed);
-    //    GameEvents.Subscribe(GameEventType.OnPlayerFinishOverdrive, ChangeSpeed);
-    //}
-
-    //private void OnDisable()
-    //{
-    //    //GaugeOverdriveLogic.OnGetOffEvent -= ChangeSpeed;
-    //    //GaugeRidingLogic.OnOverDriveEvent -= ChangeSpeed;
-
-    //    // 글로벌 이벤트 버스 관련 (= 적과 외부 오브젝트 간의 통신)
-    //    GameEvents.Subscribe(GameEventType.OnPlayerStartOverdrive, ChangeSpeed);
-    //    GameEvents.Subscribe(GameEventType.OnPlayerFinishOverdrive, ChangeSpeed);
-    //}
-
-    private void FixedUpdate()
-    {
-        UpdateMovement(Time.fixedDeltaTime);
-    }
-
     public void Initialize(Component owner)
     {
         if (owner is not Enemy enemy)
@@ -101,6 +76,11 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
 
         GameEvents.Unsubscribe(GameEventType.OnPlayerStartOverdrive, ChangeSpeed);
         GameEvents.Unsubscribe(GameEventType.OnPlayerFinishOverdrive, ChangeSpeed);
+    }
+
+    private void FixedUpdate()
+    {
+        UpdateMovement(Time.fixedDeltaTime);
     }
 
     public void ChangeSpeed()
