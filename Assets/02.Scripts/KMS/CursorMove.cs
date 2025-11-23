@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
+using System;
 using Unity.VisualScripting;
+
 
 public class CursorMove : MonoBehaviour
 {
@@ -15,6 +17,8 @@ public class CursorMove : MonoBehaviour
 
     [SerializeField] SpriteRenderer overRideCursorSpriteRenderer;
     [SerializeField] SpriteRenderer normalCursorRenderer;
+
+    private bool isShotReaction = false;
 
     private void Awake()
     {
@@ -32,6 +36,9 @@ public class CursorMove : MonoBehaviour
     {
         if (PlayerStateLogic.Instance.CurrentState != PlayerStateLogic.PlayerState.Normal)
             return;
+
+        if (isShotReaction)
+            return;   // ← Shot 반응 중에는 Update 이동 끄기
 
         // 플레이어 위치
         Vector3 playerPos = player.transform.position;
@@ -123,6 +130,7 @@ public class CursorMove : MonoBehaviour
 
     public void RotateTowardDirection(Vector2 direction, float rotateDuration = 0.1f, float restoreDuration = 0.3f)
     {
+        //발사 시 커서 꺾임
         // 기존 회전 중이면 중복 실행 방지
         if(rotateToDirectionRoutine == null)
         {
@@ -168,5 +176,61 @@ public class CursorMove : MonoBehaviour
         transform.rotation = restoreRot;
         rotateToDirectionRoutine = null;
     }
+
+    public void StartShotRecoil(Action onArrived)
+    {
+        StartCoroutine(ShotRecoilRoutine(onArrived));
+    }
+
+    private IEnumerator ShotRecoilRoutine(Action onArrived)
+    {
+        isShotReaction = true;
+
+        float dir = -Mathf.Sign(player.transform.localScale.x);
+        Vector3 startPos = transform.position;
+        Vector3 endPos = player.transform.position + new Vector3(1f * dir, 0, 0);
+
+        float duration = 0.08f;
+        float elapsed = 0f;
+
+        // 1) endPos까지 이동
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            transform.position = Vector3.Lerp(startPos, endPos, elapsed / duration);
+            yield return null;
+        }
+
+        transform.position = endPos;
+
+        // 2) endPos 도착 순간 발사 실행!
+        onArrived?.Invoke();
+
+        // 3) 복귀는 기다리지 않는 별도 코루틴
+        StartCoroutine(ReturnRoutine());
+
+        // ShotRecoilRoutine은 여기서 끝
+    }
+
+    private IEnumerator ReturnRoutine()
+{
+    Vector3 startPos = transform.position;
+
+    float dir = Mathf.Sign(player.transform.localScale.x);
+    Vector3 originalOffsetPos = player.transform.position + new Vector3(0.6f * dir, 0, 0);
+
+    float duration = 0.5f;
+    float elapsed = 0f;
+
+    while (elapsed < duration)
+    {
+        elapsed += Time.deltaTime;
+        transform.position = Vector3.Lerp(startPos, originalOffsetPos, elapsed / duration);
+        yield return null;
+    }
+
+    transform.position = originalOffsetPos;
+    isShotReaction = false;
+}
 
 }

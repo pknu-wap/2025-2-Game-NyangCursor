@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public class PoolManager : MonoBehaviour
 {
@@ -114,5 +115,17 @@ public class PoolManager : MonoBehaviour
             Destroy(instance);
             return;
         }
+    }
+    
+    //오버라이드 Despawn 딜레이버전
+    public void Despawn(GameObject instance, float delay)
+    {
+        StartCoroutine(DespawnCoroutine(instance, delay));
+    }
+
+    private IEnumerator DespawnCoroutine(GameObject instance, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        Despawn(instance); // 즉시 반환 버전 호출
     }
 }

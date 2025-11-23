@@ -63,4 +63,6 @@ public interface IKnockbackable
 {
     void ApplyKnockback(Vector2 sourcePosition, float power, float playerSpeed = 0f);
     void ApplyPull(Vector2 targetPosition, float power, float playerSpeed = 0f);
+
+    void ApplyKnockbackWithScatter(Vector2 targetPosition, float power, float scatterAmount, float playerSpeed);
 }
