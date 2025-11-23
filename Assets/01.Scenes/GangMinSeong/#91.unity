@@ -658844,6 +658844,7 @@ MonoBehaviour:
   boostDuration: 1
   boostExtraSpeed: 1.5
   boostObject: {fileID: 445898209}
+  itemBonusGuage: 0
 --- !u!114 &1554678220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -661819,6 +661820,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9830261933e03bf4ea5d7017838b1554, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentAltar: {fileID: 0}
 --- !u!114 &1979479488
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,14 +12,14 @@ public class IntroCatEffect : MonoBehaviour
     [SerializeField] private float alphaDuration = 2.0f;
 
     // 시작값
-    private float startHolo = 0f;
-    private float startPixel = 512f;
-    private float startAlpha = 1f;
+    private float startHolo = 0.2f; //최대 1
+    private float startPixel = 110f;//최대 512
+    private float startAlpha = 1f;//최대1
 
     // 종료값
-    private float endHolo = 0f;
-    private float endPixel = 10;
-    private float endAlpha = 0f;
+    private float endHolo = 1f;
+    private float endPixel = 4;
+    private float endAlpha = 1f;
 
     private Coroutine holoRoutine;
     private Coroutine pixelRoutine;
