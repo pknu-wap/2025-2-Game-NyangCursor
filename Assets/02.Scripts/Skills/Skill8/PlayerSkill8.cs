@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class MeteorSkill : MonoBehaviour, ISkill
+public class PlayerSkill8 : MonoBehaviour, ISkill
 {
     [Header("스킬이 사용하는 기본값")]
     [SerializeField] private float baseDamage = 10f;

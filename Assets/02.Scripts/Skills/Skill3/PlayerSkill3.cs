@@ -4,12 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PlayerSkill4 : MonoBehaviour, ISkill
+public class PlayerSkill3 : MonoBehaviour, ISkill
 {
-    [SerializeField] private GameObject stormPrefab;
+
+    [SerializeField] private GameObject lightningEffectPrefab;
+
+    [SerializeField] private GameObject hitEffectPrefab; // A 프리팹 할당
 
     private int currentLevel = 0;
     private string skillName;
+    [SerializeField] private LayerMask enemyMask;
 
     [Header("이 스킬이 사용하는 공용 스탯 키들")]
     [SerializeField] private List<SkillStatKey> usedStats = new List<SkillStatKey>();
@@ -18,10 +22,8 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
     [SerializeField] private float baseDamage = 2f;
     [SerializeField] private float baseCooldown = 5f;
     [SerializeField] private float baseRange = 3f;
-    [SerializeField] private float baseProjectileSizeLevel = 1f;
-
-    // 발사체 수가 아니라 소환체 수 같은걸로 따로 변수를 파야할듯
-    [SerializeField] private float baseEffectZoneDuration = 1f;
+    [SerializeField] private float baseProjectileCount = 1;
+    [SerializeField] private int baseDepth = 1; // 깊이는 너무 종속되는 변수여서 레벨당으로 할당
 
 
     // 각 STATKEY별 현재 값
@@ -31,8 +33,9 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
     public float currentDamage { get; private set; }
     public float currentCooldown { get; private set; }
     public float currentRange { get; private set; }
-    public float currentProjectileSizeLevel { get; private set; }
-    public float currentEffectZoneDuration { get; private set; }
+    public float currentProjectileCount { get; private set; }
+    public int currentDepth { get; private set; }
+
     private Coroutine passiveRoutine;
 
 
@@ -49,15 +52,14 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
         statValues[SkillStatKey.Damage] = baseDamage;
         statValues[SkillStatKey.Cooldown] = baseCooldown;
         statValues[SkillStatKey.Range] = baseRange;
-        statValues[SkillStatKey.EffectZoneDuration] = baseEffectZoneDuration;
-        statValues[SkillStatKey.ProjectileSize] = baseProjectileSizeLevel;
+        statValues[SkillStatKey.ProjectileCount] = baseProjectileCount;
 
         // 현재값 변수도 초기화
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
         currentRange = baseRange;
-        currentEffectZoneDuration = baseEffectZoneDuration;
-        currentProjectileSizeLevel = baseProjectileSizeLevel;
+        currentProjectileCount = baseProjectileCount;
+        currentDepth = baseDepth;
     }
 
 
@@ -96,7 +98,7 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
     {
         while (true)
         {
-            SpawnStormAtRandomPosition();
+            FireLightning();
             Debug.Log($"{skillName} (패시브 효과 발동 중...)");
             if (showUI)
                 cdUI?.StartCooldown(cd);
@@ -117,6 +119,8 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
             if (data.applyLevelUp)
             {
                 currentLevel++;
+                // 깊이는 레벨에 종속, 1레벨마다 한단계씩 증가
+                currentDepth++;
             }
 
         }
@@ -145,11 +149,8 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
             case SkillStatKey.Range:
                 currentRange = statValues[key];
                 break;
-            case SkillStatKey.EffectZoneDuration:
-                currentEffectZoneDuration = statValues[key];
-                break;
-            case SkillStatKey.ProjectileSize:
-                currentProjectileSizeLevel = statValues[key];
+            case SkillStatKey.ProjectileCount:
+                currentProjectileCount = statValues[key];
                 break;
         }
     }
@@ -164,18 +165,17 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
                 // 스킬에서 사용하는 스탯에 따라 커스터마이징 하면 됩니다.
                 SkillStatKey.Damage => baseDamage,
                 SkillStatKey.Cooldown => baseCooldown,
+                SkillStatKey.ProjectileCount => baseProjectileCount,
                 SkillStatKey.Range => baseRange,
-                SkillStatKey.EffectZoneDuration => baseEffectZoneDuration,
-                SkillStatKey.ProjectileSize => baseProjectileSizeLevel,
                 _ => 0f
             };
         }
         currentLevel = 1;
+        currentDepth = 1;
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
+        currentProjectileCount = baseProjectileCount;
         currentRange = baseRange;
-        currentEffectZoneDuration = baseEffectZoneDuration;
-        currentProjectileSizeLevel = baseProjectileSizeLevel;
 
 
         StopAllCoroutines();
@@ -266,29 +266,120 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
 
     #endregion
 
-
-    private void SpawnStormAtRandomPosition()
+    private void FireLightning()
     {
-        Vector2 spawnPos = GetRandomPositionOutsideInnerRadius(transform.position, currentRange, 1f);
+        // 1) 범위 안의 적 찾기
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, currentRange, enemyMask);
+        if (enemies.Length == 0) return;
 
-        GameObject stormObj = PoolManager.instance.Spawn(stormPrefab, spawnPos);
+        // 2) 거리순 정렬
+        List<Transform> sortedEnemies = new List<Transform>();
+        foreach (var e in enemies) sortedEnemies.Add(e.transform);
 
-        Storm storm = stormObj.GetComponent<Storm>();
-        if (storm != null)
+        sortedEnemies.Sort((a, b) =>
+            Vector2.Distance(transform.position, a.position)
+            .CompareTo(Vector2.Distance(transform.position, b.position)));
+
+        // 3) 발사 개수 (최대 5 제한)
+        int shots = (int)Mathf.Clamp(currentProjectileCount, 1, 5);
+        int count = Mathf.Min(shots, sortedEnemies.Count);
+
+        for (int i = 0; i < count; i++)
         {
-            storm.Init(currentDamage, currentEffectZoneDuration, currentProjectileSizeLevel);
+            Transform startTarget = sortedEnemies[i];
+            StartCoroutine(ChainLightning(startTarget, currentDepth));
         }
     }
 
-    private Vector2 GetRandomPositionOutsideInnerRadius(Vector2 center, float baseRange, float innerRadius)
+    private IEnumerator ChainLightning(Transform startEnemy, int depth)
     {
-        Vector2 pos;
-        do
+        HashSet<Transform> visited = new HashSet<Transform>();
+        Transform current = startEnemy;
+
+        for (int i = 0; i < Mathf.Clamp(depth, 1, 5); i++)
         {
-            float angle = UnityEngine.Random.Range(0f, 360f) * Mathf.Deg2Rad;
-            float radius = UnityEngine.Random.Range(innerRadius, baseRange);
-            pos = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
-        } while (Vector2.Distance(center, pos) < innerRadius);
-        return pos;
+            if (current == null) yield break;
+
+            visited.Add(current);
+
+            ApplyDamage(current);
+            Debug.Log($"Hit: {current.name}");
+
+            // Player → current (첫 번째는 플레이어 기준)
+            if (i == 0)
+                SpawnLightningEffect(transform.position, current.position);
+
+            // 다음 적 찾기 (범위 내 방문하지 않은 랜덤 적)
+            Transform next = FindRandomNextEnemy(current.position, visited);
+            if (next == null) yield break;
+
+            // current → next
+            SpawnLightningEffect(current.position, next.position);
+
+            current = next;
+
+            yield return null;
+        }
     }
+
+
+
+    private Transform FindRandomNextEnemy(Vector2 from, HashSet<Transform> visited)
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(from, currentRange, enemyMask);
+
+        List<Transform> candidates = new List<Transform>();
+        foreach (var h in hits)
+        {
+            Transform t = h.transform;
+            if (!visited.Contains(t))
+                candidates.Add(t);
+        }
+
+        if (candidates.Count == 0)
+            return null;
+
+        // 랜덤으로 선택
+        int index = UnityEngine.Random.Range(0, candidates.Count);
+        return candidates[index];
+    }
+
+    private void ApplyDamage(Transform enemy)
+    {
+        var hp = enemy.GetComponent<IDamageable>();
+        if (hp != null)
+        {
+            hp.TakeDamage(currentDamage);
+            /// 타격 효과 생성 (PoolManager 사용)
+            if (hitEffectPrefab != null)
+            {
+                PoolManager.instance.Spawn(hitEffectPrefab, enemy.position);
+            }
+        }
+
+
+    }
+
+    private void SpawnLightningEffect(Vector3 start, Vector3 end)
+    {
+        if (lightningEffectPrefab != null)
+        {
+            GameObject obj = PoolManager.instance.Spawn(lightningEffectPrefab, start);
+            LineRenderer lr = obj.GetComponent<LineRenderer>();
+
+            lr.positionCount = 2;
+            lr.SetPosition(0, start);
+            lr.SetPosition(1, end);
+
+            // 일정 시간 후 다시 Pool로 반환
+            StartCoroutine(DespawnAfter(obj, 0.15f));
+        }
+    }
+
+    private IEnumerator DespawnAfter(GameObject obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        PoolManager.instance.Despawn(obj);
+    }
+
 }

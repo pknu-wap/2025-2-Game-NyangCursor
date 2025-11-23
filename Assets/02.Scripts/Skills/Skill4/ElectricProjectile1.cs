@@ -2,7 +2,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ElectricProjectile3 : MonoBehaviour, IProjectile
+public class ElectricProjectile1 : MonoBehaviour, IProjectile
 {
     [SerializeField] private GameObject explosionPrefab;
     [SerializeField] private GameObject hitEffectPrefab;

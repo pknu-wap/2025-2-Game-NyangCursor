@@ -10,13 +10,13 @@ public enum SkillStatKey
     Range,          // 범위 (거리)
     Duration,       // 지속시간 (초)
     ProjectileCount,// 발사체 수
-    ProcChance,     // 상태이상 발동확률
-    Speed,          // 투사체/이동 속도
-    ManaCost,       // 소모 자원
     ProjectileSize, // 발사체 크기
+    EffectZoneDuration, // 장판류 스킬의 유지 시간
+
+    // 밑 3개는 레거시 예정
     Interval,       // 순차형 스킬일 때, 각 단계 사이의 시간 간격
     BlockCount,     // 블록 단위 스킬일 때, 총 블록의 개수
-    EffectZoneDuration // 장판류 스킬의 유지 시간
+    Speed          // 투사체/이동 속도 
     // 필요하면 여기에 추가
 }
 

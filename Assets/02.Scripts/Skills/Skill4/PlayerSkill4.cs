@@ -2,24 +2,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
-public class PlayerSkill1 : MonoBehaviour, ISkill
+public class PlayerSkill4 : MonoBehaviour, ISkill
 {
+
+    [SerializeField] private GameObject projectilePrefab;
+
     private int currentLevel = 0;
     private string skillName;
 
-    [SerializeField] private Rigidbody2D playerRb;
+    [SerializeField] private LayerMask enemyMask;
 
     [Header("이 스킬이 사용하는 공용 스탯 키들")]
     [SerializeField] private List<SkillStatKey> usedStats = new List<SkillStatKey>();
 
     [Header("기본값")]
-    [SerializeField] private float baseDamage = 10f;
+    [SerializeField] private float baseDamage = 2f;
     [SerializeField] private float baseCooldown = 5f;
-    [SerializeField] private float baseDuration = 3f;
-    [SerializeField] private float baseSpeed = 3f;
-    [SerializeField] private int baseProjectileCount = 2;
-    [SerializeField] private int baseProjectileSizeLevel = 0;
+    [SerializeField] private float baseRange = 3f;
+    [SerializeField] private float baseProjectileSizeLevel = 1f;
+    [SerializeField] private float baseProjectileCount = 1f;
+    [SerializeField] private float baseEffectZoneDuration = 1f;
 
 
     // 각 STATKEY별 현재 값
@@ -28,16 +32,11 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
     // 현재값 변수
     public float currentDamage { get; private set; }
     public float currentCooldown { get; private set; }
-    public float currentDuration { get; private set; }
-    public float currentSpeed { get; private set; }
-    public float currentProjectileCount { get; private set; }
+    public float currentRange { get; private set; }
     public float currentProjectileSizeLevel { get; private set; }
-
+    public float currentProjectileCount { get; private set; }
+    public float currentEffectZoneDuration { get; private set; }
     private Coroutine passiveRoutine;
-
-    [Header("개별 스킬 설정")]
-    [Header("레벨별 스킬 프리팹")]
-    [SerializeField] private List<GameObject> projectilePrefabs = new List<GameObject>();
 
 
     #region 스킬 스크립트 기본 구조
@@ -52,17 +51,17 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
         // 각 스킬 스크립트에서 쓰이는 변수는 따로 초기화
         statValues[SkillStatKey.Damage] = baseDamage;
         statValues[SkillStatKey.Cooldown] = baseCooldown;
-        statValues[SkillStatKey.Duration] = baseDuration;
-        statValues[SkillStatKey.Speed] = baseSpeed;
+        statValues[SkillStatKey.Range] = baseRange;
         statValues[SkillStatKey.ProjectileCount] = baseProjectileCount;
+        statValues[SkillStatKey.EffectZoneDuration] = baseEffectZoneDuration;
         statValues[SkillStatKey.ProjectileSize] = baseProjectileSizeLevel;
 
         // 현재값 변수도 초기화
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
-        currentDuration = baseDuration;
-        currentSpeed = baseSpeed;
+        currentRange = baseRange;
         currentProjectileCount = baseProjectileCount;
+        currentEffectZoneDuration = baseEffectZoneDuration;
         currentProjectileSizeLevel = baseProjectileSizeLevel;
     }
 
@@ -76,7 +75,7 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
 
     private void OnDisable()
     {
-        UpgradeManager.OnUpgradeSelected1 += ApplyUpgrade;
+        UpgradeManager.OnUpgradeSelected1 -= ApplyUpgrade;
         PlayerStateLogic.Instance.OnStateChanged -= HandleStateChanged;
     }
 
@@ -102,7 +101,7 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
     {
         while (true)
         {
-            FireProjectiles(); // 스킬 작동 함수가 들어가면 됩니다
+            FireProjectiles();
             Debug.Log($"{skillName} (패시브 효과 발동 중...)");
             if (showUI)
                 cdUI?.StartCooldown(cd);
@@ -121,7 +120,10 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
                 return;
 
             if (data.applyLevelUp)
+            {
                 currentLevel++;
+            }
+
         }
 
         if (!usedStats.Contains(key))
@@ -145,14 +147,14 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
             case SkillStatKey.Cooldown:
                 currentCooldown = statValues[key];
                 break;
-            case SkillStatKey.Duration:
-                currentDuration = statValues[key];
-                break;
-            case SkillStatKey.Speed:
-                currentSpeed = statValues[key];
+            case SkillStatKey.Range:
+                currentRange = statValues[key];
                 break;
             case SkillStatKey.ProjectileCount:
                 currentProjectileCount = statValues[key];
+                break;
+            case SkillStatKey.EffectZoneDuration:
+                currentEffectZoneDuration = statValues[key];
                 break;
             case SkillStatKey.ProjectileSize:
                 currentProjectileSizeLevel = statValues[key];
@@ -170,9 +172,9 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
                 // 스킬에서 사용하는 스탯에 따라 커스터마이징 하면 됩니다.
                 SkillStatKey.Damage => baseDamage,
                 SkillStatKey.Cooldown => baseCooldown,
-                SkillStatKey.Duration => baseDuration,
-                SkillStatKey.Speed => baseSpeed,
                 SkillStatKey.ProjectileCount => baseProjectileCount,
+                SkillStatKey.Range => baseRange,
+                SkillStatKey.EffectZoneDuration => baseEffectZoneDuration,
                 SkillStatKey.ProjectileSize => baseProjectileSizeLevel,
                 _ => 0f
             };
@@ -180,10 +182,11 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
         currentLevel = 1;
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
-        currentDuration = baseDuration;
-        currentSpeed = baseSpeed;
         currentProjectileCount = baseProjectileCount;
+        currentRange = baseRange;
+        currentEffectZoneDuration = baseEffectZoneDuration;
         currentProjectileSizeLevel = baseProjectileSizeLevel;
+
 
         StopAllCoroutines();
         passiveRoutine = null;
@@ -272,72 +275,58 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
     }
 
     #endregion
+
     private void FireProjectiles()
     {
-        if (projectilePrefabs.Count == 0)
-        {
-            Debug.LogWarning($"{skillName}: 발사할 프리팹이 없습니다!");
-            return;
-        }
+        // 1) 범위 안 적 검색
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, currentRange, enemyMask);
+        if (enemies.Length == 0)
+            return; // 주변 적이 없으면 발사 안 함
 
+        // 2) 발사할 투사체 수
         int projectileCount = Mathf.Max(1, Mathf.RoundToInt(currentProjectileCount));
-        float angleStep = 360f / projectileCount;
-
-        Vector2 moveDir = playerRb.linearVelocity.normalized;
-
-        // 🔹 이동 방향의 수직 벡터 (왼쪽 방향)
-        Vector2 perpendicular = new Vector2(-moveDir.y, moveDir.x);
-        float baseAngle = Mathf.Atan2(perpendicular.y, perpendicular.x) * Mathf.Rad2Deg;
 
         for (int i = 0; i < projectileCount; i++)
         {
-            GameObject prefabToUse = GetProjectilePrefabForLevel();
-
-            // PoolManager에서 스폰
-            GameObject proj = PoolManager.instance.Spawn(prefabToUse, transform.position);
-
-            float angle = baseAngle + (i * angleStep);
-            Vector2 dir = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
+            // PoolManager에서 투사체 가져오기
+            GameObject projObj = PoolManager.instance.Spawn(projectilePrefab, transform.position);
 
             // IProjectile 세팅
-            if (proj.TryGetComponent<IProjectile>(out var projectile))
+            if (projObj.TryGetComponent<ElectricProjectile1>(out var projectile))
             {
                 projectile.SetDamage(currentDamage);
-                projectile.SetDuration(currentDuration);
+                projectile.SetDuration(currentEffectZoneDuration); // 투사체 지속 시간
+                projectile.SetSize(currentProjectileSizeLevel);
+                projectile.effectZoneDuration = currentEffectZoneDuration;
             }
 
-            // Rigidbody 세팅
-            if (proj.TryGetComponent<Rigidbody2D>(out var rb2d))
+            // Rigidbody2D로 발사 방향 세팅: 현재 가장 가까운 적 방향
+            Transform target = FindClosestEnemy(transform.position, enemies);
+            if (projObj.TryGetComponent<Rigidbody2D>(out var rb))
             {
-                rb2d.linearVelocity = dir.normalized * currentSpeed;
+                Vector2 dir = target != null ? (target.position - transform.position).normalized : Vector2.right;
+                rb.linearVelocity = dir * 4f; // 발사체 속도는 고정
             }
         }
     }
 
-
-
-
-
-    // ================== 투사체 프리팹/크기 관리 ==================
-    private GameObject GetProjectilePrefabForLevel()
+    // 가장 가까운 적 찾기
+    private Transform FindClosestEnemy(Vector3 from, Collider2D[] enemies)
     {
-        // 최대 8단계
-        int level = Mathf.Clamp(currentLevel, 1, 8);
+        Transform closest = null;
+        float minDist = Mathf.Infinity;
 
-        // 각 프리팹당 2단계씩
-        int prefabIndex = (level - 1) / 2;
-        prefabIndex = Mathf.Clamp(prefabIndex, 0, projectilePrefabs.Count - 1);
-
-        GameObject prefab = projectilePrefabs[prefabIndex];
-
-        // 홀수 단계면 약간 확대
-        if (level % 2 == 0)
+        foreach (var e in enemies)
         {
-            prefab = Instantiate(prefab);
-            prefab.transform.localScale *= 1.2f; // 임의 크기 증가
+            float dist = Vector2.Distance(from, e.transform.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closest = e.transform;
+            }
         }
 
-        return prefab;
+        return closest;
     }
 
 }

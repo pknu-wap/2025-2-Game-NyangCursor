@@ -4,13 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PlayerSkil6 : MonoBehaviour, ISkill
+public class PlayerSkill5 : MonoBehaviour, ISkill
 {
-    [Header("프리팹")]
-    [SerializeField] private GameObject fireThrowerPrefab; // 프리팹 참조
-    private GameObject fireThrowerInstance; // 생성된 인스턴스
-    private ParticleSystem firePS;
-
+    [SerializeField] private GameObject stormPrefab;
 
     private int currentLevel = 0;
     private string skillName;
@@ -19,22 +15,24 @@ public class PlayerSkil6 : MonoBehaviour, ISkill
     [SerializeField] private List<SkillStatKey> usedStats = new List<SkillStatKey>();
 
     [Header("기본값")]
-    [SerializeField] private float baseDamage = 5f;
+    [SerializeField] private float baseDamage = 2f;
     [SerializeField] private float baseCooldown = 5f;
-    [SerializeField] private float baseRange = 4f;
-    [SerializeField] private float baseProjectileSize = 1f;
-    [SerializeField] private float baseDuration = 2f;
+    [SerializeField] private float baseRange = 3f;
+    [SerializeField] private float baseProjectileSizeLevel = 1f;
+
+    // 발사체 수가 아니라 소환체 수 같은걸로 따로 변수를 파야할듯
+    [SerializeField] private float baseEffectZoneDuration = 1f;
 
 
     // 각 STATKEY별 현재 값
     private Dictionary<SkillStatKey, float> statValues = new Dictionary<SkillStatKey, float>();
 
     // 현재값 변수
-    public float currentCooldown { get; private set; }
     public float currentDamage { get; private set; }
+    public float currentCooldown { get; private set; }
     public float currentRange { get; private set; }
-    public float currentProjectileSize { get; private set; }
-    public float currnetDuration { get; private set; }
+    public float currentProjectileSizeLevel { get; private set; }
+    public float currentEffectZoneDuration { get; private set; }
     private Coroutine passiveRoutine;
 
 
@@ -48,29 +46,18 @@ public class PlayerSkil6 : MonoBehaviour, ISkill
         }
 
         // 각 스킬 스크립트에서 쓰이는 변수는 따로 초기화
-        statValues[SkillStatKey.Damage] = baseCooldown;
+        statValues[SkillStatKey.Damage] = baseDamage;
         statValues[SkillStatKey.Cooldown] = baseCooldown;
         statValues[SkillStatKey.Range] = baseRange;
-        statValues[SkillStatKey.ProjectileSize] = baseProjectileSize;
+        statValues[SkillStatKey.EffectZoneDuration] = baseEffectZoneDuration;
+        statValues[SkillStatKey.ProjectileSize] = baseProjectileSizeLevel;
 
+        // 현재값 변수도 초기화
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
         currentRange = baseRange;
-        currentProjectileSize = baseProjectileSize;
-        currnetDuration = baseDuration;
-
-        if (fireThrowerPrefab != null)
-        {
-            fireThrowerInstance = Instantiate(fireThrowerPrefab);
-            fireThrowerInstance.transform.SetParent(transform, false);
-
-            Transform flameTransform = fireThrowerInstance.transform.Find("FireSprayFlame");
-            if (flameTransform != null)
-                firePS = flameTransform.GetComponent<ParticleSystem>();
-            fireThrowerInstance.SetActive(false);
-        }
-
-        UpdateParticleStats();
+        currentEffectZoneDuration = baseEffectZoneDuration;
+        currentProjectileSizeLevel = baseProjectileSizeLevel;
     }
 
 
@@ -105,42 +92,18 @@ public class PlayerSkil6 : MonoBehaviour, ISkill
 
     }
 
-    private IEnumerator PassiveLoop(float cooldown, SkillCooldownUI cdUI, bool showUI)
+    private IEnumerator PassiveLoop(float cd, SkillCooldownUI cdUI, bool showUI)
     {
         while (true)
         {
-            Debug.Log("루프 시작");
-            // 1 화염방사기 켬
-            fireThrowerInstance.SetActive(true);
-
-            // UI 쿨다운 시작
+            SpawnStormAtRandomPosition();
+            Debug.Log($"{skillName} (패시브 효과 발동 중...)");
             if (showUI)
-                cdUI?.StartCooldown(cooldown);
+                cdUI?.StartCooldown(cd);
 
-            // 2 지속시간 동안 대기
-            float timer = 0f;
-            while (timer < currnetDuration)
-            {
-                timer += Time.deltaTime;
-                yield return null;
-            }
-
-            // 3 지속시간 끝나면 화염방사기 끔
-            var fireDamage = firePS.GetComponent<FireDamageParticle>();
-            fireDamage.SetDeactive();
-            fireThrowerInstance.SetActive(false);
-
-            // 4 쿨타임 > 지속시간일 경우 남은 쿨타임만큼 대기
-            float remainingCooldown = Mathf.Max(0f, cooldown - currnetDuration);
-            if (remainingCooldown > 0f)
-                yield return new WaitForSeconds(remainingCooldown);
-
-            // 1번으로 다시 루프
+            yield return new WaitForSeconds(cd);
         }
     }
-
-
-
 
     public void ApplyUpgrade(UpgradeEventData data)
     {
@@ -182,14 +145,13 @@ public class PlayerSkil6 : MonoBehaviour, ISkill
             case SkillStatKey.Range:
                 currentRange = statValues[key];
                 break;
-            case SkillStatKey.ProjectileSize:
-                currentProjectileSize = statValues[key];
+            case SkillStatKey.EffectZoneDuration:
+                currentEffectZoneDuration = statValues[key];
                 break;
-            case SkillStatKey.Duration:
-                currnetDuration = statValues[key];
+            case SkillStatKey.ProjectileSize:
+                currentProjectileSizeLevel = statValues[key];
                 break;
         }
-        UpdateParticleStats();
     }
 
 
@@ -203,8 +165,8 @@ public class PlayerSkil6 : MonoBehaviour, ISkill
                 SkillStatKey.Damage => baseDamage,
                 SkillStatKey.Cooldown => baseCooldown,
                 SkillStatKey.Range => baseRange,
-                SkillStatKey.ProjectileSize => baseProjectileSize,
-                SkillStatKey.Duration => baseDuration,
+                SkillStatKey.EffectZoneDuration => baseEffectZoneDuration,
+                SkillStatKey.ProjectileSize => baseProjectileSizeLevel,
                 _ => 0f
             };
         }
@@ -212,13 +174,12 @@ public class PlayerSkil6 : MonoBehaviour, ISkill
         currentDamage = baseDamage;
         currentCooldown = baseCooldown;
         currentRange = baseRange;
-        currentProjectileSize = baseProjectileSize;
-        currnetDuration = baseDuration;
+        currentEffectZoneDuration = baseEffectZoneDuration;
+        currentProjectileSizeLevel = baseProjectileSizeLevel;
 
 
         StopAllCoroutines();
         passiveRoutine = null;
-        ResetParticleStats();
     }
 
     public void SetSkill(string skillName)
@@ -255,7 +216,6 @@ public class PlayerSkil6 : MonoBehaviour, ISkill
             if (passiveRoutine != null)
             {
                 StopCoroutine(passiveRoutine);
-                fireThrowerInstance.SetActive(false);
                 passiveRoutine = null;
                 Debug.Log($"[Skill] {skillName} | PassiveRoutine stopped due to disallowed state");
             }
@@ -307,59 +267,28 @@ public class PlayerSkil6 : MonoBehaviour, ISkill
     #endregion
 
 
-    private void UpdateParticleStats()
+    private void SpawnStormAtRandomPosition()
     {
-        if (firePS == null) return;
+        Vector2 spawnPos = GetRandomPositionOutsideInnerRadius(transform.position, currentRange, 1f);
 
-        var main = firePS.main;
-        var emission = firePS.emission;
-        var shape = firePS.shape;
+        GameObject stormObj = PoolManager.instance.Spawn(stormPrefab, spawnPos);
 
-        // ==================== 1. 투사체 크기 적용 ====================
-        // ProjectileSize 증가 → angle 확대, startSize 확대
-        shape.angle = shape.angle * currentProjectileSize;
-
-        // 현재 startSpeed가 constant인지 확인 후 값을 꺼내기
-        float baseSpeed = main.startSpeed.constant;
-
-        float rangeFactor = currentRange / baseRange;
-        main.startSpeed = baseSpeed * rangeFactor;
-
-        // ==================== 3. Emission rate 보정 ====================
-        // 크기, 범위 변화에 따라 자연스럽게 rate 조정
-        float baseRate = emission.rateOverTime.constant;
-        float sizeFactor = currentProjectileSize;
-        emission.rateOverTime = baseRate * Mathf.Sqrt(sizeFactor) * Mathf.Sqrt(rangeFactor);
-
-        // ==================== 4. 데미지는 FireDamageParticle에서 처리 ====================
-        var fireDamage = firePS.GetComponent<FireDamageParticle>();
-        if (fireDamage != null)
+        Storm storm = stormObj.GetComponent<Storm>();
+        if (storm != null)
         {
-            fireDamage.damagePerTick = currentDamage;
+            storm.Init(currentDamage, currentEffectZoneDuration, currentProjectileSizeLevel);
         }
     }
 
-    private void ResetParticleStats()
+    private Vector2 GetRandomPositionOutsideInnerRadius(Vector2 center, float baseRange, float innerRadius)
     {
-        if (firePS == null) return;
-
-        var main = firePS.main;
-        var emission = firePS.emission;
-        var shape = firePS.shape;
-
-        // PS 기본값 초기화
-        main.startSize = 1.8f;
-        main.startSpeed = 40f;
-        shape.angle = 20f;
-        emission.rateOverTime = 200f;
-
-        // Damage 초기화
-        var fireDamage = firePS.GetComponent<FireDamageParticle>();
-        if (fireDamage != null)
-            fireDamage.damagePerTick = baseDamage;
-
-        // PS 끄기
-        fireThrowerInstance.SetActive(false);
+        Vector2 pos;
+        do
+        {
+            float angle = UnityEngine.Random.Range(0f, 360f) * Mathf.Deg2Rad;
+            float radius = UnityEngine.Random.Range(innerRadius, baseRange);
+            pos = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+        } while (Vector2.Distance(center, pos) < innerRadius);
+        return pos;
     }
-
 }

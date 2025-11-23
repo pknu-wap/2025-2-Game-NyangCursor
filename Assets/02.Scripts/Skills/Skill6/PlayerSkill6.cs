@@ -2,15 +2,17 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PlayerSkill5 : MonoBehaviour, ISkill
+public class PlayerSkill6 : MonoBehaviour, ISkill
 {
     [Header("프리팹")]
     [SerializeField] private GameObject auraPrefab;         // 플레이어를 도는 오오라
     [SerializeField] private GameObject waterBeamPrefab;    // 적에게 발사하는 물대포
     [SerializeField] private GameObject beamStartEnd;
+    [SerializeField] private GameObject hitImpactPrefab; //히트 프리팹
     private ParticleSystem auraPS;
 
     [Header("적 레이어")]
@@ -42,6 +44,8 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
     public float currentProjectileSize { get; private set; }
     public float currentChargeTime { get; private set; }
     private Coroutine passiveRoutine;
+
+    public static Action OnWaterBeam;
 
 
     #region 스킬 스크립트 기본 구조
@@ -340,7 +344,15 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
         GameObject beam = PoolManager.instance.Spawn(waterBeamPrefab, transform.position);
 
         LineRenderer beamline = beam.GetComponent<LineRenderer>();
+
+        ResetLineRenderer(beamline);
+
+        beamline.material.renderQueue = 2950;
+
+
         beamline.positionCount = 2;
+
+        OnWaterBeam?.Invoke();//카메라 줌아웃 이벤트
 
         // 3) 두께 설정
         float width = currentProjectileSize;
@@ -354,6 +366,16 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
 
         beamline.SetPosition(0, startPos);
         beamline.SetPosition(1, endPos);
+
+        // ---- 타일링 자동 조절 ----
+        float distance = Vector3.Distance(startPos, endPos);
+
+        // distance(=15) → tile(=1.3)로 변환되도록 스케일 보정
+        float tile = distance * 0.086666f;
+
+        // 1.3이 네가 보정하고 싶은 수라면 그대로 활용
+        beamline.material.mainTextureScale = new Vector2(tile, 1f);
+        // --------------------------------
 
         if (beamStartEnd != null)
         {
@@ -398,7 +420,6 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
             enemyLayer
         );
 
-        // 충돌 처리
         foreach (var hit in hits)
         {
             if (hit.collider == null) continue;
@@ -406,17 +427,40 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
             EBasicHpController hp = hit.collider.GetComponent<EBasicHpController>();
             if (hp != null)
             {
-                hp.TakeDamage(currentDamage); // 데미지 주기
+                // 데미지 적용
+                hp.TakeDamage(currentDamage);
+
+                //정지적용
+                var knockback = hit.collider.GetComponent<IKnockbackable>();
+                if (knockback != null)
+                {
+                    knockback.ApplyKnockback(transform.position, 3);
+                }
+
+                // Hit Impact 스폰 + 자동 반환
+                if (hitImpactPrefab != null)
+                {
+                    GameObject impact = PoolManager.instance.Spawn(hitImpactPrefab, hit.collider.transform.position);
+                    // 0.15초 뒤 자동 반환 (딱 이펙트 길이만큼)
+                    StartCoroutine(DespawnImpact(impact, 0.35f));
+                }
             }
         }
     }
+
+    private IEnumerator DespawnImpact(GameObject obj, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        PoolManager.instance.Despawn(obj);
+    }
+
 
 
     private IEnumerator Despawn(GameObject obj, float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
 
-        float fadeTime = 0.3f;
+        float fadeTime = 1f;
 
         // -------------------------------
         // LINE RENDERER
@@ -424,19 +468,7 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
         LineRenderer lr = obj.GetComponent<LineRenderer>();
         if (lr != null)
         {
-            // 원래 색 저장
-            Color originalColor = lr.material.color;
-
-            // 복사용 material
-            Material fadeMat = lr.material = new Material(lr.material);
-            fadeMat.DOFade(0f, fadeTime);
-
-            yield return new WaitForSeconds(fadeTime);
-
-            // 원래 상태 복구
-            lr.material = new Material(lr.material);   // 새 복사 재질 유지
-            lr.material.color = originalColor;
-
+            yield return FadeLineRenderer(lr, 0.1f);
             PoolManager.instance.Despawn(obj);
             yield break;
         }
@@ -484,6 +516,55 @@ public class PlayerSkill5 : MonoBehaviour, ISkill
 
             PoolManager.instance.Despawn(obj);
             yield break;
+        }
+    }
+
+    private IEnumerator FadeLineRenderer(LineRenderer lr, float duration)
+    {
+        Gradient gradient = lr.colorGradient;
+        GradientColorKey[] colorKeys = gradient.colorKeys;
+        GradientAlphaKey[] alphaKeys = gradient.alphaKeys;
+
+        float startA = alphaKeys[0].alpha;
+        float endA = 0f;
+
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float a = Mathf.Lerp(startA, endA, t / duration);
+
+            for (int i = 0; i < alphaKeys.Length; i++)
+                alphaKeys[i].alpha = a;
+
+            gradient.SetKeys(colorKeys, alphaKeys);
+            lr.colorGradient = gradient;
+
+            yield return null;
+        }
+    }
+
+    private void ResetLineRenderer(LineRenderer lr)
+    {
+        if (lr == null) return;
+
+        // Gradient Alpha 초기화
+        Gradient g = lr.colorGradient;
+        GradientColorKey[] ck = g.colorKeys;
+        GradientAlphaKey[] ak = g.alphaKeys;
+
+        for (int i = 0; i < ak.Length; i++)
+            ak[i].alpha = 1f;
+
+        g.SetKeys(ck, ak);
+        lr.colorGradient = g;
+
+        // 머티리얼 알파 초기화
+        if (lr.material != null && lr.material.HasProperty("_Color"))
+        {
+            Color c = lr.material.color;
+            c.a = 1f;
+            lr.material.color = c;
         }
     }
 
