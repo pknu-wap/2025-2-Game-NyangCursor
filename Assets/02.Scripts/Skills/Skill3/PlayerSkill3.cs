@@ -7,9 +7,11 @@ using UnityEngine.Rendering;
 public class PlayerSkill3 : MonoBehaviour, ISkill
 {
 
-    [SerializeField] private GameObject lightningEffectPrefab;
+    [SerializeField] private GameObject lightningEffectPrefabUnder5;
+    [SerializeField] private GameObject lightningEffectPrefabOver5;
 
-    [SerializeField] private GameObject hitEffectPrefab; // A 프리팹 할당
+    [SerializeField] private GameObject hitEffectPrefabUnder5;
+    [SerializeField] private GameObject hitEffectPrefabOver5;
 
     private int currentLevel = 0;
     private string skillName;
@@ -350,31 +352,43 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
         if (hp != null)
         {
             hp.TakeDamage(currentDamage);
-            /// 타격 효과 생성 (PoolManager 사용)
-            if (hitEffectPrefab != null)
+
+            // 5레벨 미만 / 이상에 따라 히트 이펙트 선택
+            GameObject hitPrefab = currentLevel >= 5
+                ? hitEffectPrefabOver5
+                : hitEffectPrefabUnder5;
+
+            if (hitPrefab != null)
             {
-                PoolManager.instance.Spawn(hitEffectPrefab, enemy.position);
+                PoolManager.instance.Spawn(hitPrefab, enemy.position);
             }
         }
-
-
     }
+
 
     private void SpawnLightningEffect(Vector3 start, Vector3 end)
     {
-        if (lightningEffectPrefab != null)
-        {
-            GameObject obj = PoolManager.instance.Spawn(lightningEffectPrefab, start);
-            LineRenderer lr = obj.GetComponent<LineRenderer>();
+        // 5레벨 미만 / 이상에 따라 번개 이펙트 선택
+        GameObject lightningPrefab = currentLevel >= 5
+            ? lightningEffectPrefabOver5
+            : lightningEffectPrefabUnder5;
 
-            lr.positionCount = 2;
-            lr.SetPosition(0, start);
-            lr.SetPosition(1, end);
+        if (lightningPrefab != null)
+        {
+            GameObject obj = PoolManager.instance.Spawn(lightningPrefab, start);
+            LineRenderer lr = obj.GetComponent<LineRenderer>();
+            if (lr != null)
+            {
+                lr.positionCount = 2;
+                lr.SetPosition(0, start);
+                lr.SetPosition(1, end);
+            }
 
             // 일정 시간 후 다시 Pool로 반환
             StartCoroutine(DespawnAfter(obj, 0.15f));
         }
     }
+
 
     private IEnumerator DespawnAfter(GameObject obj, float delay)
     {

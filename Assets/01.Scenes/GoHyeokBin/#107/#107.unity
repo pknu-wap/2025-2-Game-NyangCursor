@@ -181126,6 +181126,8 @@ MonoBehaviour:
   - {fileID: 6700132663866310503, guid: c8888557362d06741a7001430617c5bf, type: 3}
   - {fileID: 4271253748690567884, guid: 6d558ec3b2fab864a936c3902e487249, type: 3}
   - {fileID: 3352037337048537568, guid: 49ab4af01cd6fcd4492976760700f3b7, type: 3}
+  - {fileID: 675161360108791972, guid: 26e21e53a40d2364f978a5fd9f170c4b, type: 3}
+  - {fileID: 4529325749885727633, guid: 602b329ec4b355a4d81f26e45c5a0b76, type: 3}
   initialPoolSize: 10
   maxPoolSize: 100
 --- !u!1001 &199734795
@@ -186720,8 +186722,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a06c08fa1a249d49b3ad8454846e03f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightningEffectPrefab: {fileID: 675161360108791972, guid: ba947b99e22213048aaa410240a39a17, type: 3}
-  hitEffectPrefab: {fileID: 4529325749885727633, guid: 337b3f7c786ec8c4ca952738754c9e2a, type: 3}
+  lightningEffectPrefabUnder5: {fileID: 675161360108791972, guid: ba947b99e22213048aaa410240a39a17, type: 3}
+  lightningEffectPrefabOver5: {fileID: 675161360108791972, guid: 26e21e53a40d2364f978a5fd9f170c4b, type: 3}
+  hitEffectPrefabUnder5: {fileID: 4529325749885727633, guid: 337b3f7c786ec8c4ca952738754c9e2a, type: 3}
+  hitEffectPrefabOver5: {fileID: 4529325749885727633, guid: 602b329ec4b355a4d81f26e45c5a0b76, type: 3}
   enemyMask:
     serializedVersion: 2
     m_Bits: 128
