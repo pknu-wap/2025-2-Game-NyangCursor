@@ -181121,6 +181121,7 @@ MonoBehaviour:
   - {fileID: 3332435683413182661, guid: 0a3de9597fbcb79429a2e70dd1cc003b, type: 3}
   - {fileID: 675161360108791972, guid: 3491f7d74330b0e4f821d22fe2ce20ef, type: 3}
   - {fileID: 7227173571350965952, guid: 7bee4a9e06df9e84b8da6c1a990c8758, type: 3}
+  - {fileID: 133292, guid: 4650ed6e336fb1a4182a8589289809c2, type: 3}
   initialPoolSize: 10
   maxPoolSize: 100
 --- !u!1001 &199734795
@@ -661879,6 +661880,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 6948470598453267942, guid: 0f712dcd3dc23ed4a84d66113f5d8586, type: 3}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  MuzzleFlashEffect: {fileID: 0}
   firePoint: {fileID: 2055263780}
   bulletSpeed: 30
   maxAmmo: 10
