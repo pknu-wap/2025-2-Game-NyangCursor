@@ -28,12 +28,14 @@ public class CameraZoomController : MonoBehaviour
     {
         GaugeOverdriveLogic.OnBoostEvent += HandleBoostZoom;
         GaugeOverdriveLogic.OnNormalEvent += HandleResetZoom;  //추가
+        //PlayerSkill5.OnWaterBeam += HandleSkill5Zoom;
     }
 
     private void OnDisable()
     {
         GaugeOverdriveLogic.OnBoostEvent -= HandleBoostZoom;
         GaugeOverdriveLogic.OnNormalEvent -= HandleResetZoom;  //  추가
+       // PlayerSkill5.OnWaterBeam -= HandleSkill5Zoom;
     }
 
     // -------------------------------
@@ -60,6 +62,8 @@ public class CameraZoomController : MonoBehaviour
 
         zoomRoutine = null;
     }
+
+
 
     // -------------------------------
     //   Normal 복귀 → 카메라 Size=6
@@ -89,5 +93,28 @@ public class CameraZoomController : MonoBehaviour
         }
 
         mainCam.orthographicSize = to;
+    }
+
+    //물대포 줌아웃
+    private void HandleSkill5Zoom()
+    {
+        if (zoomRoutine != null)
+            StopCoroutine(zoomRoutine);
+
+        zoomRoutine = StartCoroutine(Skill5ZoomRoutine());
+    }
+
+    private IEnumerator Skill5ZoomRoutine()
+    {
+        // 1) 빠른 줌아웃
+        yield return StartCoroutine(LerpCameraSize(mainCam.orthographicSize, 10f, 0.5f));
+
+        // 2) 유지
+        yield return new WaitForSeconds(1f);
+
+        // 3) 기본값으로 복귀
+        yield return StartCoroutine(LerpCameraSize(mainCam.orthographicSize, defaultSize, zoomInTime));
+
+        zoomRoutine = null;
     }
 }

@@ -105,6 +105,8 @@ public class GaugeOverdriveLogic : MonoBehaviour
 
         overdrive += amount + itemBonusGuage;
         OnOverDriveTick?.Invoke(overdrive);
+
+        if (amount != 0)
         OnUpOverDriveGauge?.Invoke();
     }
 

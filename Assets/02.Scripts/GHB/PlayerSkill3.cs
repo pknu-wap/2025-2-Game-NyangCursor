@@ -154,10 +154,10 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
                 currentProjectileCount = statValues[key];
                 break;
             case SkillStatKey.EffectZoneDuration:
-                baseEffectZoneDuration = statValues[key];
+                currentEffectZoneDuration = statValues[key];
                 break;
             case SkillStatKey.ProjectileSize:
-                baseProjectileSizeLevel = statValues[key];
+                currentProjectileSizeLevel = statValues[key];
                 break;
         }
     }
@@ -292,7 +292,7 @@ public class PlayerSkill3 : MonoBehaviour, ISkill
             GameObject projObj = PoolManager.instance.Spawn(projectilePrefab, transform.position);
 
             // IProjectile 세팅
-            if (projObj.TryGetComponent<ElectricProjectile>(out var projectile))
+            if (projObj.TryGetComponent<ElectricProjectile3>(out var projectile))
             {
                 projectile.SetDamage(currentDamage);
                 projectile.SetDuration(currentEffectZoneDuration); // 투사체 지속 시간

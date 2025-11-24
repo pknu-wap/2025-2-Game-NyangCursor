@@ -146,10 +146,10 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
                 currentRange = statValues[key];
                 break;
             case SkillStatKey.EffectZoneDuration:
-                baseEffectZoneDuration = statValues[key];
+                currentEffectZoneDuration = statValues[key];
                 break;
             case SkillStatKey.ProjectileSize:
-                baseProjectileSizeLevel = statValues[key];
+                currentProjectileSizeLevel = statValues[key];
                 break;
         }
     }
