@@ -27,6 +27,8 @@ public class LobbyPlayerAnimator : MonoBehaviour
     [SerializeField] private float moveUpDuration = 0.5f;   // 이동 시간
     private Coroutine moveRoutine;
 
+    public GameObject fadeOut;
+
 
     void Awake()
     {
@@ -60,6 +62,9 @@ public class LobbyPlayerAnimator : MonoBehaviour
         if (moveRoutine != null)
             StopCoroutine(moveRoutine);
         moveRoutine = StartCoroutine(MoveUpRoutine());//플레이어 위로 이동
+
+
+
     }
 
 
@@ -78,9 +83,13 @@ public class LobbyPlayerAnimator : MonoBehaviour
         }
 
         transform.localPosition = targetPos; // 마지막 보정
+
+        //페이드아웃
+        fadeOut.SetActive(true);
+
     }
 
-    public void HandleHitAnim(float a, float b)
+    public void HandleHitAnim()
     {
         animator.SetTrigger("isHit");
 
