@@ -182599,7 +182599,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerRb: {fileID: 1979479478}
-  usedStats: 000000000100000003000000060000000400000008000000
+  usedStats: 0000000001000000030000000400000005000000
   baseDamage: 10
   baseCooldown: 2
   baseDuration: 3
@@ -186281,7 +186281,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fireThrowerPrefab: {fileID: 100002, guid: 826119355d6864150ba333b5f3bfd332, type: 3}
-  usedStats: 0000000001000000020000000800000003000000
+  usedStats: 0000000001000000020000000500000003000000
   baseDamage: 5
   baseCooldown: 5
   baseRange: 1
@@ -186561,7 +186561,7 @@ MonoBehaviour:
   baseDuration: 3
   baseSpeed: 1
   baseRange: 1
-  usedStats: 0000000001000000020000000300000006000000
+  usedStats: 0000000001000000030000000200000009000000
   fireCirclePrefabs:
   - {fileID: 8209983944463885581, guid: 8a61fba91cd4fa541b58f5cae265e4bb, type: 3}
   - {fileID: 3055438259362450278, guid: 7e11da6efddcdde42a8336b39a59d75f, type: 3}
@@ -187981,7 +187981,7 @@ MonoBehaviour:
   enemyMask:
     serializedVersion: 2
     m_Bits: 128
-  usedStats: 000000000100000002000000040000000b000000
+  usedStats: 0000000001000000020000000400000006000000
   baseDamage: 10
   baseCooldown: 1
   baseRange: 7
@@ -189004,7 +189004,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stormPrefab: {fileID: 5719506856147455035, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
-  usedStats: 0000000001000000020000000800000000000000
+  usedStats: 0000000001000000020000000500000006000000
   baseDamage: 10
   baseCooldown: 2
   baseRange: 3
@@ -659538,7 +659538,7 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
-  usedStats: 00000000010000000200000008000000
+  usedStats: 00000000010000000200000005000000
   baseDamage: 15
   baseCooldown: 5
   baseRange: 15
@@ -661214,7 +661214,7 @@ MonoBehaviour:
   enemyMask:
     serializedVersion: 2
     m_Bits: 128
-  usedStats: 0000000001000000020000000800000003000000
+  usedStats: 000000000100000002000000050000000400000003000000
   baseDamage: 8
   baseCooldown: 3
   baseRange: 7
