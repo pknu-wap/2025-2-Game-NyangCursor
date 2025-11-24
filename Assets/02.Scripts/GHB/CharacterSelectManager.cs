@@ -177,8 +177,9 @@ public class CharacterSelectManager : MonoBehaviour
 
         SelectedChararcterDataManager.instance.selectedStartData = selected.startingSkill;
         characterSelectPanel.SetActive(false);//캐릭터 선택창 끄기
-        //고양이 커서 타는 연출 후
+        //고양이 커서 타는 연출 
          OnLobbyRidingStart?.Invoke();
+
         //로드 씬 이동
        
     }

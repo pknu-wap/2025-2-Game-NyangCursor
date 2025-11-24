@@ -8,6 +8,7 @@ public class PlayerAnimatorController : MonoBehaviour
 
     [SerializeField] private GameObject NormalObj;
     [SerializeField] private GameObject OverDriveObj;
+    [SerializeField] private GameObject boost;
 
     [Header("Hit Effect Settings")]
     [SerializeField] private Material material;
