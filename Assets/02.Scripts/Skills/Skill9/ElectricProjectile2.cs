@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class ElectricProjectile9 : MonoBehaviour, IProjectile
+public class ElectricProjectile2 : MonoBehaviour, IProjectile
 {
     [Header("Effects & Prefabs")]
     [SerializeField] private GameObject explosionPrefab;
@@ -10,7 +10,7 @@ public class ElectricProjectile9 : MonoBehaviour, IProjectile
     [SerializeField] private LayerMask targetLayer;
 
     [Header("Settings")]
-    [SerializeField] private int electricLineCount = 5;  // 랜덤 전류 개수
+    private int electricLineCount;  // 랜덤 전류 개수
     [SerializeField] private float lineDuration = 0.5f;  // 전류 지속시간
     [SerializeField] private float lineMagnification = 20f; // 전류 길이 배율
 
@@ -37,6 +37,11 @@ public class ElectricProjectile9 : MonoBehaviour, IProjectile
     {
         size = s;
         transform.localScale = Vector3.one * size;
+    }
+
+    public void SetLightningCount(int count)
+    {
+        electricLineCount = count;
     }
 
     private IEnumerator DespawnAfterDuration()

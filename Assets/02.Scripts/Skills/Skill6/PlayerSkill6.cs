@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PlayerSkill5 : MonoBehaviour, ISkill
+public class PlayerSkill6 : MonoBehaviour, ISkill
 {
     [Header("프리팹")]
     [SerializeField] private GameObject auraPrefab;         // 플레이어를 도는 오오라

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireCircleSkill : MonoBehaviour, ISkill
+public class PlayerSkill2 : MonoBehaviour, ISkill
 {
     [Header("기본 스탯")]
     [SerializeField] private float baseDamage = 2f;
