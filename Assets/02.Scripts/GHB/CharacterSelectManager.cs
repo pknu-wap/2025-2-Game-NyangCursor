@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System;
 
 public class CharacterSelectManager : MonoBehaviour
 {
@@ -9,12 +10,12 @@ public class CharacterSelectManager : MonoBehaviour
     public List<CharacterDataSO> characterList = new List<CharacterDataSO>();
 
     [Header("UI 참조")]
-    [SerializeField] private GameObject characterSelectUI;
+    [SerializeField] private GameObject characterSelectPanel;
     [SerializeField] private Transform slotParent;       // 슬롯들이 들어갈 부모
     [SerializeField] private GameObject slotPrefab;      // 슬롯 프리팹
 
     [Header("설명창 오브젝트")]
-    [SerializeField] private GameObject descriptionField;
+    [SerializeField] private GameObject descriptionFieldPanel;
     [SerializeField] private Image selectedCharacterIcon;
     [SerializeField] private TextMeshProUGUI selectedCharacterName;
     [SerializeField] private TextMeshProUGUI selectedCharacterDescription;
@@ -31,26 +32,25 @@ public class CharacterSelectManager : MonoBehaviour
     [Header("스테이지 선택 UI")]
     [SerializeField] private GameObject stageSelectUI;
 
-    [Header("로비 UI")]
-    [SerializeField] private GameObject lobbyUI;
+    public static event Action OnLobbyRidingStart;
+
 
     private void Start()
     {
-        characterSelectUI.SetActive(false); // 기본은 비활성화
+        characterSelectPanel.SetActive(false); // 기본은 비활성화
     }
 
     // 시작 버튼에서 이 함수 호출
     public void OpenUI()
     {
-        characterSelectUI.SetActive(true);
-        lobbyUI.SetActive(false);
-        PopulateCharacterSlots();
+        characterSelectPanel.SetActive(true); //패널켜기
+
+        PopulateCharacterSlots(); //캐릭터 슬롯에 프리팹 추가
     }
 
     public void CloseUI()
     {
-        characterSelectUI.SetActive(false);
-        lobbyUI.SetActive(true);
+        characterSelectPanel.SetActive(false);
     }
 
     // 캐릭터 목록 표시
@@ -63,14 +63,15 @@ public class CharacterSelectManager : MonoBehaviour
         }
 
         // 새 슬롯 생성
-        foreach (var data in characterList)
+        foreach (var data in characterList) //so 만큼 생성
         {
             GameObject slot = Instantiate(slotPrefab, slotParent);
             var button = slot.transform.Find("Icon").GetComponent<Button>();
             var iconImage = slot.transform.Find("Icon").GetComponent<Image>();
 
+            //프리팹 데이터 매핑
             iconImage.sprite = data.characterImage;
-
+            iconImage.SetNativeSize();
             button.onClick.AddListener(() => OnCharacterSelected(data));
         }
     }
@@ -81,12 +82,16 @@ public class CharacterSelectManager : MonoBehaviour
     // 캐릭터 선택 시 호출
     private void OnCharacterSelected(CharacterDataSO selected)
     {
-        descriptionField.SetActive(true);
+        descriptionFieldPanel.SetActive(true); //캐릭터 설명창 켜기
+       
         selectedCharacterIcon.sprite = selected.characterImage;
+        selectedCharacterIcon.SetNativeSize();
+
         selectedCharacterName.text = selected.characterName;
         selectedCharacterDescription.text = selected.characterDescription;
 
         selectedSkillIcon.sprite = selected.startingSkill.icon;
+        selectedSkillIcon.SetNativeSize();
         selectedSkillName.text = selected.startingSkill.optionName;
         selectedSkillDescription.text = selected.startingSkill.description;
 
@@ -96,13 +101,29 @@ public class CharacterSelectManager : MonoBehaviour
         */
 
         selectButton.onClick.RemoveAllListeners();
-        selectButton.onClick.AddListener(() => CharacterConfirm(selected));
+        //selectButton.onClick.AddListener(() => CharacterConfirm(selected));
+        selectButton.onClick.AddListener(() => GameStart(selected));
     }
 
+    //나중에 스테이지 추가 시 해당 함수사용
     private void CharacterConfirm(CharacterDataSO selected)
     {
+       
         SelectedChararcterDataManager.instance.selectedStartData = selected.startingSkill;
-        stageSelectUI.SetActive(true);
-        characterSelectUI.SetActive(false);
+        stageSelectUI.SetActive(true);//스테이지 선택창 켜기
+        characterSelectPanel.SetActive(false);//캐릭터 선택창 끄기
     }
+
+    private void GameStart(CharacterDataSO selected)
+    {
+
+        SelectedChararcterDataManager.instance.selectedStartData = selected.startingSkill;
+        characterSelectPanel.SetActive(false);//캐릭터 선택창 끄기
+        //고양이 커서 타는 연출 후
+         OnLobbyRidingStart?.Invoke();
+        //로드 씬 이동
+       
+    }
+
+
 }
