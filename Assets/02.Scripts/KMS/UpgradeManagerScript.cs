@@ -4,10 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
+
 public enum UpgradeRarity { Normal, Rare, Legendary }
 
 public class UpgradeManager : MonoBehaviour
 {
+    [Serializable]
+    public struct SkillStatDisplayEntry
+    {
+        public SkillStatKey key;     // 어떤 스탯인지
+        public string displayName;   // 예: "데미지", "쿨타임", "발사체 수"
+        public bool isDecrease;      // true면 "감소", false면 "증가"
+    }
     [Header("업그레이드 슬롯 4개")]
     [SerializeField] private List<UpgradeSlotUI> slotPrefabObjects = new();
 
@@ -24,7 +32,22 @@ public class UpgradeManager : MonoBehaviour
 
     public static event Action OnUpgradeFinished;
 
+    [Header("스탯 표시 매핑 테이블")]
+    [SerializeField] List<SkillStatDisplayEntry> statDisplayMappings = new();
+
+
     public static event Action<UpgradeEventData> OnUpgradeSelected1;
+
+    private Dictionary<SkillStatKey, SkillStatDisplayEntry> statMap;
+
+    private void Awake()
+    {
+        statMap = new();
+        foreach (var map in statDisplayMappings)
+        {
+            statMap[map.key] = map; // key 중복 되면 마지막 것이 적용
+        }
+    }
 
     private void OnEnable()
     {
@@ -151,7 +174,7 @@ public class UpgradeManager : MonoBehaviour
         // 스탯 텍스트 설정
         if (slotUI.statText != null)
         {
-            slotUI.statText.text = string.Join("\n", chosenStats.Select(s => $"{s} +{ratio * 100f:F1}%"));
+            slotUI.statText.text = string.Join("\n", chosenStats.Select(s => GetStatDisplayText(s, ratio)));
         }
 
         // 버튼 클릭 이벤트
@@ -258,5 +281,19 @@ public class UpgradeManager : MonoBehaviour
     {
         OnUpgradeSelected1?.Invoke(data);
     }
+
+    private string GetStatDisplayText(SkillStatKey key, float ratio)
+    {
+        if (statMap != null && statMap.TryGetValue(key, out var map))
+        {
+            string sign = map.isDecrease ? "감소" : "증가";
+            float percent = ratio * 100f;
+            return $"{map.displayName} {percent:F1}% {sign}";
+        }
+
+        // 매핑 누락시 fallback
+        return $"{key} {ratio * 100f:F1}% 증가";
+    }
+
 
 }
