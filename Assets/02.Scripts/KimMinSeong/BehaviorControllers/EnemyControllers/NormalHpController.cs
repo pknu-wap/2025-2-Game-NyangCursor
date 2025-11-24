@@ -1,7 +1,8 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
-public class EBasicHpController : MonoBehaviour, IDamageable
+public class NormalHpController : MonoBehaviour, IDamageable
 {
     private Enemy owner;
     private float currentHp;
@@ -16,6 +17,7 @@ public class EBasicHpController : MonoBehaviour, IDamageable
     [SerializeField] private Color hitColor = Color.red;
     [SerializeField] private float hitFlashDuration = 0.15f;
 
+    // 외부 접근용 프로퍼티
     public float CurrentHp => currentHp;
     public float MaxHp => maxHp;
     public bool IsDead => isDead;
@@ -24,7 +26,7 @@ public class EBasicHpController : MonoBehaviour, IDamageable
     {
         if (owner is not Enemy enemy)
         {
-            Debug.LogError($"EBasicHpController 는 Enemy 타입만 지원합니다. 현재 타입: {owner.GetType().Name}");
+            Debug.LogError($"NormalHpController는 Enemy 타입만 지원합니다. 현재 타입: {owner.GetType().Name}");
             return;
         }
 
@@ -37,7 +39,8 @@ public class EBasicHpController : MonoBehaviour, IDamageable
         spriteRenderer.color = originalColor;
     }
 
-    public void Cleanup() {
+    public void Cleanup()
+    {
         // 필요시 정리 작업
         if (flashRoutine != null)
         {
@@ -50,9 +53,6 @@ public class EBasicHpController : MonoBehaviour, IDamageable
     {
         if (isDead)
             return;
-
-        // 디버그용
-        Debug.Log($"적이 {damage} 데미지를 받았습니다.");
 
         currentHp -= damage;
         currentHp = Mathf.Max(0, currentHp);
@@ -72,11 +72,12 @@ public class EBasicHpController : MonoBehaviour, IDamageable
         {
             if (flashRoutine != null)
                 StopCoroutine(flashRoutine);
+
             flashRoutine = StartCoroutine(FlashHitEffect());
         }
     }
 
-    private System.Collections.IEnumerator FlashHitEffect()
+    private IEnumerator FlashHitEffect()
     {
         spriteRenderer.color = hitColor;
         yield return new WaitForSeconds(hitFlashDuration);

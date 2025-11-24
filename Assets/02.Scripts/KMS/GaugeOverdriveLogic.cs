@@ -49,7 +49,9 @@ public class GaugeOverdriveLogic : MonoBehaviour
             boostObject.SetActive(false);
 
         GaugeRidingLogic.OnOverDriveEvent += HandleInitialOverDrive;
-        Enemy.OnEnemyDeath += UpOverDriveGauge;
+
+        // 글로벌 이벤트 버스 사용
+        GameEvents.Subscribe<float>(GameEventType.OnEnemyDeath, UpOverDriveGauge);
     }
 
     private void Start()
@@ -60,7 +62,9 @@ public class GaugeOverdriveLogic : MonoBehaviour
     private void OnDestroy()
     {
         GaugeRidingLogic.OnOverDriveEvent -= HandleInitialOverDrive;
-        Enemy.OnEnemyDeath -= UpOverDriveGauge;
+
+        // 글로벌 이벤트 버스 사용
+        GameEvents.Unsubscribe<float>(GameEventType.OnEnemyDeath, UpOverDriveGauge);
     }
 
     private void Update()
@@ -77,6 +81,10 @@ public class GaugeOverdriveLogic : MonoBehaviour
             PlayerStateLogic.Instance.ChangeState(PlayerState.GetOff);
             overdrive = 0f;
             OnGetOffEvent?.Invoke();
+
+            // 글로벌 이벤트 버스 사용
+            GameEvents.Publish(GameEventType.OnPlayerFinishOverdrive);
+
             Invoke(nameof(ChangeStateToNormal), 1f);
             return;
         }

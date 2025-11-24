@@ -6,12 +6,11 @@ public interface IDamageable
 {
     void Initialize(Component owner);
     void TakeDamage(float damage);
-    void TakeCollisionDamage(float amount); // 몸박 전용
+    //void TakeCollisionDamage(float amount); // 몸통박치기 전용 데미지 처리 메서드
     void Cleanup();
     float CurrentHp { get; }
     float MaxHp { get; }
     bool IsDead { get; }
-    event Action OnDeath;
 }
 
 // 이동 처리 인터페이스
@@ -21,6 +20,8 @@ public interface IMoveable
     void UpdateMovement(float deltaTime);
 
     void SetTarget(Transform target);
+
+    void ChangeSpeed();
 
     // 이동 정지/재개(여러 시스템이 동시에 정지 시켜도 안전)
     void PauseMovement();
@@ -37,8 +38,8 @@ public interface IMoveable
 public interface IAttackable
 {
     void Initialize(Component owner);
-    void TryAttack(Transform target);
-    bool CanAttack();
+    void Attack();
+    void SetTarget(Transform target);
     void Cleanup();
 }
 
@@ -46,8 +47,6 @@ public interface IAttackable
 public interface ICollidable
 {
     void Initialize(Component owner);
-    void OnCollisionDetected(Collision2D collision);
-    void OnTriggerDetected(Collider2D collider);
     void Cleanup();
 }
 
@@ -59,10 +58,12 @@ public interface IDroppable
     void Cleanup();
 }
 
+// 넉백 처리 인터페이스
 public interface IKnockbackable
 {
+    void Initialize(Component owner);
     void ApplyKnockback(Vector2 sourcePosition, float power, float playerSpeed = 0f);
     void ApplyPull(Vector2 targetPosition, float power, float playerSpeed = 0f);
-
     void ApplyKnockbackWithScatter(Vector2 targetPosition, float power, float scatterAmount, float playerSpeed);
+    void Cleanup();
 }

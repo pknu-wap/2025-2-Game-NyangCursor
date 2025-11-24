@@ -13,9 +13,6 @@ public struct DamageColorRule
 
 public class DamageTextSystem : MonoBehaviour
 {
-    [Header("연결")]
-    [SerializeField] private EBasicHpController hpController;
-
     [Header("데미지 텍스트 프리팹 & Canvas")]
     [SerializeField] private GameObject damageTextPrefab;
 
@@ -24,28 +21,24 @@ public class DamageTextSystem : MonoBehaviour
 
     private void Awake()
     {
-        if (hpController == null)
-            hpController = GetComponent<EBasicHpController>();
+        // 글로벌 이벤트 버스 사용
+        GameEvents.Subscribe<(float, Transform)>(GameEventType.OnEnemyTakeDamage, OnDamage);
     }
 
-    private void OnEnable()
+    private void OnDestroy()
     {
-        hpController.OnTakeDamage += OnDamage;
+        // 글로벌 이벤트 버스 사용
+        GameEvents.Unsubscribe<(float, Transform)>(GameEventType.OnEnemyTakeDamage, OnDamage);
     }
 
-    private void OnDisable()
+    private void OnDamage((float damage, Transform source) data)
     {
-        hpController.OnTakeDamage -= OnDamage;
+        SpawnAndAnimateDamageText(data.damage, data.source);
     }
 
-    private void OnDamage(float currentHp, float damage)
+    private void SpawnAndAnimateDamageText(float damage, Transform source)
     {
-        SpawnAndAnimateDamageText(damage);
-    }
-
-    private void SpawnAndAnimateDamageText(float damage)
-    {
-        Vector3 spawnPos = hpController.transform.position;
+        Vector3 spawnPos = source.position;
         // Pool에서 스폰
         GameObject obj = PoolManager.instance.Spawn(damageTextPrefab, spawnPos);
 

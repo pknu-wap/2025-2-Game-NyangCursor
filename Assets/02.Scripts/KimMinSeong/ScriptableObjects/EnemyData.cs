@@ -20,14 +20,6 @@ public class EnemyData : ScriptableObject
     public float moveSpeed = 3f;
 
     [Space(5)]
-    [Tooltip("공격 데미지")]
-    public float attackDamage = 5f;
-
-    [Space(5)]
-    [Tooltip("공격 쿨타임 (초 단위)")]
-    public float attackRate = 0.5f;
-
-    [Space(5)]
     [Tooltip("처치시 게이지 회복량")]
     public float overdriveGaugeReward = 10f;
 }

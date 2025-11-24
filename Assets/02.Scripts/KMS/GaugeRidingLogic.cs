@@ -68,6 +68,8 @@ public class GaugeRidingLogic : MonoBehaviour
         PlayerStateLogic.Instance.ChangeState(PlayerState.OverDrive);
         OnOverDriveEvent?.Invoke(); //오버드라이브 이벤트 발송 To(OverDriveModController)
 
+        // 글로벌 이벤트 버스 사용
+        GameEvents.Publish(GameEventType.OnPlayerStartOverdrive);
     }
 
     public void UpRidingGauge(float amount)

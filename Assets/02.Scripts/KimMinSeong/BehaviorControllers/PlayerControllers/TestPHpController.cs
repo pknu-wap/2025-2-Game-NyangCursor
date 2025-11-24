@@ -23,7 +23,6 @@ public class PlayerHpController : MonoBehaviour, IDamageable
     public float MaxHp => maxHp;
     public bool IsDead => isDead;
 
-    public event Action OnDeath;
     public static event Action<float, float> OnInitializeHp;
     public static event Action<float, float> OnTakeDamage;
     public static event Action OnReduceGauge;
@@ -72,7 +71,10 @@ public class PlayerHpController : MonoBehaviour, IDamageable
             currentHp -= damage;
             currentHp = Mathf.Max(0, currentHp);
             OnTakeDamage?.Invoke(currentHp, maxHp);
-        
+
+            // 글로벌 이벤트 버스 사용 → 카메라 흔들림 적용
+            GameEvents.Publish(GameEventType.OnPlayerTakeDamage);
+
             rb.linearVelocity = Vector2.zero;
              rb.constraints = RigidbodyConstraints2D.FreezePosition;
 
@@ -86,6 +88,11 @@ public class PlayerHpController : MonoBehaviour, IDamageable
             gaugeOverdriveLogic.UpOverDriveGauge(-10);
             OnReduceGauge?.Invoke();
         }
+    }
+
+    public void TakeCollisionDamage(float amount)
+    {
+        // 필요시 구현
     }
 
     private IEnumerator RestoreMovement(float delay)
@@ -106,8 +113,6 @@ public class PlayerHpController : MonoBehaviour, IDamageable
         isDead = true;
 
         StageFlowManager.instance.SetStateToEnd();
-
-        OnDeath?.Invoke();
     }
 
     public void Cleanup()
@@ -132,12 +137,6 @@ public class PlayerHpController : MonoBehaviour, IDamageable
         Gizmos.color = Color.green;
         Gizmos.DrawCube(position - new Vector3(barWidth * (1 - hpRatio) * 0.5f, 0, 0),
             new Vector3(barWidth * hpRatio, barHeight, 0));
-    }
-
-    public void TakeCollisionDamage(float amount)
-    {
-        //몸박이여서 코드를 옮겨야함
-        //스킬데미지랑 따로
     }
 #endif
 }

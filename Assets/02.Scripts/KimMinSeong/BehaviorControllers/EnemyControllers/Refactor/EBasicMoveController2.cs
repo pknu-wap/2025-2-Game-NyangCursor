@@ -22,36 +22,6 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
     private int pauseCount = 0;
     private bool IsPaused => pauseCount > 0;
 
-    private void OnEnable()
-    {
-        GaugeOverdriveLogic.OnGetOffEvent += ChangeSpeed;
-        GaugeRidingLogic.OnOverDriveEvent += ChangeSpeed;
-    }
-
-    private void OnDisable()
-    {
-        GaugeOverdriveLogic.OnGetOffEvent -= ChangeSpeed;
-        GaugeRidingLogic.OnOverDriveEvent -= ChangeSpeed;
-    }
-
-    private void ChangeSpeed()
-    {
-        var state = PlayerStateLogic.Instance.CurrentState;
-
-        if (state == PlayerState.GetOff)
-        {
-            moveSpeed = baseMoveSpeed;
-        }
-        else if (state == PlayerState.Normal)
-        {
-            moveSpeed = baseMoveSpeed;
-        }
-        else if (state == PlayerState.OverDrive)
-        {
-            moveSpeed = baseMoveSpeed * 3f;
-        }
-    }
-
     public void Initialize(Component owner)
     {
         if (owner is not Enemy enemy)
@@ -78,9 +48,58 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
 
         rb.interpolation = RigidbodyInterpolation2D.Interpolate; //달달거림 해결
 
-        ChangeSpeed();
+        SubscribeEvents();
     }
 
+    public void Cleanup()
+    {
+        pauseCount = 0;
+        Stop();
+        UnsubscribeEvents();
+    }
+
+    // 현재 스크립트에서 사용하는 이벤트들을 구독함
+    private void SubscribeEvents()
+    {
+        // 로컬 이벤트 버스 관련 (= 인터페이스 구현체 간의 통신)
+        owner.EventBus.Subscribe<float>(EnemyEventType.OnKnockback, PauseMovementForSeconds);
+
+        // 글로벌 이벤트 버스 관련 (= 적과 외부 오브젝트 간의 통신)
+        GameEvents.Subscribe(GameEventType.OnPlayerStartOverdrive, ChangeSpeed);
+        GameEvents.Subscribe(GameEventType.OnPlayerFinishOverdrive, ChangeSpeed);
+    }
+
+    // 현재 스크립트에서 사용하는 이벤트들을 구독 해제함
+    private void UnsubscribeEvents()
+    {
+        owner.EventBus.Unsubscribe<float>(EnemyEventType.OnKnockback, PauseMovementForSeconds);
+
+        GameEvents.Unsubscribe(GameEventType.OnPlayerStartOverdrive, ChangeSpeed);
+        GameEvents.Unsubscribe(GameEventType.OnPlayerFinishOverdrive, ChangeSpeed);
+    }
+
+    private void FixedUpdate()
+    {
+        UpdateMovement(Time.fixedDeltaTime);
+    }
+
+    public void ChangeSpeed()
+    {
+        var state = PlayerStateLogic.Instance.CurrentState;
+
+        if (state == PlayerState.GetOff)
+        {
+            moveSpeed = baseMoveSpeed;
+        }
+        else if (state == PlayerState.Normal)
+        {
+            moveSpeed = baseMoveSpeed;
+        }
+        else if (state == PlayerState.OverDrive)
+        {
+            moveSpeed = baseMoveSpeed * 3f;
+        }
+    }
 
     public void UpdateMovement(float fixedDeltaTime)
     {
@@ -110,9 +129,8 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
         }
     }
 
-    // ============================================
-    // 타겟 지정
-    // ============================================
+    // 공격할 대상을 설정하는 함수
+    // EnemyManager 에서 호출됨
     public void SetTarget(Transform target)
     {
         this.target = target;
@@ -168,11 +186,5 @@ public class EBasicMoveController2 : MonoBehaviour, IMoveable
     public void Stop()
     {
         rb.linearVelocity = Vector2.zero;
-    }
-
-    public void Cleanup()
-    {
-        pauseCount = 0;
-        Stop();
     }
 }

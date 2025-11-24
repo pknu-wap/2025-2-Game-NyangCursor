@@ -75,6 +75,10 @@ public class EnemyManager : MonoBehaviour
 
                 IMoveable moveable = enemy.GetComponent<IMoveable>();   // 적의 타깃으로 쓸 플레이어 좌표 주입
                 moveable?.SetTarget(playerTransform);
+                moveable?.ChangeSpeed();
+
+                IAttackable attackable = enemy.GetComponent<IAttackable>();
+                attackable?.SetTarget(playerTransform); // 적의 타깃으로 쓸 플레이어 좌표 주입
 
                 if (enemy != null)
                 {

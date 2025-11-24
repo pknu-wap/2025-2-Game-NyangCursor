@@ -1,15 +1,16 @@
 using UnityEngine;
 
+// 이 스크립트는 1:1 충돌만을 지원함
 public class EBasicCollisionController : MonoBehaviour, ICollidable
 {
-    [Header("=== 충돌 처리에 필요한 데이터 ===")]
-    [SerializeField] private float collisionDamage = 10f;
-    [SerializeField] private float damageCoolTime = 0.5f;
-    [SerializeField] private LayerMask damageableLayer;
-
-    // 내부적으로 사용하는 변수
     private Enemy owner;
-    private float lastDamageTime;
+
+    [Header("충돌 관련")]
+    private IDamageable currentTarget;
+    private float lastDamageTime = -100f;
+    [SerializeField] private float collisionDamage = 10f;
+    [SerializeField] private float collisionCooldown = 0.5f;
+    [SerializeField] private LayerMask damageableLayer;
 
     public void Initialize(Component owner)
     {
@@ -21,62 +22,87 @@ public class EBasicCollisionController : MonoBehaviour, ICollidable
         }
 
         this.owner = enemy;
-        lastDamageTime = -damageCoolTime; // 시작 시 즉시 데미지 가능
-    }
-
-    public void OnCollisionDetected(Collision2D collision)
-    {
-        // LayerMaskHelper 확장 메서드 사용
-        if (damageableLayer.Contains(collision.gameObject))
-            TryDealDamage(collision.gameObject);
-    }
-
-    public void OnTriggerDetected(Collider2D collider)
-    {
-        // LayerMaskHelper 확장 메서드 사용
-        if (damageableLayer.Contains(collider.gameObject))
-            TryDealDamage(collider.gameObject);
-    }
-
-    private void TryDealDamage(GameObject target)
-    {
-        // 쿨타임 체크
-        if (Time.time - lastDamageTime < damageCoolTime)
-            return;
-
-        // IDamageable 인터페이스를 구현한 컴포넌트 찾기
-        IDamageable damageable = target.GetComponent<IDamageable>();
-        if (damageable != null && !damageable.IsDead)
-        {
-            damageable.TakeDamage(collisionDamage);
-            lastDamageTime = Time.time;
-            //Debug.Log($"{owner.name} 이(가) {target.name} 에게 {collisionDamage} 데미지를 입혔습니다.");
-        }
-    }
+        currentTarget = null;
+        lastDamageTime = -100f;
+}
 
     public void Cleanup()
     {
-        // 필요시 수정
+        currentTarget = null;
+        lastDamageTime = -100f;
     }
 
-    // Unity의 충돌 이벤트를 ICollidable로 전달
+    private void HandleEnter(GameObject target)
+    {
+        IDamageable damageable = target.GetComponent<IDamageable>();
+        if (damageable != null && !damageable.IsDead)
+        {
+            currentTarget = damageable;
+            DealDamage();
+        }
+    }
+
+    private void DealDamage()
+    {
+        if (currentTarget == null || currentTarget.IsDead)
+        {
+            currentTarget = null;
+            return;
+        }
+
+        currentTarget.TakeDamage(collisionDamage);
+        lastDamageTime = Time.time;
+    }
+
+    // === 콜라이더 전용 ===
+
+    // 콜라이더 진입 시 즉시 데미지 처리
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        OnCollisionDetected(collision);
+        if (damageableLayer.Contains(collision.gameObject))
+            HandleEnter(collision.gameObject);
     }
 
+    // 콜라이더 내에 머무를 때 쿨타임 체크 후 데미지 처리
     private void OnCollisionStay2D(Collision2D collision)
     {
-        OnCollisionDetected(collision);
+        if (currentTarget == null || currentTarget.IsDead)
+            return;
+
+        if (Time.time - lastDamageTime >= collisionCooldown)
+            DealDamage();
     }
 
-    private void OnTriggerEnter2D(Collider2D collider)
+    // 현재 타겟이 콜라이더에서 벗어날 때 타겟 초기화
+    private void OnCollisionExit2D(Collision2D collision)
     {
-        OnTriggerDetected(collider);
+        if (damageableLayer.Contains(collision.gameObject))
+            currentTarget = null;
     }
 
-    private void OnTriggerStay2D(Collider2D collider)
-    {
-        OnTriggerDetected(collider);
-    }
+    // === 트리거 전용 ===
+
+    //// 트리거 진입 시 즉시 데미지 처리
+    //private void OnTriggerEnter2D(Collider2D collider)
+    //{
+    //    if (damageableLayer.Contains(collider.gameObject))
+    //        HandleEnter(collider.gameObject);
+    //}
+
+    //// 트리거 내에 머무를 때 쿨타임 체크 후 데미지 처리
+    //private void OnTriggerStay2D(Collider2D collider)
+    //{
+    //    if (currentTarget == null || currentTarget.IsDead)
+    //        return;
+
+    //    if (Time.time - lastDamageTime >= damageInterval)
+    //        DealDamage();
+    //}
+
+    //// 현재 타겟이 트리거에서 벗어날 때 타겟 초기화
+    //private void OnTriggerExit2D(Collider2D collider)
+    //{
+    //    if (damageableLayer.Contains(collider.gameObject))
+    //        currentTarget = null;
+    //}
 }
