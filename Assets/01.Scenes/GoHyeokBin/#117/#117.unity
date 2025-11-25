@@ -182611,7 +182611,7 @@ MonoBehaviour:
   baseDuration: 3
   baseProjectileCount: 2
   baseProjectileSizeLevel: 1
-  baseProjectileSpeed: 3
+  baseProjectileSpeed: 10
   projectilePrefabs:
   - {fileID: 3140043068264800744, guid: c8d89bcbb6d3085438645054b143e33e, type: 3}
   - {fileID: 6700132663866310503, guid: c8888557362d06741a7001430617c5bf, type: 3}

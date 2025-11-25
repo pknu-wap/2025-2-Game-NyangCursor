@@ -133,11 +133,13 @@ public class PlayerSkill4 : MonoBehaviour, ISkill
         if (key == SkillStatKey.Cooldown)
         {
             statValues[key] -= data.upgradeRatio;
+            statValues[key] = Mathf.Max(statValues[key], 1f); // 최소 1 제한
         }
         else
         {
             statValues[key] += data.upgradeRatio;
         }
+
         // 스킬에서 사용하는 스탯에 따라 커스터마이징 하면 됩니다.
         switch (key)
         {

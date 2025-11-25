@@ -196,6 +196,7 @@ public class PlayerSkill6 : MonoBehaviour, ISkill
         if (key == SkillStatKey.Cooldown)
         {
             statValues[key] -= data.upgradeRatio;
+            statValues[key] = Mathf.Max(statValues[key], 1.5f); // 최소 1.5 제한
         }
         else
         {
