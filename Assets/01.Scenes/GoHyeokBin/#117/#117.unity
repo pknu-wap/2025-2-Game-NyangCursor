@@ -182606,11 +182606,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerRb: {fileID: 1979479478}
   usedStats: 0000000001000000030000000400000005000000
-  baseDamage: 10
+  baseDamage: 5
   baseCooldown: 2
   baseDuration: 3
   baseProjectileCount: 2
-  baseProjectileSizeLevel: 0
+  baseProjectileSizeLevel: 1
   baseProjectileSpeed: 3
   projectilePrefabs:
   - {fileID: 3140043068264800744, guid: c8d89bcbb6d3085438645054b143e33e, type: 3}
@@ -186288,7 +186288,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fireThrowerPrefab: {fileID: 100002, guid: 826119355d6864150ba333b5f3bfd332, type: 3}
   usedStats: 0000000001000000020000000500000003000000
-  baseDamage: 5
+  baseDamage: 3
   baseCooldown: 5
   baseRange: 1
   baseProjectileSize: 1
@@ -186734,9 +186734,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   usedStats: 00000000010000000200000004000000
-  baseDamage: 3
+  baseDamage: 5
   baseCooldown: 1
-  baseRange: 5
+  baseRange: 7
   baseProjectileCount: 1
   baseDepth: 1
 --- !u!1 &941146689
@@ -187988,8 +187988,8 @@ MonoBehaviour:
     m_Bits: 128
   usedStats: 0000000001000000020000000400000006000000
   baseDamage: 10
-  baseCooldown: 1
-  baseRange: 7
+  baseCooldown: 5
+  baseRange: 8
   baseProjectileSizeLevel: 1
   baseProjectileCount: 1
   baseEffectZoneDuration: 5
@@ -189032,9 +189032,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stormPrefab: {fileID: 5719506856147455035, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
   usedStats: 0000000001000000020000000500000006000000
-  baseDamage: 10
-  baseCooldown: 2
-  baseRange: 3
+  baseDamage: 2
+  baseCooldown: 5
+  baseRange: 5
   baseProjectileSizeLevel: 1
   baseEffectZoneDuration: 5
 --- !u!1 &1247127112
@@ -659601,6 +659601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c03cc6fe1e2f8734eba5c24e141c2b47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  removeAltar: {fileID: 1247127112}
 --- !u!4 &1728949961
 Transform:
   m_ObjectHideFlags: 0
@@ -661242,9 +661243,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   usedStats: 000000000100000002000000050000000400000003000000
-  baseDamage: 8
-  baseCooldown: 3
-  baseRange: 7
+  baseDamage: 10
+  baseCooldown: 5
+  baseRange: 8
   baseProjectileSizeLevel: 1
   baseProjectileCount: 1
   baseDuration: 3
