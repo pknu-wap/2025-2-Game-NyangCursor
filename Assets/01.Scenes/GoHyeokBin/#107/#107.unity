@@ -188664,6 +188664,28 @@ MonoBehaviour:
   normalRate: 70
   rareRate: 25
   legendaryRate: 5
+  statDisplayMappings:
+  - key: 0
+    displayName: "\uB370\uBBF8\uC9C0"
+    isDecrease: 0
+  - key: 1
+    displayName: "\uCFE8\uB2E4\uC6B4"
+    isDecrease: 1
+  - key: 2
+    displayName: "\uC0AC\uAC70\uB9AC"
+    isDecrease: 0
+  - key: 3
+    displayName: "\uC2A4\uD0AC \uC9C0\uC18D\uC2DC\uAC04"
+    isDecrease: 0
+  - key: 4
+    displayName: "\uD22C\uC0AC\uCCB4 \uAC1C\uC218"
+    isDecrease: 0
+  - key: 5
+    displayName: "\uD22C\uC0AC\uCCB4 \uD06C\uAE30"
+    isDecrease: 0
+  - key: 6
+    displayName: "\uBC94\uC704\uACF5\uACA9 \uC9C0\uC18D\uC2DC\uAC04"
+    isDecrease: 0
 --- !u!95 &1190216728
 Animator:
   serializedVersion: 7
@@ -661766,6 +661788,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collisionDamage: 1
+  collisionCooldown: 0.5
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128

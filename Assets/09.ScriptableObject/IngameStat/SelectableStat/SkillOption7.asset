@@ -15,7 +15,7 @@ MonoBehaviour:
   isSkill: 1
   optionName: "\uD654\uC5FC\uBC29\uC0AC\uAE30"
   affectedStat: 0
-  icon: {fileID: -2650771296557143352, guid: 84a5aaf0cc9dd4348ba87caed4bebb69, type: 3}
+  icon: {fileID: 1098286324429101383, guid: 491904d99ea3ae5449393065791dd7c8, type: 3}
   minUpgradeRatio: 0.05
   maxUpgradeRatio: 0.15
   description: 
