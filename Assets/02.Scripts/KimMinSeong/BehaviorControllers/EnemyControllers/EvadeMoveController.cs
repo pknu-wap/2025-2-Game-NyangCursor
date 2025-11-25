@@ -74,28 +74,31 @@ public class EvadeMoveController : NormalMoveController
         currentState = MovementState.Chase;
     }
 
-    public override void UpdateMovement(float deltaTime)
+    public override void UpdateMovement(float fixedDeltaTime)
     {
-        if (target == null)
+        if (target == null || IsPaused)
+        {
+            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, fixedDeltaTime * 5f);
             return;
+        }
 
         switch (currentState)
         {
             case MovementState.Chase:
-                UpdateChaseMovement(deltaTime);
+                UpdateChaseMovement(fixedDeltaTime);
                 break;
 
             case MovementState.Attacking:
-                UpdateAttackingMovement(deltaTime);
+                UpdateAttackingMovement(fixedDeltaTime);
                 break;
 
             case MovementState.Evading:
-                UpdateEvadingMovement(deltaTime);
+                UpdateEvadingMovement(fixedDeltaTime);
                 break;
         }
     }
 
-    private void UpdateChaseMovement(float deltaTime)
+    private void UpdateChaseMovement(float fixedDeltaTime)
     {
         // 플레이어 방향으로 이동
         Vector3 direction = (target.position - transform.position).normalized;
@@ -105,7 +108,7 @@ public class EvadeMoveController : NormalMoveController
         FlipSprite(direction.x);
     }
 
-    private void UpdateAttackingMovement(float deltaTime)
+    private void UpdateAttackingMovement(float fixedDeltaTime)
     {
         // 공격 중에는 느리게 이동
         // 속도가 0 이라면 불필요한 연산을 하지 않음
@@ -119,7 +122,7 @@ public class EvadeMoveController : NormalMoveController
         }
     }
 
-    private void UpdateEvadingMovement(float deltaTime)
+    private void UpdateEvadingMovement(float fixedDeltaTime)
     {
         // 플레이어 반대 방향으로 느리게 후퇴
         Vector3 direction = (transform.position - target.position).normalized;

@@ -36,9 +36,8 @@ public class SuicideHpController : NormalHpController
 
         isDead = true;
 
-        // 로컬 이벤트 버스만 발행 → 풀링, 드랍 처리
-        owner.EventBus.Publish(EnemyEventType.OnDeath);
-
+        // 자폭 죽음 이벤트 발행 → 풀링만 처리하고 드랍은 안함
         // 글로벌 이벤트는 발행 안함 → 오버드라이브 게이지 증가는 안함
+        owner.EventBus.Publish(EnemyEventType.OnSuicideDeath);
     }
 }

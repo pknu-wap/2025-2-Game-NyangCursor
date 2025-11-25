@@ -4,36 +4,26 @@ using UnityEngine;
 public class NormalBullet : Bullet
 {
     [Header("파티클 관련")]
-    [SerializeField] private GameObject impactParticle; // 폭발 파티클
+    [SerializeField] private GameObject explosionParticle; // 폭발 파티클
     [SerializeField] private GameObject projectileParticle; // 탄막 파티클
     [SerializeField] private GameObject muzzleParticle; // 발사 파티클
 
     // 폭발 파티클을 생성할 때 파묻히는 현상을 방지하기 위한 오프셋
-    [SerializeField] private float impactParticleOffset = 0.15f;
+    [SerializeField] private float explosionParticleOffset = 0.15f;
 
-    private GameObject activeProjectileParticle; // 현재 생성된 탄막 파티클 참조 → OnDisable 에서 풀로 복귀시키기 위해 사용
 
-    protected override void OnEnable()
+    public override void Initialize(Vector3 direction, float speed, float damage)
     {
-        base.OnEnable();
+        base.Initialize(direction, speed, damage);
 
         // 발사 파티클 생성
         GameObject muzzle = PoolManager.instance.Spawn(muzzleParticle, transform.position);
         StartCoroutine(DespawnParticle(muzzle));      // 파티클 시스템이 끝난 후 풀로 복귀
 
         // 탄막 파티클 생성
-        activeProjectileParticle = PoolManager.instance.Spawn(projectileParticle, transform.position);
-        activeProjectileParticle.transform.SetParent(transform);         // 탄막 프리팹의 자식으로 설정
-        activeProjectileParticle.transform.localPosition = Vector3.zero; // 탄막 중심에 위치하도록 설정
-    }
-
-    protected override void OnDisable()
-    {
-        // 탄막 파티클 정리
-        PoolManager.instance.Despawn(activeProjectileParticle);
-        activeProjectileParticle = null;
-
-        base.OnDisable();
+        GameObject projectile = PoolManager.instance.Spawn(projectileParticle, transform.position);
+        projectile.transform.SetParent(transform);           // 탄막 프리팹의 자식으로 설정
+        projectile.transform.localPosition = Vector3.zero;   // 탄막 중심에 위치하도록 설정
     }
 
     protected override void Hit(GameObject target)
@@ -42,20 +32,18 @@ public class NormalBullet : Bullet
         Vector3 hitPoint = (transform.position - target.transform.position).normalized;
 
         // 2. 폭발 파티클 생성 위치 및 회전을 계산
-        Vector3 impactPosition = transform.position + (hitPoint * impactParticleOffset);
-        Quaternion impactRotation = Quaternion.FromToRotation(Vector3.up, hitPoint);
+        Vector3 explosionPosition = transform.position + (hitPoint * explosionParticleOffset);
+        Quaternion explosionRotation = Quaternion.FromToRotation(Vector3.up, hitPoint);
 
         // 3. 폭발 파티클 생성
-        GameObject impact = PoolManager.instance.Spawn(impactParticle, impactPosition);
-        impact.transform.rotation = impactRotation;
-        StartCoroutine(DespawnParticle(impact));  // 파티클 시스템이 끝난 후 풀로 복귀
+        GameObject explosion = PoolManager.instance.Spawn(explosionParticle, explosionPosition);
+        explosion.transform.rotation = explosionRotation;
+        StartCoroutine(DespawnParticle(explosion));  // 파티클 시스템이 끝난 후 풀로 복귀
 
         // 4. 데미지 처리
         IDamageable damageable = target.GetComponent<IDamageable>();
-        if (damageable == null || damageable.IsDead)
-            return;
-
-        damageable.TakeDamage(damage);
+        if (damageable != null && !damageable.IsDead)
+            damageable.TakeDamage(damage);
 
         // 풀로 복귀
         PoolManager.instance.Despawn(this.gameObject);

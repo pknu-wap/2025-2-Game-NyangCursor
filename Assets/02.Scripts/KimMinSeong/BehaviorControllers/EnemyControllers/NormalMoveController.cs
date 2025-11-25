@@ -13,6 +13,10 @@ public class NormalMoveController : MonoBehaviour, IMoveable
     protected float currentSpeedMultiplier = 1f;    //  현재 속도 배율 
     [SerializeField] protected float overdriveSpeedMultiplier = 3f; // 오버드라이브 모드일 때 추가 속도 배율
 
+    // 구버전 이동 일시정지 시스템 (리팩토링 예정)
+    protected int pauseCount = 0;
+    public bool IsPaused => pauseCount > 0;
+
     public virtual void Initialize(Component owner)
     {
         if (owner is not Enemy enemy)
@@ -24,6 +28,8 @@ public class NormalMoveController : MonoBehaviour, IMoveable
         this.owner = enemy;
         baseMoveSpeed = enemy.Data.moveSpeed;
         rb = GetComponent<Rigidbody2D>();
+
+        pauseCount = 0;
 
         // Rigidbody 설정
         rb.gravityScale = 0f;
@@ -86,12 +92,16 @@ public class NormalMoveController : MonoBehaviour, IMoveable
             SetSpeedMultiplier(1f);
     }
 
-    public virtual void UpdateMovement(float deltaTime)
+    public virtual void UpdateMovement(float fixedDeltaTime)
     {
-        if (target == null)
+        if (target == null || IsPaused)
+        {
+            rb.linearVelocity = Vector2.Lerp(rb.linearVelocity, Vector2.zero, fixedDeltaTime * 5f);
             return;
+        }
 
-        Vector3 direction = (transform.position - target.position).normalized;
+        // 플레이어를 향해 이동
+        Vector3 direction = (target.position - transform.position).normalized;
         Vector2 velocity = direction * baseMoveSpeed * currentSpeedMultiplier;
         rb.linearVelocity = velocity;
 
@@ -105,10 +115,12 @@ public class NormalMoveController : MonoBehaviour, IMoveable
 
     public void PauseMovement()
     {
+        pauseCount++;
     }
 
     public void ResumeMovement()
     {
+        pauseCount = Mathf.Max(0, pauseCount - 1);
     }
 
     public void PauseMovementForSeconds(float seconds)
@@ -122,6 +134,8 @@ public class NormalMoveController : MonoBehaviour, IMoveable
 
     private IEnumerator PauseRoutine(float seconds)
     {
+        PauseMovement();
+
         float remainingTime = seconds;
         while (remainingTime > 0f)
         {
@@ -132,6 +146,8 @@ public class NormalMoveController : MonoBehaviour, IMoveable
             remainingTime -= Time.deltaTime;
             yield return null;
         }
+
+        ResumeMovement();
     }
 
     public void Stop()

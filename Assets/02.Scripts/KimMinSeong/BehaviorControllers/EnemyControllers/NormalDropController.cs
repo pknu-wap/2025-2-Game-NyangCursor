@@ -1,19 +1,19 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class EBasicDropController : MonoBehaviour, IDroppable
+public class NormalDropController : MonoBehaviour, IDroppable
 {
-    private Enemy owner;
-    private Transform dropTransform; // 드랍하고자 하는 위치
+    protected Enemy owner;
+    protected Transform dropTransform; // 드랍하고자 하는 위치
 
     [Header("흩뿌리기 설정값")]
-    [SerializeField, Range(1f, 10f)] private float minScatterForce = 1f;  // 흩뿌리는 힘의 최소값
-    [SerializeField, Range(1f, 10f)] private float maxScatterForce = 10f;    // 흩뿌리는 힘의 최대값
+    [SerializeField, Range(1f, 10f)] protected float minScatterForce = 1f;  // 흩뿌리는 힘의 최소값
+    [SerializeField, Range(1f, 10f)] protected float maxScatterForce = 10f;    // 흩뿌리는 힘의 최대값
 
     [Header("드랍할 객체들")]
-    [SerializeField] private List<DropEntity> dropEntities;    // 드랍할 객체들을 저장하는 리스트
+    [SerializeField] protected List<DropEntity> dropEntities;    // 드랍할 객체들을 저장하는 리스트
 
-    public void Initialize(Component owner)
+    public virtual void Initialize(Component owner)
     {
         // Enemy 타입만 허용
         if (owner is not Enemy enemy)
@@ -25,23 +25,32 @@ public class EBasicDropController : MonoBehaviour, IDroppable
         this.owner = enemy;
         dropTransform = transform;   // 드랍할 위치는 현재 스크립트가 부착된 오브젝트 기준
 
-        this.owner.EventBus.Subscribe(EnemyEventType.OnDeath, Drop);
+        SubscribeEvents();
     }
 
-    public void Cleanup()
+    public virtual void Cleanup()
+    {
+        UnsubscribeEvents();
+    }
+    protected virtual void SubscribeEvents()
+    {
+        owner.EventBus.Subscribe(EnemyEventType.OnDeath, Drop);
+    }
+
+    protected virtual void UnsubscribeEvents()
     {
         owner.EventBus.Unsubscribe(EnemyEventType.OnDeath, Drop);
     }
 
     // 현재 리스트에서 원하는 오브젝트들을 드랍하는 함수
-    public void Drop()
+    public virtual void Drop()
     {
-        // 이 컨트롤러는 경험치만 드랍하도록 설정
+        // 기본적으로 경험치, 골드만 드랍하도록 설정
         DropObject<ExpDropObject>();
         DropObject<GoldDropObject>();
     }
 
-    private void DropObject<T>() where T : DropObject
+    protected void DropObject<T>() where T : DropObject
     {
         foreach (var entity in dropEntities)
         {
@@ -63,7 +72,7 @@ public class EBasicDropController : MonoBehaviour, IDroppable
     }
 
     // 드랍한 오브젝트를 랜덤하게 흩뿌리는 함수
-    private void ScatterObject(Rigidbody2D rb)
+    protected virtual void ScatterObject(Rigidbody2D rb)
     {
         // 흩뿌리기 설정을 잘못 했다면 Switch 
         if (minScatterForce > maxScatterForce)

@@ -3,15 +3,16 @@ using System.Collections.Generic;
 
 public enum EnemyEventType
 {
-    OnDeath,
+    OnDeath,    // 플레이어에게 정상적으로 처치당했을 때
+    OnSuicideDeath, // 자폭으로 죽었을 때
     OnTakeDamage,
     OnKnockback,
     OnEnterEvadeRange,
     OnExitEvadeRange,
     OnEnterAttackRange,
     OnExitAttackRange,
-    OnEnterSuicideRange,
-    OnSuicide,
+    OnEnterSuicideRange,    // 자폭 범위에 진입했을 때
+    OnSuicide,  // 자폭했을 때
     // 필요시 추가
 }
 
