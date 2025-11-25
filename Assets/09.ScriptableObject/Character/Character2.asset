@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e010a67c32d8b34cb257441696c21f0, type: 3}
   m_Name: Character2
   m_EditorClassIdentifier: 
-  characterName: "\uCE90\uB9AD\uD1302"
-  characterImage: {fileID: 21300000, guid: e76786b2576424846b208103bdf1923f, type: 3}
-  characterDescription: "\uCE90\uB9AD\uD130 2 \uC124\uBA85"
+  characterName: "\uB178\uB791 \uCEE4\uC11C"
+  characterImage: {fileID: -8441114947850832984, guid: 80f246f67c6189d4793fa274db40c755, type: 3}
+  characterDescription: "\uADC0\uC5FD\uB2E4\uACE0 \uBB34\uC2DC\uD558\uC9C0 \uB9D0\uB77C"
   startingSkill: {fileID: 11400000, guid: aaf6b7e1475f89a459f81ffc86212c21, type: 2}

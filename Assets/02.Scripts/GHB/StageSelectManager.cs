@@ -26,8 +26,7 @@ public class StageSelectManager : MonoBehaviour
     [Header("시작 버튼")]
     [SerializeField] private Button startButton;
 
-    [Header("로비 UI")]
-    [SerializeField] private GameObject lobbyUI;
+
 
     private void Start()
     {
@@ -44,7 +43,6 @@ public class StageSelectManager : MonoBehaviour
     public void CloseUI()
     {
         stageSelectUI.SetActive(false);
-        lobbyUI.SetActive(true);
     }
 
     // 캐릭터 목록 표시
