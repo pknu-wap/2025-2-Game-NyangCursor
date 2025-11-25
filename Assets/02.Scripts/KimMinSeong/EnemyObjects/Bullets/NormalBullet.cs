@@ -11,23 +11,29 @@ public class NormalBullet : Bullet
     // 폭발 파티클을 생성할 때 파묻히는 현상을 방지하기 위한 오프셋
     [SerializeField] private float impactParticleOffset = 0.15f;
 
-    public override void Initialize(Vector3 direction, float speed, float damage)
+    private GameObject activeProjectileParticle; // 현재 생성된 탄막 파티클 참조 → OnDisable 에서 풀로 복귀시키기 위해 사용
+
+    protected override void OnEnable()
     {
-        base.Initialize(direction, speed, damage);
+        base.OnEnable();
 
-        // 1. 발사 파티클 생성
+        // 발사 파티클 생성
         GameObject muzzle = PoolManager.instance.Spawn(muzzleParticle, transform.position);
-        StartCoroutine(DespawnParticle(muzzle));  // 파티클 시스템이 끝난 후 풀로 복귀
+        StartCoroutine(DespawnParticle(muzzle));      // 파티클 시스템이 끝난 후 풀로 복귀
 
-        // 2. 탄막 파티클 생성
-        GameObject projectile = PoolManager.instance.Spawn(projectileParticle, transform.position);
-        projectile.transform.SetParent(transform);         // 탄막 프리팹의 자식으로 설정
-        projectile.transform.localPosition = Vector3.zero; // 탄막 중심에 위치하도록 설정
+        // 탄막 파티클 생성
+        activeProjectileParticle = PoolManager.instance.Spawn(projectileParticle, transform.position);
+        activeProjectileParticle.transform.SetParent(transform);         // 탄막 프리팹의 자식으로 설정
+        activeProjectileParticle.transform.localPosition = Vector3.zero; // 탄막 중심에 위치하도록 설정
     }
 
-    public override void Cleanup()
+    protected override void OnDisable()
     {
-        base.Cleanup();
+        // 탄막 파티클 정리
+        PoolManager.instance.Despawn(activeProjectileParticle);
+        activeProjectileParticle = null;
+
+        base.OnDisable();
     }
 
     protected override void Hit(GameObject target)
@@ -51,8 +57,7 @@ public class NormalBullet : Bullet
 
         damageable.TakeDamage(damage);
 
-        // 내부 변수 초기화 및 풀로 복귀
-        Cleanup();
+        // 풀로 복귀
         PoolManager.instance.Despawn(this.gameObject);
     }
 

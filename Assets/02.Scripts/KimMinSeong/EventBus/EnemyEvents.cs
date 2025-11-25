@@ -10,6 +10,8 @@ public enum EnemyEventType
     OnExitEvadeRange,
     OnEnterAttackRange,
     OnExitAttackRange,
+    OnEnterSuicideRange,
+    OnSuicide,
     // 필요시 추가
 }
 
