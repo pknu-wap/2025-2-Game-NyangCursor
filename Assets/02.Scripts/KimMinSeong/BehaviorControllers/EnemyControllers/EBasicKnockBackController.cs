@@ -20,7 +20,7 @@ public class EBasicKnockBackController : MonoBehaviour, IKnockbackable
         }
 
         this.owner = enemy;
-        rb = owner.GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         lastKnockbackTime = -999f;
     }
 
