@@ -72,12 +72,14 @@ public class Enemy : MonoBehaviour
     {
         // 로컬 이벤트 버스의 Subscribe 메서드 사용해 적 사망을 처리
         EventBus.Subscribe(EnemyEventType.OnDeath, HandleDeath);
+        EventBus.Subscribe(EnemyEventType.OnSuicideDeath, HandleDeath);
     }
 
     protected virtual void UnsubscribeEvents()
     {
         // 로컬 이벤트 버스의 Unsubscribe 메서드 사용해 적 사망을 처리
         EventBus.Unsubscribe(EnemyEventType.OnDeath, HandleDeath);
+        EventBus.Subscribe(EnemyEventType.OnSuicideDeath, HandleDeath);
     }
 
     // 적 사망 이벤트 핸들러

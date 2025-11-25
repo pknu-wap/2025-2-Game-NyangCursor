@@ -51,9 +51,6 @@ public class EBasicHpController : MonoBehaviour, IDamageable
         if (isDead)
             return;
 
-        // 디버그용
-        Debug.Log($"적이 {damage} 데미지를 받았습니다.");
-
         currentHp -= damage;
         currentHp = Mathf.Max(0, currentHp);
 
