@@ -89,7 +89,7 @@ public class LobbyPlayerAnimator : MonoBehaviour
 
         yield return new WaitForSeconds(1);
 
-        LoadingScene.Nextloading("#117");
+        LoadingScene.Nextloading("#FinalDemo");
     }
 
     public void HandleHitAnim()
