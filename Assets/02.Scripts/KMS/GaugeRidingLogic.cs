@@ -15,6 +15,8 @@ public class GaugeRidingLogic : MonoBehaviour
     public static event Action OnRidingEvent; //E키를 눌렀을때 라이딩 하는 이벤트
     public static event Action OnOverDriveEvent;//오버드라이브 진입한 이벤트
 
+    public static event Action OnFullRidingGaue; //라이딩 게이지 꽉 찼을때 이벤트
+
     [SerializeField] private Rigidbody2D rigidPlayer;
 
 
@@ -48,6 +50,7 @@ public class GaugeRidingLogic : MonoBehaviour
 
         if (activeEkey == true && ridingGauge >= 100f)
         {
+            OnFullRidingGaue?.Invoke();
             // E 키 입력 → Riding() 호출
             if (Input.GetKeyDown(KeyCode.E))
             {

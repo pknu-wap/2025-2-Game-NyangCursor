@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: SkillOption8
   m_EditorClassIdentifier: 
   isSkill: 1
-  optionName: "\uBA54\uD14C\uC624"
+  optionName: "\uC804\uD0C4\uBC1C\uC0AC"
   affectedStat: 0
-  icon: {fileID: 21300000, guid: 6c516954fe6c349bb8bda0d6640215ea, type: 3}
+  icon: {fileID: 21300000, guid: 0ae5710b3fb9b4e0a98ec7357a1e29fc, type: 3}
   minUpgradeRatio: 0.9
   maxUpgradeRatio: 0.9
   description: "\uD37C\uC9C0\uB294 \uD3ED\uBC1C\uC744 \uC0AC\uBC29\uC73C\uB85C \uBC1C\uC0AC"
