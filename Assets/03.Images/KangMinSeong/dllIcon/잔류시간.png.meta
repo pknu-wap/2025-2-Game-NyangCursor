@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c2c7eb8a4576b5048ba75d09ef8b97a2
+guid: 2ed0e4b450936404dbfb89a2a1499d6f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4085272051784911184
-    second: Gemini_Generated_Image_f8c2bsf8c2bsf8c2_0
+      213: 4733421927566138990
+    second: "\u110C\u1161\u11AB\u1105\u1172\u1109\u1175\u1100\u1161\u11ABcd_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -96,43 +96,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: iOS
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Gemini_Generated_Image_f8c2bsf8c2bsf8c2_0
+      name: "\u110C\u1161\u11AB\u1105\u1172\u1109\u1175\u1100\u1161\u11ABcd_0"
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1088
-        height: 960
+        width: 1024
+        height: 1024
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -141,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0598871594dc1b830800000000000000
-      internalID: 4085272051784911184
+      spriteID: e6edf941a2e70b140800000000000000
+      internalID: 4733421927566138990
       vertices: []
       indices: 
       edges: []
@@ -151,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Gemini_Generated_Image_f8c2bsf8c2bsf8c2_0: 4085272051784911184
+      "\u110C\u1161\u11AB\u1105\u1172\u1109\u1175\u1100\u1161\u11ABcd_0": 4733421927566138990
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
