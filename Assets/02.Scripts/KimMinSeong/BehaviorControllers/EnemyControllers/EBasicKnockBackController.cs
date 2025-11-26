@@ -26,7 +26,7 @@ public class EBasicKnockBackController : MonoBehaviour, IKnockbackable
 
     public void Cleanup()
     {
-        rb = null;
+        //rb = null;
     }
 
     public void ApplyKnockback(Vector2 sourcePosition, float power, float playerSpeed = 0f)

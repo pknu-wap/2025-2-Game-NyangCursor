@@ -19,14 +19,13 @@ namespace MagicArsenal
             // Projectile Particle 생성
             if (projectileParticle)
             {
-                projectileParticle = Instantiate(projectileParticle, myTransform.position, myTransform.rotation);
-                projectileParticle.transform.parent = myTransform;
+                projectileParticle = Instantiate(projectileParticle, myTransform.position, myTransform.rotation, myTransform);
             }
 
             // Muzzle Particle 생성
             if (muzzleParticle)
             {
-                muzzleParticle = Instantiate(muzzleParticle, myTransform.position, myTransform.rotation);
+                muzzleParticle = Instantiate(muzzleParticle, myTransform.position, myTransform.rotation, myTransform);
                 Destroy(muzzleParticle, 1.5f);
             }
 

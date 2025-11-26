@@ -13,6 +13,9 @@ public class StageFlowManager : MonoBehaviour
         End       // 게임 종료
     }
 
+    // 데모를 위한 임시 삭제제단 변수입니다. 추후 삭제 예정
+    [SerializeField] private GameObject removeAltar;
+
     public StageState CurrentState { get; private set; }
 
     public static event Action<StageState> OnStageStateChanged;
@@ -75,6 +78,21 @@ public class StageFlowManager : MonoBehaviour
                 SetStateToPlay();
             }
         }
+        // 데모를 위한 임시 단축키
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            if (CurrentState == StageState.Play)
+            {
+                // UI 활성화
+                removeAltar.SetActive(true);
+                SetStateToAltar();
+            }
+            else if(CurrentState ==StageState.Altar)
+            {
+                removeAltar.SetActive(false);
+                SetStateToPlay();
+            }
+        }
         if (Input.GetKeyDown(KeyCode.O))
         {
             GoToLobby();
@@ -95,15 +113,15 @@ public class StageFlowManager : MonoBehaviour
                 break;
 
             case StageState.Augment:
-                 Time.timeScale = 0f;
+                Time.timeScale = 0f;
                 break;
             case StageState.Pause:
                 Time.timeScale = 0f;
                 break;
 
             case StageState.Altar:
-                Time.timeScale = 0f; 
-                   break;
+                Time.timeScale = 0f;
+                break;
 
             case StageState.End:
                 // 필요시 따로 제어 가능 (기본은 1)

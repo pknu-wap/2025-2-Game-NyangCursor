@@ -123,14 +123,9 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
             {
                 // 레벨은 항상 1씩 증가
                 currentLevel++;
-
-                // 2레벨당 한 번씩(2, 4, 6, ...) 업그레이드
-                if (currentLevel % 2 == 0)
-                {
-                    currentProjectileSpeed += 1f;
-                    currentProjectileCount += 1;
-                    statValues[SkillStatKey.ProjectileCount] += 1;
-                }
+                currentProjectileSpeed += 1f;
+                currentProjectileCount += 1;
+                statValues[SkillStatKey.ProjectileCount] += 1;
             }
         }
 
@@ -141,6 +136,7 @@ public class PlayerSkill1 : MonoBehaviour, ISkill
         if (key == SkillStatKey.Cooldown)
         {
             statValues[key] -= data.upgradeRatio;
+            statValues[key] = Mathf.Max(statValues[key], 0.4f); // 최소 0.5 제한
         }
         else
         {

@@ -316,29 +316,61 @@ public class PlayerSkil7 : MonoBehaviour, ISkill
         var emission = firePS.emission;
         var shape = firePS.shape;
 
-        // ==================== 1. 투사체 크기 적용 ====================
-        // ProjectileSize 증가 → angle 확대, startSize 확대
-        shape.angle = shape.angle * currentProjectileSize;
+        // ============================
+        //  0. 기준값
+        // ============================
+        const float baseMinLifetime = 0.35f;
+        const float baseMaxLifetime = 0.50f;
 
-        // 현재 startSpeed가 constant인지 확인 후 값을 꺼내기
-        float baseSpeed = main.startSpeed.constant;
+        const float baseAngle = 5f;
+        const float baseRate = 100f;
 
+        // 최대 값
+        const float maxMinLifetime = 0.8f;
+        const float maxMaxLifetime = 1.0f;
+
+        const float maxAngle = 30f;
+        const float maxRate = 450f;
+
+        // 스탯 비율
         float rangeFactor = currentRange / baseRange;
-        main.startSpeed = baseSpeed * rangeFactor;
-
-        // ==================== 3. Emission rate 보정 ====================
-        // 크기, 범위 변화에 따라 자연스럽게 rate 조정
-        float baseRate = emission.rateOverTime.constant;
         float sizeFactor = currentProjectileSize;
-        emission.rateOverTime = baseRate * Mathf.Sqrt(sizeFactor) * Mathf.Sqrt(rangeFactor);
 
-        // ==================== 4. 데미지는 FireDamageParticle에서 처리 ====================
+        // ============================
+        // 1. Start Lifetime (사거리)
+        // ============================
+        float newMinLife = baseMinLifetime * rangeFactor;
+        float newMaxLife = baseMaxLifetime * rangeFactor;
+
+        // Clamp
+        newMinLife = Mathf.Min(newMinLife, maxMinLifetime);
+        newMaxLife = Mathf.Min(newMaxLife, maxMaxLifetime);
+
+        main.startLifetime = new ParticleSystem.MinMaxCurve(newMinLife, newMaxLife);
+
+        // ============================
+        // 2. Angle (범위)
+        // ============================
+        float newAngle = baseAngle * sizeFactor;
+        shape.angle = Mathf.Clamp(newAngle, 0f, maxAngle);
+
+        // ============================
+        // 3. Rate Over Time (파티클 수)
+        // ============================
+        float newRate = baseRate * Mathf.Sqrt(sizeFactor) * Mathf.Sqrt(rangeFactor);
+        emission.rateOverTime = Mathf.Clamp(newRate, 0f, maxRate);
+
+        // ============================
+        // 4. 데미지 반영
+        // ============================
         var fireDamage = firePS.GetComponent<FireDamageParticle>();
         if (fireDamage != null)
         {
             fireDamage.damagePerTick = currentDamage;
         }
     }
+
+
 
     private void ResetParticleStats()
     {
@@ -348,19 +380,30 @@ public class PlayerSkil7 : MonoBehaviour, ISkill
         var emission = firePS.emission;
         var shape = firePS.shape;
 
-        // PS 기본값 초기화
-        main.startSize = 1.8f;
-        main.startSpeed = 40f;
-        shape.angle = 20f;
-        emission.rateOverTime = 200f;
+        // 0. PS 기본값 (Update와 동일)
+        const float baseMinLifetime = 0.35f;
+        const float baseMaxLifetime = 0.50f;
 
-        // Damage 초기화
+        const float baseAngle = 5f;
+        const float baseRate = 100f;
+
+        // 1. Lifetime 초기화
+        main.startLifetime = new ParticleSystem.MinMaxCurve(baseMinLifetime, baseMaxLifetime);
+
+        // 2. Angle 초기화
+        shape.angle = baseAngle;
+
+        // 3. Rate Over Time 초기화
+        emission.rateOverTime = baseRate;
+
+        // 4. 데미지 리셋
         var fireDamage = firePS.GetComponent<FireDamageParticle>();
         if (fireDamage != null)
             fireDamage.damagePerTick = baseDamage;
 
-        // PS 끄기
+        // 6. 파티클 시스템 비활성화
         fireThrowerInstance.SetActive(false);
     }
+
 
 }
