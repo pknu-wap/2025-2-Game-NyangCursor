@@ -12,14 +12,14 @@ public class LoadText : MonoBehaviour
     void Start()
     {
         loadtext = GetComponent<TextMeshProUGUI>();
-        rand = Random.Range(1, 8);
+        rand = Random.Range(1, 2);
         switch (rand)
         {
             case 1:
-                loadtext.text = "ufo 쥐 군단 잡으로 가는중..";
+                loadtext.text = "쥐 군단 잡으로 가는중..";
                 break;
             case 2:
-                loadtext.text = "ufo 쥐 군단 잡으로 가는중..";
+                loadtext.text = "쥐 군단 잡으로 가는중..";
                 break;
             case 3:
                 loadtext.text = "커서에서 내릴때 구멍을 조심하세요!";
