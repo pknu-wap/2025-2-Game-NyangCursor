@@ -3,7 +3,8 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System;
-using DG.Tweening;   // 꼭 필요
+using DG.Tweening;
+using UnityEngine.SceneManagement;   // 꼭 필요
 
 public class CharacterSelectManager : MonoBehaviour
 {
@@ -181,7 +182,7 @@ public class CharacterSelectManager : MonoBehaviour
          OnLobbyRidingStart?.Invoke();
 
         //로드 씬 이동
-       
+        
     }
 
 

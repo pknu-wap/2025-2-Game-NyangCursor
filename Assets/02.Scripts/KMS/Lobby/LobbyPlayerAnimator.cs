@@ -87,6 +87,9 @@ public class LobbyPlayerAnimator : MonoBehaviour
         //페이드아웃
         fadeOut.SetActive(true);
 
+        yield return new WaitForSeconds(1);
+
+        LoadingScene.Nextloading("#117");
     }
 
     public void HandleHitAnim()

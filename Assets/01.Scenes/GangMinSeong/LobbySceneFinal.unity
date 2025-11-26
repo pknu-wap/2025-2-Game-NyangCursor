@@ -34505,6 +34505,7 @@ MonoBehaviour:
   normalRate: 70
   rareRate: 25
   legendaryRate: 5
+  statDisplayMappings: []
 --- !u!95 &2129793655
 Animator:
   serializedVersion: 7
