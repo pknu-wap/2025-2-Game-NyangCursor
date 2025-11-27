@@ -425,7 +425,7 @@ public class PlayerSkill6 : MonoBehaviour, ISkill
         {
             if (hit.collider == null) continue;
 
-            EBasicHpController hp = hit.collider.GetComponent<EBasicHpController>();
+            IDamageable hp = hit.collider.GetComponent<IDamageable>();
             if (hp != null)
             {
                 // 데미지 적용
