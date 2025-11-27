@@ -21,6 +21,10 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
     [Header("플레이어 참조")]
     [SerializeField] private Transform playerTransform;
 
+    public GameObject fireCircleInstance;
+
+     private ParticleSystem firePS; //파티클
+
     private int currentLevel = 1;
     private string skillName;
     private Coroutine passiveRoutine;
@@ -45,6 +49,10 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
         statValues[SkillStatKey.Range] = baseRange;
 
         SyncCurrentValues();
+
+             GameObject  firceCircle = Instantiate(fireCircleInstance);
+            firePS = firceCircle.GetComponent<ParticleSystem>();
+
     }
 
     private void OnEnable()
@@ -87,17 +95,48 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
         passiveRoutine = StartCoroutine(PassiveLoop(currentCooldown, cdUI, hasCooldownStat));
     }
 
-    private IEnumerator PassiveLoop(float cd, SkillCooldownUI cdUI, bool showUI)
+    private IEnumerator PassiveLoop(float cooldown, SkillCooldownUI cdUI, bool showUI)
     {
+        // while (true)
+        // {
+        //     FireCircleActive();
+        //     Debug.Log($"{skillName} (패시브 효과 발동 중...)");
+        //     // 쿨다운 StatKey가 있는 경우만 UI 표시
+        //     if (showUI)
+        //         cdUI?.StartCooldown(cd);
+
+        //     yield return new WaitForSeconds(cd);
+        // }
+
         while (true)
         {
-            FireCircleActive();
-            Debug.Log($"{skillName} (패시브 효과 발동 중...)");
-            // 쿨다운 StatKey가 있는 경우만 UI 표시
-            if (showUI)
-                cdUI?.StartCooldown(cd);
+            Debug.Log("루프 시작");
+            // 1 화염방사기 켬
+            fireCircleInstance.SetActive(true);
 
-            yield return new WaitForSeconds(cd);
+            // UI 쿨다운 시작
+            if (showUI)
+                cdUI?.StartCooldown(cooldown);
+
+            // 2 지속시간 동안 대기
+            float timer = 0f;
+            while (timer < currentDuration)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
+
+            // 3 지속시간 끝나면 화염방사기 끔
+            var fireDamage = firePS.GetComponent<FireDamageParticle>();
+            fireDamage.SetDeactive();
+            fireCircleInstance.SetActive(false);
+
+            // 4 쿨타임 > 지속시간일 경우 남은 쿨타임만큼 대기
+            float remainingCooldown = Mathf.Max(0f, cooldown - currentDuration);
+            if (remainingCooldown > 0f)
+                yield return new WaitForSeconds(remainingCooldown);
+
+            // 1번으로 다시 루프
         }
     }
 
@@ -112,15 +151,16 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
         int prefabIndex = Mathf.Clamp((currentLevel - 1) / 2, 0, fireCirclePrefabs.Count - 1);
         GameObject prefab = fireCirclePrefabs[prefabIndex];
 
-        GameObject circle = Instantiate(prefab, transform.position, Quaternion.identity);
+         //레거시 
+        //GameObject circle = Instantiate(prefab, transform.position, Quaternion.identity);
 
-        if (circle.TryGetComponent<CircleSkillLogic>(out var logic))
-        {
-            // 플레이어의 Transform을 넘겨서 따라가게
-            logic.Initialize(currentDamage, currentSpeed, currentRange, transform);
-        }
+        // if (circle.TryGetComponent<CircleSkillLogic>(out var logic))
+        // {
+        //     // 플레이어의 Transform을 넘겨서 따라가게
+        //     logic.Initialize(currentDamage, currentSpeed, currentRange, transform);
+        // }
 
-        Destroy(circle, currentDuration);
+        //Destroy(circle, currentDuration);
     }
 
     public void ApplyUpgrade(UpgradeEventData data)

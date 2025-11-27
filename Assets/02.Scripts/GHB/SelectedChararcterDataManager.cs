@@ -6,6 +6,10 @@ public class SelectedChararcterDataManager : MonoBehaviour
 
     [HideInInspector] // 인위적 조작 방지를 위한 하이드 인 인스펙터
     public UpgradeOptionSO selectedStartData;
+
+    public CharacterDataSO characterDataSO;
+
+
     
     void Awake()
     {
