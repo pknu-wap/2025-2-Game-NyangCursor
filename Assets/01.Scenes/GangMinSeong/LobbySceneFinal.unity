@@ -23296,6 +23296,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selectedStartData: {fileID: 0}
+  characterDataSO: {fileID: 0}
 --- !u!4 &1470002444
 Transform:
   m_ObjectHideFlags: 0

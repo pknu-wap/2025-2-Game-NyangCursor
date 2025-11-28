@@ -21,7 +21,8 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
     [Header("플레이어 참조")]
     [SerializeField] private Transform playerTransform;
 
-    public GameObject fireCircleInstance;
+    public GameObject fireCirclePrefab;
+    private GameObject fireCircleInstance;
 
      private ParticleSystem firePS; //파티클
 
@@ -34,7 +35,6 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
     public float currentDamage { get; private set; }
     public float currentCooldown { get; private set; }
     public float currentDuration { get; private set; }
-    public float currentSpeed { get; private set; }
     public float currentRange { get; private set; }
     public List<SkillStatKey> UsedStats => usedStats;
     public int CurrentLevel { get => currentLevel; set => currentLevel = value; }
@@ -45,15 +45,25 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
         statValues[SkillStatKey.Damage] = baseDamage;
         statValues[SkillStatKey.Cooldown] = baseCooldown;
         statValues[SkillStatKey.Duration] = baseDuration;
-        statValues[SkillStatKey.Speed] = baseSpeed;
         statValues[SkillStatKey.Range] = baseRange;
 
         SyncCurrentValues();
 
-             GameObject  firceCircle = Instantiate(fireCircleInstance);
-            firePS = firceCircle.GetComponent<ParticleSystem>();
+             fireCircleInstance = Instantiate(fireCirclePrefab);
+
+        Transform flameTransform = fireCircleInstance.transform.Find("Ember");
+            firePS = flameTransform.GetComponent<ParticleSystem>();
+        fireCircleInstance.SetActive(false);
+
+        UpdateParticleStats();
 
     }
+
+    void Update()
+    {
+       fireCircleInstance.transform.position = playerTransform.position;
+    }
+
 
     private void OnEnable()
     {
@@ -75,7 +85,6 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
         currentDamage = statValues[SkillStatKey.Damage];
         currentCooldown = statValues[SkillStatKey.Cooldown];
         currentDuration = statValues[SkillStatKey.Duration];
-        currentSpeed = statValues[SkillStatKey.Speed];
         currentRange = statValues[SkillStatKey.Range];
     }
 
@@ -188,6 +197,8 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
 
         SyncCurrentValues();
         Debug.Log($"[FireCircleSkill] 강화 적용: {key} {(key == SkillStatKey.Cooldown ? "-" : "+")}{ratio:P1} → {statValues[key]:F2}");
+
+        UpdateParticleStats();
     }
 
     public void SetSkill(string skillName)
@@ -197,16 +208,25 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
 
     public void ResetSkill()
     {
-        StopAllCoroutines();
+        foreach (SkillStatKey key in Enum.GetValues(typeof(SkillStatKey)))
+        {
+            statValues[key] = key switch
+            {
+                // 스킬에서 사용하는 스탯에 따라 커스터마이징 하면 됩니다.
+                SkillStatKey.Damage => baseDamage,
+                SkillStatKey.Cooldown => baseCooldown,
+                SkillStatKey.Range => baseRange,
+                SkillStatKey.Duration => baseDuration,
+                _ => 0f
+            };
+        }
         currentLevel = 1;
+        currentDamage = baseDamage;
+        currentCooldown = baseCooldown;
+        currentRange = baseRange;
 
-        statValues[SkillStatKey.Damage] = baseDamage;
-        statValues[SkillStatKey.Cooldown] = baseCooldown;
-        statValues[SkillStatKey.Duration] = baseDuration;
-        statValues[SkillStatKey.Speed] = baseSpeed;
-        statValues[SkillStatKey.Range] = baseRange;
-
-        SyncCurrentValues();
+        StopAllCoroutines();
+        passiveRoutine = null;
     }
 
     public void HandleStateChanged(PlayerStateLogic.PlayerState newState)
@@ -227,6 +247,7 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
             if (passiveRoutine != null)
             {
                 StopCoroutine(passiveRoutine);
+                fireCircleInstance.SetActive(false);
                 passiveRoutine = null;
                 Debug.Log($"[Skill] {skillName} | PassiveRoutine stopped due to disallowed state");
             }
@@ -273,4 +294,40 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
         return state == PlayerStateLogic.PlayerState.OverDrive ||
                state == PlayerStateLogic.PlayerState.Berserk;
     }
+
+    private void UpdateParticleStats()
+    {
+        if (firePS == null) return;
+
+        // ============================
+        // 사거리 → 크기 반영
+        // ============================
+
+        // 기준 스케일(레벨 1일 때)
+        const float baseScale = 1f;
+
+        // Range가 올라갈 때 스케일 증가량 (원하는 대로 조절 가능)
+        const float scalePerRange = 1f;  // range 1 증가마다 +0.5 크기 증가
+
+        // 공식
+        float newScale = baseScale + (currentRange - 1f) * scalePerRange;
+
+        // 실제 오브젝트에 스케일 적용
+        if (fireCircleInstance != null)
+        {
+            fireCircleInstance.transform.localScale = new Vector3(newScale, newScale, newScale);
+        }
+
+
+
+        // ============================
+        // 데미지 반영
+        // ============================
+        var fireDamage = firePS.GetComponent<FireDamageParticle>();
+        if (fireDamage != null)
+        {
+            fireDamage.damagePerTick = currentDamage;
+        }
+    }
+
 }

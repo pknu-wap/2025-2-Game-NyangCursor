@@ -102,4 +102,5 @@ public class FireDamageParticle : MonoBehaviour
             yield return new WaitForSeconds(tickRate);
         }
     }
+
 }

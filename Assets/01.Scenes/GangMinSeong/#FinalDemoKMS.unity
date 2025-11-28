@@ -186886,13 +186886,14 @@ MonoBehaviour:
   baseDuration: 3
   baseSpeed: 1
   baseRange: 1
-  usedStats: 0000000001000000030000000200000009000000
+  usedStats: 00000000010000000300000002000000
   fireCirclePrefabs:
   - {fileID: 8197433914150080023, guid: 27d3d650e645040229ac5829de3c4037, type: 3}
   - {fileID: 3055438259362450278, guid: 7e11da6efddcdde42a8336b39a59d75f, type: 3}
   - {fileID: 433010636056306860, guid: 52f0a0482b055294c93e51f2fee07be1, type: 3}
   - {fileID: 4154280995557591761, guid: 329f63bb6eebd3e4b92c239b0045c1b1, type: 3}
   playerTransform: {fileID: 1979479470}
+  fireCirclePrefab: {fileID: 8197433914150080023, guid: 27d3d650e645040229ac5829de3c4037, type: 3}
 --- !u!1 &921878930
 GameObject:
   m_ObjectHideFlags: 0
@@ -187029,7 +187030,7 @@ Transform:
   m_GameObject: {fileID: 933587634}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -662284,7 +662285,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -29.899994}
+  m_AnchoredPosition: {x: 0, y: -29.900024}
   m_SizeDelta: {x: 300, y: 100}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &1940415954
