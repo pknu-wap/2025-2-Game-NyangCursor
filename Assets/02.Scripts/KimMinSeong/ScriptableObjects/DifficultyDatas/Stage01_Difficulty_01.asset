@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa29ccb581ebba54f95c990b6ca032fa, type: 3}
   m_Name: Stage01_Difficulty_01
   m_EditorClassIdentifier: 
-  startTimeMinutes: 1
+  startTimeMinutes: 0
   spawnableEnemies:
   - enemyPrefab: {fileID: 1146727613942615151, guid: dbe13d43ab80f134d83301055740344e, type: 3}
     spawnWeight: 1
