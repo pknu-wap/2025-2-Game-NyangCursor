@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa29ccb581ebba54f95c990b6ca032fa, type: 3}
+  m_Name: Stage01_Difficulty_03
+  m_EditorClassIdentifier: 
+  startTimeMinutes: 2
+  spawnableEnemies:
+  - enemyPrefab: {fileID: 1146727613942615151, guid: dbe13d43ab80f134d83301055740344e, type: 3}
+    spawnWeight: 4
+  - enemyPrefab: {fileID: 1642993225890707820, guid: 063639f2ca3347c45aa33eedf847accc, type: 3}
+    spawnWeight: 2
+  - enemyPrefab: {fileID: 4814969749798417926, guid: 1f3f32abaa285604db1b86cded73de32, type: 3}
+    spawnWeight: 4
+  spawnPeriod: 0.25
+  maxEnemies: 200

@@ -3,46 +3,46 @@ using UnityEngine;
 
 public class DifficultyManager : MonoBehaviour
 {
-    [Header("난이도가 증가하는 지점(분 단위)")]
-    [SerializeField] private List<float> difficultyIncreaseMinutes = new List<float>();
-    private List<float> difficultyIncreaseTimes;
-    private int currentIndex = 0;
+    [Header("참조하는 오브젝트들")]
+    [SerializeField] private TimerManager timerManager; // 직접 참조
+    [SerializeField] private EnemyManager enemyManager; // 직접 참조
+
+    [Header("이 스테이지에서 사용하는 난이도들")]
+    [SerializeField] private List<DifficultyData> difficulties;
+
+    private int currentIndex = -1;    // 현재 난이도
+
+    // 현재 난이도를 외부에서 읽을 수 있도록 하는 프로퍼티
+    public DifficultyData CurrentDifficulty => currentIndex >= 0 ? difficulties[currentIndex] : null;
+
+    void Awake()
+    {
+        // 오름차순 정렬
+        difficulties.Sort((a, b) => a.startTimeMinutes.CompareTo(b.startTimeMinutes));
+
+        // 리스트가 비어있지 않다면 첫 번째 난이도로 초기화
+        if (difficulties.Count > 0)
+            currentIndex = 0;
+    }
 
     void Start()
     {
-        difficultyIncreaseTimes = new List<float>(difficultyIncreaseMinutes.Count);
-        for (int i = 0; i < difficultyIncreaseMinutes.Count; i++)
+        // 트리거 시간 등록
+        // 이때 첫 번째 난이도는 이미 적용되어 있으므로 스킵
+        for (int i = 1; i < difficulties.Count; ++i)
         {
-            difficultyIncreaseTimes.Add(difficultyIncreaseMinutes[i] * 60f);
-        }
-
-    }
-
-    void OnEnable()
-    {
-        TimerManager.OnTimerTick += HandleTimerTick;
-    }
-
-    void OnDisable()
-    {
-        TimerManager.OnTimerTick -= HandleTimerTick;
-    }
-
-    private void HandleTimerTick(float elapsedTime)
-    {
-        if (currentIndex >= difficultyIncreaseTimes.Count) return;
-
-        if (elapsedTime >= difficultyIncreaseTimes[currentIndex])
-        {
-            IncreaseDifficulty();
-            currentIndex++;
+            int index = i;
+            float triggerTime = difficulties[i].StartTimeSeconds;
+            timerManager.RegisterTrigger(triggerTime, () => ApplyDifficulty(index));
         }
     }
 
-    public void IncreaseDifficulty()
+    private void ApplyDifficulty(int index)
     {
-        Debug.Log("난이도 증가 로그");
-        // 타이머 매니저와 난이도 매니저는 역할이 연결되지만, 구분되어야 한다고 생각하여 스크립트 분리
-        // 난이도 매니저를 통한 적 생성 매니저의 변수 값 변경
+        currentIndex = index;
+        DifficultyData data = difficulties[index];
+
+        Debug.Log($"난이도가 변경됨! 현재 단계 = {currentIndex}");
+        enemyManager.ApplyDifficulty(data);
     }
 }
