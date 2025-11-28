@@ -9,7 +9,6 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
     [SerializeField] private float baseDamage = 2f;
     [SerializeField] private float baseCooldown = 5f;
     [SerializeField] private float baseDuration = 3f;
-    [SerializeField] private float baseSpeed = 1f;
     [SerializeField] private float baseRange = 1f;
 
     [Header("이 스킬이 사용하는 공용 스탯 키들")]
