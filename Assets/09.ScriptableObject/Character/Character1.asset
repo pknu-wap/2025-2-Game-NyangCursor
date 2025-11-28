@@ -15,4 +15,4 @@ MonoBehaviour:
   characterName: "\uD551\uD06C \uCEE4\uC11C"
   characterImage: {fileID: 6554736390298987251, guid: 64f2040adef46e447a6a9820a21c7eb5, type: 3}
   characterDescription: "\uAE30\uBCF8 \uCEE4\uC11C"
-  startingSkill: {fileID: 11400000, guid: 43e9bd1ac45fbae40bf837a6cbbb440f, type: 2}
+  startingSkill: {fileID: 11400000, guid: d417747e38c28de4ab1721e6feab8ffa, type: 2}

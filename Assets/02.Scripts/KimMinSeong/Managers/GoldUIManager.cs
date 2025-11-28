@@ -7,6 +7,8 @@ public class GoldUIManager : MonoBehaviour
 
     public void UpdateGoldUI(int savedGold, int earnedGold)
     {
-        goldText.text = $"savedGold:${savedGold} / earnedGold:${earnedGold}";
+        //goldText.text = $"savedGold:${savedGold} / earnedGold:${earnedGold}";
+        goldText.text = $"{earnedGold}";
+
     }
 }

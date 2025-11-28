@@ -51,7 +51,7 @@ public class InGameUIManager : MonoBehaviour
         int milliseconds = Mathf.FloorToInt(survivedTime * 1000f % 1000f / 10f);
 
         clearTimeText.text = $"생존 시간 : {minutes:00}:{seconds:00}:{milliseconds:00}";
-        rewardText.text = $"획득 보상 : {reward} G";
+        rewardText.text = $"획득 치즈 : {reward}";
 
         if (isCleared)
         {

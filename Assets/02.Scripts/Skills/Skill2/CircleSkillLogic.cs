@@ -48,10 +48,10 @@ public class CircleSkillLogic : MonoBehaviour
 
        Debug.Log("데미지: " + damage + "스피드 : " + speed + "범위 :" + range);
         // 회전 속도 조정
-        AdjustParticleRotationSpeed();
+        //AdjustParticleRotationSpeed();
 
         // 범위 확장 시작
-        StartCoroutine(ExpandRange());
+        //StartCoroutine(ExpandRange());
 
         // 공격 루프 시작
         if (damageLoop == null)

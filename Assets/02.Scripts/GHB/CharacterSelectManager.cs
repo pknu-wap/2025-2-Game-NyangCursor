@@ -175,8 +175,9 @@ public class CharacterSelectManager : MonoBehaviour
 
     private void GameStart(CharacterDataSO selected)
     {
-
+       //시작 캐릭터 so넘겨주기
         SelectedChararcterDataManager.instance.selectedStartData = selected.startingSkill;
+        SelectedChararcterDataManager.instance.characterDataSO = selected;
         characterSelectPanel.SetActive(false);//캐릭터 선택창 끄기
         //고양이 커서 타는 연출 
          OnLobbyRidingStart?.Invoke();

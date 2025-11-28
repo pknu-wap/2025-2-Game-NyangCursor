@@ -12,4 +12,11 @@ public class TempReloadScene : MonoBehaviour
         SceneManager.LoadScene(currentScene.name);
         Time.timeScale = 1.0f;
     }
+
+    public void MoveLobby()
+    {
+        SceneManager.LoadScene("LobbySceneFinal");
+        SceneManager.LoadScene("LobbySceneFinal");
+        Time.timeScale = 1.0f;
+    }
 }

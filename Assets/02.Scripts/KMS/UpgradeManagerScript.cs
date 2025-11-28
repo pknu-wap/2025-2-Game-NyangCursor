@@ -145,9 +145,38 @@ public class UpgradeManager : MonoBehaviour
         if (slotUI.skillnameText != null)
         {
             string extension = data.isSkill ? ".exe" : ".dll";
-            string displayName = $"[{data.optionName}{extension}]";
-            slotUI.rarityText.text = $"[{rarity}]";
+            string displayName = $"{data.optionName}{extension}";
             slotUI.skillnameText.text = displayName;
+
+            // 등급 표기
+            slotUI.rarityText.text = $"[{rarity}]";
+
+            // 🔥 등급별 색상 적용
+            switch (rarity)
+            {
+                case UpgradeRarity.Normal:
+                    //slotUI.skillnameText.color = Color.white;
+                    slotUI.rarityText.color = Color.white;
+                    slotUI.statText.color = Color.white;
+                    break;
+
+                case UpgradeRarity.Rare:
+                    //slotUI.skillnameText.color = new Color32(180, 100, 255, 255);
+                    slotUI.rarityText.color = new Color32(180, 100, 255, 255);
+                    slotUI.statText.color = new Color32(180, 100, 255, 255);
+                    break;
+
+                case UpgradeRarity.Legendary:
+                    //slotUI.skillnameText.color = new Color32(255, 220, 80, 255);
+                    slotUI.rarityText.color = new Color32(255, 220, 80, 255);
+                    slotUI.statText.color = new Color32(255, 220, 80, 255);
+                    break;
+
+                default:
+                    slotUI.skillnameText.color = Color.white;
+                    slotUI.rarityText.color = Color.white;
+                    break;
+            }
         }
 
         // 레벨 텍스트 설정
@@ -162,12 +191,12 @@ public class UpgradeManager : MonoBehaviour
                 }
                 else
                 {
-                    slotUI.levelText.text = "Locked";
+                    slotUI.levelText.text = "Unlock";
                 }
             }
             else
             {
-                slotUI.levelText.text = "-";
+                slotUI.levelText.text = "";
             }
         }
 
