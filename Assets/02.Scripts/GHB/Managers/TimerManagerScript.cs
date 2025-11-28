@@ -1,5 +1,6 @@
-﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class TimerManager : MonoBehaviour
 {
@@ -14,6 +15,11 @@ public class TimerManager : MonoBehaviour
 
     private bool isPaused = false;
     private bool isCleared = false;
+
+    // 트리거 시스템
+    private Dictionary<float, Action> triggerCallbacks = new Dictionary<float, Action>();
+    private List<float> pendingTriggerTimes = new List<float>();
+
 
     // 외부에서 읽기 가능하도록 프로퍼티 추가
     public float CurrentTime => currentTime;
@@ -41,12 +47,35 @@ public class TimerManager : MonoBehaviour
         // UI에 실시간 전달
         OnTimerTick?.Invoke(currentTime);
 
+        // 트리거 체크
+        for (int i = pendingTriggerTimes.Count - 1; i >= 0; --i)
+        {
+            float triggerTime = pendingTriggerTimes[i];
+            if (currentTime >= triggerTime)
+            {
+                triggerCallbacks[triggerTime]?.Invoke();
+                pendingTriggerTimes.RemoveAt(i);
+            }
+        }
+
         // 클리어 조건
         if (currentTime >= clearSeconds && !isCleared)
         {
             isCleared = true;
             Debug.Log("스테이지 클리어!");
             StageFlowManager.instance.SetStateToEnd();
+        }
+    }
+
+    // 특정 시간에 콜백을 등록하는 함수
+    public void RegisterTrigger(float timeSeconds, Action callback)
+    {
+        if (triggerCallbacks.ContainsKey(timeSeconds))
+            triggerCallbacks[timeSeconds] += callback;
+        else
+        {
+            triggerCallbacks[timeSeconds] = callback;
+            pendingTriggerTimes.Add(timeSeconds);
         }
     }
 
