@@ -226,6 +226,7 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
 
         StopAllCoroutines();
         passiveRoutine = null;
+        ResetParticleStats();
     }
 
     public void HandleStateChanged(PlayerStateLogic.PlayerState newState)
@@ -327,6 +328,18 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
         {
             fireDamage.damagePerTick = currentDamage;
         }
+    }
+
+    void ResetParticleStats()
+    {
+
+        //크기 리셋
+        fireCircleInstance.transform.localScale = new Vector3(1, 1, 1);
+
+        // 데미지 리셋
+        var fireDamage = firePS.GetComponent<FireDamageParticle>();
+        if (fireDamage != null)
+            fireDamage.damagePerTick = baseDamage;
     }
 
 }

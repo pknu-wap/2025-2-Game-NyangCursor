@@ -197,7 +197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minDropCount: 1
-  maxDropCount: 10
+  maxDropCount: 4
   minScatterForce: 1
   maxScatterForce: 10
   dropEntities:

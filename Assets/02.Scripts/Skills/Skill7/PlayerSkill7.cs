@@ -256,7 +256,8 @@ public class PlayerSkil7 : MonoBehaviour, ISkill
             if (passiveRoutine != null)
             {
                 StopCoroutine(passiveRoutine);
-                fireThrowerInstance.SetActive(false);
+                
+
                 passiveRoutine = null;
                 Debug.Log($"[Skill] {skillName} | PassiveRoutine stopped due to disallowed state");
             }

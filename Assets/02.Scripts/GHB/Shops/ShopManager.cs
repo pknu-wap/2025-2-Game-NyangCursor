@@ -105,7 +105,7 @@ public class ShopManager : MonoBehaviour
         lobbyUI.SetActive(true);
     }
 
-    void Update()
+/*    void Update()
     {
         // 닫기
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -126,5 +126,5 @@ public class ShopManager : MonoBehaviour
                 Debug.Log($"{statKey} : {val}");
             }
         }
-    }
+    }*/
 }
