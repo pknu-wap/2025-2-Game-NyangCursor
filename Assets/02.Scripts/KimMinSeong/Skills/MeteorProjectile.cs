@@ -2,97 +2,73 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MeteorProjectile : MonoBehaviour, IProjectile
+public class MeteorProjectile : MonoBehaviour
 {
     [Header("적 레이어 지정")]
     [SerializeField] private LayerMask targetLayer;
 
     [Header("메테오 설정")]
-    [SerializeField] private float explosionDuration = 1f; // 폭발 지속 시간
+    [SerializeField] private float explosionRadius = 2f; // 폭발 반경
+
+    [Header("파티클 관련")]
+    [SerializeField] private GameObject explosionParticle; // 폭발 파티클
 
     private float damage;
-    private Coroutine explosionCoroutine;
-    private HashSet<GameObject> damagedEnemies = new HashSet<GameObject>(); // 중복 피해 방지
-
-    [SerializeField] private GameObject muzzleParticlePrefab; // 소환 시 이펙트
-    [SerializeField] private GameObject explosionParticlePrefab; // 폭발 이펙트
-
-    public void SetDamage(float damage)
-    {
-        this.damage = damage;
-    }
-
-    public void SetDuration(float duration)
-    {
-    }
-
-    public void SetSize(float size)
-    {
-    }
 
     public void Initialize(float damage, Vector3 targetPos)
     {
-        // 데미지 설정
-        SetDamage(damage);
-
-        // 중복 피해 방지용 리스트 초기화
-        damagedEnemies.Clear();
-
-        // 폭발 이펙트 생성
-        GameObject explosionVFX = Instantiate(explosionParticlePrefab, transform.position, Quaternion.identity);
-        Destroy(explosionVFX, 2f);
-
-        // 후속 이펙트 생성
-        GameObject muzzleVFX = Instantiate(muzzleParticlePrefab, transform.position, transform.rotation);
-        Destroy(muzzleVFX, 2f);
-
-        // 폭발 코루틴 시작
-        if (explosionCoroutine != null)
-        {
-            StopCoroutine(explosionCoroutine);
-        }
-        explosionCoroutine = StartCoroutine(ExplodeCoroutine());
+        this.damage = damage;
+        Explode();
     }
 
     private void OnDisable()
     {
         damage = 0;
-        damagedEnemies.Clear();
-
-        if (explosionCoroutine != null)
-        {
-            StopCoroutine(explosionCoroutine);
-            explosionCoroutine = null;
-        }
     }
 
-    private IEnumerator ExplodeCoroutine()
+    private void Explode()
     {
-        // 폭발 이펙트가 재생되는 동안 대기
-        yield return new WaitForSeconds(explosionDuration);
+        // 폭발 파티클 생성
+        GameObject explosion = PoolManager.instance.Spawn(explosionParticle, transform.position);
+        StartCoroutine(DespawnParticle(explosion));
 
-        // 풀로 반환
+        // 폭발 범위 내의 타겟 감지
+        Collider2D[] targets = Physics2D.OverlapCircleAll(transform.position, explosionRadius, targetLayer);
+
+        foreach (var target in targets)
+        {
+            if (targetLayer.Contains(target.gameObject))
+            {
+                IDamageable damageable = target.GetComponent<IDamageable>();
+                if (damageable != null && !damageable.IsDead)
+                    damageable.TakeDamage(damage);
+            }
+        }
+
+        // 풀로 복귀
         PoolManager.instance.Despawn(this.gameObject);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    // 파티클 시스템이 끝날 때까지 대기한 후 풀로 복귀하는 코루틴
+    private IEnumerator DespawnParticle(GameObject particle)
     {
-        // LayerMaskHelper를 사용하여 targetLayer에 포함되는지 확인
-        if (!targetLayer.Contains(other.gameObject.layer))
-            return;
+        ParticleSystem ps = particle.GetComponent<ParticleSystem>();
 
-        // 이미 피해를 입힌 적이라면 스킵
-        if (damagedEnemies.Contains(other.gameObject))
-            return;
+        // ParticleSystem이 재생 중일 때까지 대기
+        while (ps != null && ps.isPlaying)
+            yield return null;
 
-        // IDamageable 인터페이스로 데미지 처리
-        IDamageable damageable = other.GetComponent<IDamageable>();
-        if (damageable != null && !damageable.IsDead)
-        {
-            damageable.TakeDamage(damage);
-            damagedEnemies.Add(other.gameObject);
+        // 모든 파티클이 완전히 사라질 때까지 추가적으로 대기
+        yield return new WaitForSeconds(ps.main.startLifetime.constantMax);
 
-            Debug.Log($"메테오 폭발! 대상: {other.name}, 데미지: {damage}");
-        }
+        // 풀로 복귀
+        PoolManager.instance.Despawn(particle);
+    }
+
+    // 디버그용 기즈모
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, explosionRadius);
     }
 }

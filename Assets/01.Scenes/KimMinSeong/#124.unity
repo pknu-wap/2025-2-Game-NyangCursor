@@ -181108,6 +181108,7 @@ MonoBehaviour:
   - {fileID: 6948470598453267942, guid: 0f712dcd3dc23ed4a84d66113f5d8586, type: 3}
   - {fileID: 5897547034953215948, guid: f90405bd017e75f4399db0b66120d4d1, type: 3}
   - {fileID: 186734, guid: 87ef6fb9e11601146bcd5dcb522968d4, type: 3}
+  - {fileID: 141964, guid: 1fafe872a479e244f935f1e8a8787c98, type: 3}
   - {fileID: 4246174279374542710, guid: 89139b8f26fc6914188dd4a9fd49d1c3, type: 3}
   - {fileID: 6238145512408227742, guid: f22d00e9451683840a804747912167cb, type: 3}
   - {fileID: 4529325749885727633, guid: 9078764b39bae3b4186fa63755b7b475, type: 3}
@@ -188675,11 +188676,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f63046364cbd0149a9db8d743ccfeed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseDamage: 10
+  baseDamage: 5
   baseCooldown: 5
-  baseInterval: 1
-  baseBlockCount: 3
-  usedStats: 00000000010000000700000009000000
+  baseProjectileCount: 1
+  usedStats: 000000000100000004000000
   maxLevel: 8
   upgradeStep: 2
   playerTransform: {fileID: 1979479470}
@@ -188687,7 +188687,8 @@ MonoBehaviour:
   - {fileID: 186734, guid: 87ef6fb9e11601146bcd5dcb522968d4, type: 3}
   blockSpace: 15
   projectileSpace: 3
-  projectileCount: 3
+  blockCount: 3
+  blockInterval: 1
 --- !u!1 &1182626954
 GameObject:
   m_ObjectHideFlags: 0
