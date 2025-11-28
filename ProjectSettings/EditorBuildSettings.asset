@@ -107,7 +107,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/01.Scenes/LoadScene.unity
     guid: b4912a8ee3d715e4c92c4c6e08b9f680
-  - enabled: 1
+  - enabled: 0
     path: Assets/01.Scenes/FinalDemo/#FinalDemo.unity
     guid: 9b13708fa10ad4276a663f966b0dd727
   - enabled: 0
