@@ -85,7 +85,7 @@ public class PlayerHpController : MonoBehaviour, IDamageable
         }
         else if (PlayerStateLogic.Instance.CurrentState == PlayerStateLogic.PlayerState.OverDrive)
         {
-            gaugeOverdriveLogic.UpOverDriveGauge(-10);
+            gaugeOverdriveLogic.UpOverDriveGauge(-15);
             OnReduceGauge?.Invoke();
         }
     }

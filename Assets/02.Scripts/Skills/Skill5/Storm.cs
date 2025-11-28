@@ -40,13 +40,17 @@ public class Storm : MonoBehaviour
 
     private void ApplySize(float size)
     {
-        Vector3 prefabScale = Vector3.one * 0.5f; // prefab 원래 크기
-        transform.localScale = prefabScale * size;
+        Vector3 prefabScale = Vector3.one * 0.5f; // prefab 기본 크기
+
+        // size 영향을 절반만 받도록 수정
+        float adjustedSize = 1f + ((size - 1f) * 0.5f);
+
+        transform.localScale = prefabScale * adjustedSize;
 
         if (ps != null)
         {
             var shape = ps.shape;
-            shape.radius = size * 0.5f; // shape 모듈도 맞춰줌
+            shape.radius = adjustedSize * 0.5f;
         }
     }
 

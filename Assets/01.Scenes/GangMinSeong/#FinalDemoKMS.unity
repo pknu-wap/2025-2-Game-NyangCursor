@@ -180466,6 +180466,67 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1001 &82836537
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 2055263783}
+    m_Modifications:
+    - target: {fileID: 124182, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_Name
+      value: MuzzleFlashRoundPurple
+      objectReference: {fileID: 0}
+    - target: {fileID: 124182, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.346
+      objectReference: {fileID: 0}
+    - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
 --- !u!1 &122303747
 GameObject:
   m_ObjectHideFlags: 0
@@ -182850,6 +182911,16 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 278198595}
   m_CullTransparentMesh: 1
+--- !u!1 &300462075 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 124182, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+  m_PrefabInstance: {fileID: 82836537}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &300462078 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400504, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+  m_PrefabInstance: {fileID: 82836537}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &317363773
 GameObject:
   m_ObjectHideFlags: 0
@@ -188102,13 +188173,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd88c1f6346d77e4388dddd62feac0b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPeriod: 0.3
-  maxEnemies: 100
+  difficultyManager: {fileID: 1354920561}
   playerTransform: {fileID: 1979479470}
-  enemyPrefabsToSpawn:
-  - {fileID: 1146727613942615151, guid: dbe13d43ab80f134d83301055740344e, type: 3}
-  - {fileID: 1642993225890707820, guid: 063639f2ca3347c45aa33eedf847accc, type: 3}
-  - {fileID: 4814969749798417926, guid: 1f3f32abaa285604db1b86cded73de32, type: 3}
   spawnZoneCollider: {fileID: 1983897943}
   combatZoneCollider: {fileID: 788909392}
 --- !u!1 &1034999839
@@ -189457,7 +189523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseDamage: 10
-  baseCooldown: 5
+  baseCooldown: 8
   baseInterval: 1
   baseBlockCount: 3
   usedStats: 00000000010000000700000009000000
@@ -190264,8 +190330,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stormPrefab: {fileID: 5719506856147455035, guid: 90630783ba1d17a46ac031f1a480ddee, type: 3}
   usedStats: 0000000001000000020000000500000006000000
-  baseDamage: 2
-  baseCooldown: 5
+  baseDamage: 1
+  baseCooldown: 7
   baseRange: 5
   baseProjectileSizeLevel: 1
   baseEffectZoneDuration: 5
@@ -627441,12 +627507,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2eab16771e6dd24cb6f4787e55a14fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  difficultyIncreaseMinutes:
-  - 0.1
-  - 0.2
-  - 0.3
-  - 0.4
-  - 0.5
+  timerManager: {fileID: 1695795980}
+  enemyManager: {fileID: 970950313}
+  difficulties:
+  - {fileID: 11400000, guid: ee0cb5eab853806459ec08708e4579ab, type: 2}
+  - {fileID: 11400000, guid: 31ddb0afc9345f84aa935eb61b09610f, type: 2}
+  - {fileID: 11400000, guid: 326205c454c4feb4f9f29e32bfdf4ff4, type: 2}
 --- !u!1 &1364113826
 GameObject:
   m_ObjectHideFlags: 0
@@ -632136,8 +632202,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   usedStats: 000000000100000002000000050000000400000003000000
-  baseDamage: 10
-  baseCooldown: 5
+  baseDamage: 7
+  baseCooldown: 7
   baseRange: 8
   baseProjectileSizeLevel: 1
   baseProjectileCount: 1
@@ -632811,7 +632877,7 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
-  MuzzleFlashEffect: {fileID: 124182, guid: 96a4e4fb8515d4af785c0732f68ba567, type: 3}
+  MuzzleFlashEffect: {fileID: 300462075}
   firePoint: {fileID: 2055263780}
   bulletSpeed: 30
   maxAmmo: 10
@@ -634429,7 +634495,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 300462078}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2080032882

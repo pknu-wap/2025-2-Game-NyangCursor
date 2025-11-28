@@ -15,4 +15,4 @@ MonoBehaviour:
   enemyName: PirateRat
   maxHP: 30
   moveSpeed: 3
-  overdriveGaugeReward: 10
+  overdriveGaugeReward: 5

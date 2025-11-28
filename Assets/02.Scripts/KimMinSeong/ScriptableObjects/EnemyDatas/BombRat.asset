@@ -15,4 +15,4 @@ MonoBehaviour:
   enemyName: example
   maxHP: 20
   moveSpeed: 3
-  overdriveGaugeReward: 10
+  overdriveGaugeReward: 0

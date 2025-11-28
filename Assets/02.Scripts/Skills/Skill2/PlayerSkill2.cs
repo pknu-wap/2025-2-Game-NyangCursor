@@ -333,13 +333,13 @@ public class PlayerSkill2 : MonoBehaviour, ISkill
     void ResetParticleStats()
     {
 
-        //크기 리셋
+/*        //크기 리셋
         fireCircleInstance.transform.localScale = new Vector3(1, 1, 1);
 
         // 데미지 리셋
         var fireDamage = firePS.GetComponent<FireDamageParticle>();
         if (fireDamage != null)
-            fireDamage.damagePerTick = baseDamage;
+            fireDamage.damagePerTick = baseDamage;*/
     }
 
 }

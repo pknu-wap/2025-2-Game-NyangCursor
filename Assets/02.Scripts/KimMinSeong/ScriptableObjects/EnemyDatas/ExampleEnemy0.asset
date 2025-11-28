@@ -15,6 +15,4 @@ MonoBehaviour:
   enemyName: ExampleEnemy0
   maxHP: 20
   moveSpeed: 2
-  attackDamage: 0
-  attackRate: 0.5
-  overdriveGaugeReward: 10
+  overdriveGaugeReward: 5

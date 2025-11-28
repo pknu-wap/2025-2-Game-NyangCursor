@@ -13,6 +13,8 @@ public class PlayerShotManager : MonoBehaviour
 
     [SerializeField]private GameObject MuzzleFlashEffect; //총구이펙트
 
+
+
     [SerializeField] private GameObject firePoint; // 총알 발사 위치
     private CursorMove cursorMove;
     [SerializeField] private float bulletSpeed = 10f;
@@ -36,6 +38,7 @@ public class PlayerShotManager : MonoBehaviour
         cursorMove = firePoint.GetComponent<CursorMove>();
         currentAmmo = maxAmmo;
         UpdateAmmoUI();
+
     }
 
     private bool IsAbleToShoot()
