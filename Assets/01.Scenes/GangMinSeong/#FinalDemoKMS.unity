@@ -187619,7 +187619,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   usedStats: 00000000010000000200000004000000
-  baseDamage: 5
+  baseDamage: 1
   baseCooldown: 1
   baseRange: 7
   baseProjectileCount: 1
